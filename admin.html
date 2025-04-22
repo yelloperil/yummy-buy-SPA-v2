@@ -45,6 +45,16 @@
             border-bottom: 3px solid #5D5CDE;
             font-weight: 600;
         }
+        /* Add toast styles here */
+        .toast {
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -105,6 +115,9 @@
                 <!-- Products will be loaded here -->
             </div>
         </div>
+
+        <!-- Toast Container -->
+        <div id="toastContainer" class="fixed bottom-4 right-4 z-50"></div>
     </div>
 
     <!-- Order Detail Modal -->
@@ -464,7 +477,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 
-        // ### Order Management - Product View ### <nav>@@@</nav>
+        // ### Order Management - Product View ### ### <nav>@@@</nav>
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -844,6 +857,35 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 
+        // Toast notification function
+        function showToast(message, type = 'success', duration = 3000) {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            // Set toast styling based on type
+            let bgColor = 'bg-green-500';
+            if (type === 'error') bgColor = 'bg-red-500';
+            if (type === 'warning') bgColor = 'bg-yellow-500';
+            if (type === 'info') bgColor = 'bg-blue-500';
+            
+            toast.className = `toast ${bgColor} text-white py-3 px-4 rounded-lg shadow-lg mb-2`;
+            toast.innerHTML = message;
+            
+            toastContainer.appendChild(toast);
+            
+            // Show the toast with animation
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // Remove the toast after duration
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toastContainer.removeChild(toast);
+                }, 300);
+            }, duration);
+        }
 
         // Product Management Functions
         async function loadProducts() {
