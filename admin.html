@@ -802,6 +802,8 @@
 
         // [Add this code after the order modal functions]
 
+// ### Product Management Functions ###
+
         // Product Management Functions
         async function loadProducts() {
             const productsList = document.getElementById('productsList');
@@ -870,6 +872,13 @@
                 });
                 
                 // Add event listeners
+
+                    // for Add Product button
+                document.getElementById('addProductBtn').addEventListener('click', () => {
+                    openProductModal(); // Call with no parameters for a new product
+                });
+
+                    // for Edit button
                 document.querySelectorAll('.edit-product-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const productId = e.target.getAttribute('data-product-id');
@@ -877,6 +886,7 @@
                     });
                 });
                 
+                    // for Delete button
                 document.querySelectorAll('.delete-product-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const productId = e.target.getAttribute('data-product-id');
