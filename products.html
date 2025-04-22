@@ -46,14 +46,24 @@
                 <p class="text-gray-600 dark:text-gray-400 mt-2">Browse our products and place your pre-order</p>
             </div>
             <div>
-                <!-- LINK TO ADMIN DASHBOARD -->
-                <h3><a href="admin.html">ADMIN</a></h3>
+                <!-- NAVIGATION LINKS -->
+                <nav class="flex gap-4">
+                    <a href="products.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">Products</a>
+                    <a href="history.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">History</a>
+                </nav>
+            </div>
+            <div class="mt-4 sm:mt-0 flex items-center">
+                <!-- HIDDEN LINK TO ADMIN DASHBOARD -->
+                <h3 id="adminLink" class="hidden">
+                    <a href="admin.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">Admin Dashboard</a>
+                </h3>
             </div>
             <div>
                 <!-- HIDDEN USER INFO DISPLAY -->
                 <span id="userPhoneDisplay" class="hidden mr-3 text-sm text-gray-600 dark:text-gray-400"></span>
             </div>
             <div class="mt-4 sm:mt-0 flex items-center">
+                <!-- LOGIN BUTTON: TRIGGERS AUTH MODAL -->
                 <button id="loginBtn" class="bg-primary hover:bg-secondary text-white py-2 px-4 rounded-md font-medium transition-all">
                     Log In
                 </button>
@@ -506,8 +516,9 @@
         
         // Check if user is already logged in
         firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                // User is signed in
+            const websiteAdmins = ['+17789569063', '+16049778798', '+15054443986', '+17788929401', '+1-778-956-9063', '+1-604-977-8798', '+1-505-444-3986', '+1-778-892-9401' ]
+            if (user && websiteAdmins.includes(user.phoneNumber)) {
+                // User is signed in and is an admin
                 currentUser = user;
                 isLoggedIn = true;
                 
@@ -515,6 +526,17 @@
                 loginBtn.textContent = 'My Account';
                 userPhoneDisplay.textContent = user.phoneNumber || 'Authenticated User';
                 userPhoneDisplay.classList.remove('hidden');
+                document.getElementById('adminLink').classList.remove('hidden');
+            } else if (user) {
+                // User is signed in but not an admin
+                currentUser = user;
+                isLoggedIn = true;
+                
+                // Update UI
+                loginBtn.textContent = 'My Account';
+                userPhoneDisplay.textContent = user.phoneNumber || 'Authenticated User';
+                userPhoneDisplay.classList.remove('hidden');
+                document.getElementById('adminLink').classList.add('hidden');
             } else {
                 // User is signed out
                 currentUser = null;
@@ -523,6 +545,7 @@
                 // Update UI
                 loginBtn.textContent = 'Log In';
                 userPhoneDisplay.classList.add('hidden');
+                document.getElementById('adminLink').classList.add('hidden');
             }
         });
         
