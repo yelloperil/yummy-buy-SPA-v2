@@ -898,24 +898,39 @@
             // Set title
             document.getElementById('productModalTitle').textContent = 
                 productId ? 'Edit Product' : 'Add New Product';
-
-            // // If editing, load product data
-            // if (product.id) {
-            //     db.collection('products').doc(product.id).get().then(doc => {
-            //         if (doc.exists) {
-            //             const product = doc.data();
-            //             document.getElementById('productId').value = doc.id;
-            //             document.getElementById('productName').value = product.name;
-            //             document.getElementById('productPrice').value = product.price;
-            //             document.getElementById('productDescription').value = product.description || '';
+            
+            // If editing, load product data
+            if (productId) {
+                db.collection('products').doc(productId).get().then(doc => {
+                    if (doc.exists) {
+                        const product = doc.data();
+                        document.getElementById('productId').value = doc.id;
+                        document.getElementById('productName').value = product.name || '';
+                        document.getElementById('productPrice').value = product.price || '';
+                        document.getElementById('productDescription').value = product.description || '';
                         
-            //             if (product.imageUrl) {
-            //                 document.getElementById('previewImage').src = product.imageUrl;
-            //                 imagePreview.classList.remove('hidden');
-            //             }
-            //         }
-            //     });
-            // }
+                        // Add status field handling
+                        const statusSelect = document.getElementById('productStatus');
+                        if (statusSelect) {
+                            statusSelect.value = product.status || 'unreleased';
+                        }
+                        
+                        if (product.imageUrl) {
+                            document.getElementById('previewImage').src = product.imageUrl;
+                            imagePreview.classList.remove('hidden');
+                        }
+                        
+                        // Ensure the save button is visible
+                        document.getElementById('saveProductBtn').style.display = 'block';
+                    }
+                }).catch(error => {
+                    console.error("Error getting product:", error);
+                    alert('Error loading product data. Please try again.');
+                });
+            } else {
+                // Ensure the save button is visible for new products
+                document.getElementById('saveProductBtn').style.display = 'block';
+            }
             
             // Show modal
             modal.classList.remove('hidden');

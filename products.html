@@ -228,6 +228,7 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore(); // Add Firestore reference
+        const auth = firebase.auth();
         
         // Authentication State
         let isLoggedIn = false;
