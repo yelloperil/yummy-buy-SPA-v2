@@ -1,0 +1,35 @@
+.
+├── A_meticulously_organized_arran(1).jpeg
+├── A_meticulously_organized_arran(10).jpeg
+├── A_meticulously_organized_arran(11).jpeg
+├── A_meticulously_organized_arran(13).jpeg
+├── A_meticulously_organized_arran(17).jpeg
+├── A_meticulously_organized_arran(2).jpeg
+├── A_meticulously_organized_arran(20).jpeg
+├── A_meticulously_organized_arran(21).jpeg
+├── A_meticulously_organized_arran(23).jpeg
+├── A_meticulously_organized_arran(29).jpeg
+├── A_meticulously_organized_arran(3).jpeg
+├── A_meticulously_organized_arran(30).jpeg
+├── A_meticulously_organized_arran(32).jpeg
+├── A_meticulously_organized_arran(33).jpeg
+├── A_meticulously_organized_arran(34).jpeg
+├── A_meticulously_organized_arran(4).jpeg
+├── A_meticulously_organized_arran(5).jpeg
+├── A_meticulously_organized_arran(6).jpeg
+├── A_meticulously_organized_arran(7).jpeg
+├── A_meticulously_organized_arran(8).jpeg
+├── A_meticulously_organized_arran(9).jpeg
+├── cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png
+├── la-mujer-dice-ok-vector(1).jpg
+├── painterly_anime_artwork_A_meti(1).jpeg
+├── painterly_anime_artwork_A_meti(2).jpeg
+├── painterly_anime_artwork_A_meti.jpeg
+├── smiling-powerful-woman.jpg
+├── tree.txt
+└── vecteezy_african-civet-mascot_413_BG-Removed.png
+
+1 directory, 29 files
+
+
+*last update April 17, 2025

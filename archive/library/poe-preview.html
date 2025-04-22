@@ -1,0 +1,425 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Pre-Order System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        secondary: '#A5A4FF',
+                    }
+                }
+            }
+        }
+
+        // Check for dark mode preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-primary">Product Pre-Order System</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">Browse our products and place your pre-order</p>
+        </header>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Product Catalogue Section -->
+            <div class="lg:w-2/3">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Product Catalogue</h2>
+                    <div class="mb-4">
+                        <input type="text" id="searchInput" placeholder="Search products..." class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                    </div>
+                    <div id="productList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Products will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Section -->
+            <div class="lg:w-1/3">
+                <!-- Shopping Cart -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Shopping Cart</h2>
+                    <div id="cartItems" class="mb-4">
+                        <p id="emptyCartMessage" class="text-gray-500 dark:text-gray-400">Your cart is empty</p>
+                        <!-- Cart items will be inserted here by JavaScript -->
+                    </div>
+                    <div id="cartTotal" class="font-semibold text-lg mb-4">Total: $0.00</div>
+                    <button id="clearCartBtn" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+                        Clear Cart
+                    </button>
+                </div>
+
+                <!-- Customer Information -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Customer Information</h2>
+                    <form id="orderForm" class="space-y-4">
+                        <div>
+                            <label for="name" class="block mb-1">Full Name</label>
+                            <input type="text" id="name" name="name" required="" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                        </div>
+                        <div>
+                            <label for="email" class="block mb-1">Email</label>
+                            <input type="email" id="email" name="email" required="" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                        </div>
+                        <div>
+                            <label for="phone" class="block mb-1">Phone</label>
+                            <input type="tel" id="phone" name="phone" required="" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                        </div>
+                        <div>
+                            <label for="address" class="block mb-1">Shipping Address</label>
+                            <textarea id="address" name="address" rows="3" required="" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base"></textarea>
+                        </div>
+                        <div>
+                            <label for="notes" class="block mb-1">Additional Notes (Optional)</label>
+                            <textarea id="notes" name="notes" rows="2" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base"></textarea>
+                        </div>
+                        <button type="submit" id="submitOrderBtn" disabled="" class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                            Place Pre-Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Confirmation Modal -->
+        <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
+                <h3 class="text-xl font-bold mb-4 text-primary">Order Confirmation</h3>
+                <p id="confirmationMessage" class="mb-4"></p>
+                <div id="orderReference" class="bg-gray-100 dark:bg-gray-700 p-3 rounded-md text-center mb-4 font-medium"></div>
+                <button id="closeModalBtn" class="w-full bg-primary hover:bg-secondary text-white py-2 px-4 rounded-md">
+                    Close
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="flex flex-col items-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+                    <p class="text-lg">Processing your order...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample product data (replace with your actual products)
+        const products = [
+            { id: 1, name: "Wireless Earbuds", price: 79.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Cpath d='M130,80 C130,60 115,45 95,45 C75,45 60,60 60,80 L60,120 C60,125 65,130 70,130 L80,130 C85,130 90,125 90,120 L90,90 C90,85 95,80 100,80 C105,80 110,85 110,90 L110,120 C110,125 115,130 120,130 L130,130 C135,130 140,125 140,120 L140,80 Z' fill='%235D5CDE'/%3E%3C/svg%3E", description: "True wireless earbuds with noise cancellation and premium sound quality." },
+            { id: 2, name: "Smart Watch", price: 149.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Crect x='70' y='60' width='60' height='80' rx='10' fill='%235D5CDE'/%3E%3Crect x='80' y='70' width='40' height='60' rx='5' fill='white'/%3E%3Cpath d='M70,100 L50,100 M130,100 L150,100 M100,60 L100,40 M100,140 L100,160' stroke='%235D5CDE' stroke-width='4'/%3E%3C/svg%3E", description: "Fitness tracker with heart rate monitoring, GPS, and customizable watch faces." },
+            { id: 3, name: "Bluetooth Speaker", price: 129.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Crect x='50' y='70' width='100' height='60' rx='10' fill='%235D5CDE'/%3E%3Ccircle cx='80' cy='100' r='20' fill='%23333'/%3E%3Ccircle cx='120' cy='100' r='10' fill='%23333'/%3E%3C/svg%3E", description: "Portable speaker with 20-hour battery life and water-resistant design." },
+            { id: 4, name: "Wireless Charger", price: 39.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Ccircle cx='100' cy='100' r='40' fill='%235D5CDE'/%3E%3Ccircle cx='100' cy='100' r='30' fill='white'/%3E%3Ccircle cx='100' cy='100' r='10' fill='%235D5CDE'/%3E%3C/svg%3E", description: "Fast charging pad compatible with all Qi-enabled devices." },
+            { id: 5, name: "Tablet Stand", price: 24.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Cpath d='M60,140 L80,80 L120,80 L140,140 Z' fill='%235D5CDE'/%3E%3Crect x='70' y='60' width='60' height='80' rx='5' fill='white' stroke='%235D5CDE' stroke-width='2'/%3E%3C/svg%3E", description: "Adjustable aluminum stand for tablets and smartphones." },
+            { id: 6, name: "USB-C Hub", price: 59.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Crect x='40' y='80' width='120' height='40' rx='5' fill='%235D5CDE'/%3E%3Crect x='50' y='90' width='10' height='20' fill='white'/%3E%3Crect x='70' y='90' width='10' height='20' fill='white'/%3E%3Crect x='90' y='90' width='10' height='20' fill='white'/%3E%3Crect x='110' y='90' width='10' height='20' fill='white'/%3E%3Crect x='130' y='90' width='20' height='10' fill='white'/%3E%3C/svg%3E", description: "7-in-1 adapter with HDMI, USB, and SD card ports." }
+        ];
+
+        // Initialize cart
+        let cart = [];
+
+        // DOM elements
+        const productList = document.getElementById('productList');
+        const cartItems = document.getElementById('cartItems');
+        const emptyCartMessage = document.getElementById('emptyCartMessage');
+        const cartTotal = document.getElementById('cartTotal');
+        const clearCartBtn = document.getElementById('clearCartBtn');
+        const submitOrderBtn = document.getElementById('submitOrderBtn');
+        const orderForm = document.getElementById('orderForm');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+        const orderReference = document.getElementById('orderReference');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const searchInput = document.getElementById('searchInput');
+
+        // Display products
+        function displayProducts(products) {
+            productList.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
+                
+                productCard.innerHTML = `
+                    <div class="bg-gray-100 dark:bg-gray-700 p-4 flex justify-center">
+                        <img src="${product.image}" alt="${product.name}" class="h-32 object-contain">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold mb-1">${product.name}</h3>
+                        <p class="text-primary font-medium mb-2">$${product.price.toFixed(2)}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <button data-product-id="${product.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
+                                <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${product.id}">
+                                <button data-product-id="${product.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
+                            </div>
+                            <button data-product-id="${product.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                productList.appendChild(productCard);
+            });
+
+            // Add event listeners for product cards
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', addToCart);
+            });
+
+            document.querySelectorAll('.increase-qty').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.target.dataset.productId;
+                    const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+                    input.value = parseInt(input.value) + 1;
+                });
+            });
+
+            document.querySelectorAll('.decrease-qty').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.target.dataset.productId;
+                    const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+                    if (parseInt(input.value) > 1) {
+                        input.value = parseInt(input.value) - 1;
+                    }
+                });
+            });
+        }
+
+        // Add product to cart
+        function addToCart(e) {
+            const productId = parseInt(e.target.dataset.productId);
+            const product = products.find(p => p.id === productId);
+            const quantityInput = document.querySelector(`.qty-input[data-product-id="${productId}"]`);
+            const quantity = parseInt(quantityInput.value);
+            
+            // Check if product is already in cart
+            const existingItem = cart.find(item => item.product.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({
+                    product,
+                    quantity
+                });
+            }
+            
+            // Reset quantity input
+            quantityInput.value = 1;
+            
+            // Update cart display
+            updateCartDisplay();
+            
+            // Show feedback
+            const button = e.target;
+            const originalText = button.textContent;
+            button.textContent = 'Added!';
+            button.classList.remove('bg-primary', 'hover:bg-secondary');
+            button.classList.add('bg-green-500');
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.add('bg-primary', 'hover:bg-secondary');
+                button.classList.remove('bg-green-500');
+            }, 1000);
+        }
+
+        // Update cart display
+        function updateCartDisplay() {
+            if (cart.length === 0) {
+                emptyCartMessage.style.display = 'block';
+                cartItems.innerHTML = '';
+                cartTotal.textContent = 'Total: $0.00';
+                clearCartBtn.disabled = true;
+                submitOrderBtn.disabled = true;
+            } else {
+                emptyCartMessage.style.display = 'none';
+                
+                let cartHTML = '';
+                let total = 0;
+                
+                cart.forEach((item, index) => {
+                    const itemTotal = item.product.price * item.quantity;
+                    total += itemTotal;
+                    
+                    cartHTML += `
+                        <div class="flex items-center gap-3 py-3 ${index !== 0 ? 'border-t border-gray-200 dark:border-gray-700' : ''}">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden">
+                                <img src="${item.product.image}" alt="${item.product.name}" class="h-8 object-contain">
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="font-medium text-sm">${item.product.name}</h4>
+                                <div class="flex justify-between items-center mt-1">
+                                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                                        $${item.product.price.toFixed(2)} × ${item.quantity}
+                                    </div>
+                                    <button data-index="${index}" class="remove-item text-red-500 hover:text-red-700 text-sm">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                cartItems.innerHTML = cartHTML;
+                cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+                clearCartBtn.disabled = false;
+                submitOrderBtn.disabled = false;
+                
+                // Add event listeners for remove buttons
+                document.querySelectorAll('.remove-item').forEach(button => {
+                    button.addEventListener('click', removeFromCart);
+                });
+            }
+        }
+
+        // Remove item from cart
+        function removeFromCart(e) {
+            const index = parseInt(e.target.dataset.index);
+            cart.splice(index, 1);
+            updateCartDisplay();
+        }
+
+        // Clear cart
+        function clearCart() {
+            cart = [];
+            updateCartDisplay();
+        }
+
+        // Handle order submission
+        async function submitOrder(e) {
+            e.preventDefault();
+            
+            // Show loading overlay
+            loadingOverlay.classList.remove('hidden');
+
+            // Get form data
+            const customerData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                notes: document.getElementById('notes').value
+            };
+            
+            // Format order data
+            const orderItems = cart.map(item => ({
+                product: item.product.name,
+                price: item.product.price,
+                quantity: item.quantity,
+                subtotal: (item.product.price * item.quantity).toFixed(2)
+            }));
+            
+            let total = 0;
+            cart.forEach(item => {
+                total += item.product.price * item.quantity;
+            });
+            
+            const orderData = {
+                customer: customerData,
+                items: orderItems,
+                total: total.toFixed(2),
+                orderDate: new Date().toISOString(),
+                orderStatus: 'Pre-Order Placed'
+            };
+
+            try {
+                // Create order message for the bot
+                const orderMessage = `@Claude-3.7-Sonnet 
+I need to store a new pre-order in your database. Please respond with ONLY JSON containing the order details and a unique reference number.
+
+Order Details:
+\`\`\`json
+${JSON.stringify(orderData, null, 2)}
+\`\`\`
+
+Please add a unique reference number to this order and provide your response in ONLY raw JSON format with no additional text, explanations, or formatting (no code blocks).`;
+
+                // Register handler for bot response
+                window.Poe.registerHandler("order-handler", (result) => {
+                    if (result.status === "complete" && result.responses.length > 0) {
+                        try {
+                            // Hide loading overlay
+                            loadingOverlay.classList.add('hidden');
+                            
+                            // Parse the bot response
+                            const response = JSON.parse(result.responses[0].content);
+                            
+                            // Show confirmation modal
+                            confirmationMessage.textContent = `Thank you ${customerData.name}! Your pre-order has been received and will be processed soon.`;
+                            orderReference.textContent = `Order Reference: ${response.referenceNumber || 'N/A'}`;
+                            confirmationModal.classList.remove('hidden');
+                            
+                            // Reset form and cart
+                            orderForm.reset();
+                            clearCart();
+                        } catch (error) {
+                            console.error("Error processing response:", error);
+                            alert("There was an error processing your order. Please try again.");
+                            loadingOverlay.classList.add('hidden');
+                        }
+                    } else if (result.status === "error") {
+                        console.error("Error from bot:", result.responses[0]?.statusText);
+                        alert("There was an error processing your order. Please try again.");
+                        loadingOverlay.classList.add('hidden');
+                    }
+                });
+
+                // Send order to bot
+                await window.Poe.sendUserMessage(orderMessage, {
+                    handler: "order-handler",
+                    stream: false,
+                    openChat: false
+                });
+            } catch (error) {
+                console.error("Error submitting order:", error);
+                alert("There was an error processing your order. Please try again.");
+                loadingOverlay.classList.add('hidden');
+            }
+        }
+
+        // Search functionality
+        function searchProducts() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) || 
+                product.description.toLowerCase().includes(searchTerm)
+            );
+            displayProducts(filteredProducts);
+        }
+
+        // Event listeners
+        clearCartBtn.addEventListener('click', clearCart);
+        orderForm.addEventListener('submit', submitOrder);
+        closeModalBtn.addEventListener('click', () => {
+            confirmationModal.classList.add('hidden');
+        });
+        searchInput.addEventListener('input', searchProducts);
+
+        // Initialize
+        displayProducts(products);
+        updateCartDisplay();
+    </script>
+
+</body></html>

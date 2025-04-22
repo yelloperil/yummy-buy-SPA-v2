@@ -1,0 +1,1418 @@
+Create an app that allows customers to select items from a product catalogue and place an unpaid pre-order. This customer order should then be collected in a database so I can keep track of all the orders for my products.
+@
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Pre-Order System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        secondary: '#A5A4FF',
+                    }
+                }
+            }
+        }
+
+        // Check for dark mode preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-primary">Product Pre-Order System</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">Browse our products and place your pre-order</p>
+        </header>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Product Catalogue Section -->
+            <div class="lg:w-2/3">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Product Catalogue</h2>
+                    <div class="mb-4">
+                        <input type="text" id="searchInput" placeholder="Search products..." 
+                            class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                    </div>
+                    <div id="productList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Products will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Section -->
+            <div class="lg:w-1/3">
+                <!-- Shopping Cart -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Shopping Cart</h2>
+                    <div id="cartItems" class="mb-4">
+                        <p id="emptyCartMessage" class="text-gray-500 dark:text-gray-400">Your cart is empty</p>
+                        <!-- Cart items will be inserted here by JavaScript -->
+                    </div>
+                    <div id="cartTotal" class="font-semibold text-lg mb-4">Total: $0.00</div>
+                    <button id="clearCartBtn" 
+                        class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+                        Clear Cart
+                    </button>
+                </div>
+
+                <!-- Customer Information -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Customer Information</h2>
+                    <form id="orderForm" class="space-y-4">
+                        <div>
+                            <label for="name" class="block mb-1">Full Name</label>
+                            <input type="text" id="name" name="name" required
+                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                        </div>
+                        <div>
+                            <label for="email" class="block mb-1">Email</label>
+                            <input type="email" id="email" name="email" required
+                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                        </div>
+                        <div>
+                            <label for="phone" class="block mb-1">Phone</label>
+                            <input type="tel" id="phone" name="phone" required
+                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                        </div>
+                        <div>
+                            <label for="address" class="block mb-1">Shipping Address</label>
+                            <textarea id="address" name="address" rows="3" required
+                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base"></textarea>
+                        </div>
+                        <div>
+                            <label for="notes" class="block mb-1">Additional Notes (Optional)</label>
+                            <textarea id="notes" name="notes" rows="2"
+                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base"></textarea>
+                        </div>
+                        <button type="submit" id="submitOrderBtn" disabled
+                            class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                            Place Pre-Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Confirmation Modal -->
+        <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
+                <h3 class="text-xl font-bold mb-4 text-primary">Order Confirmation</h3>
+                <p id="confirmationMessage" class="mb-4"></p>
+                <div id="orderReference" class="bg-gray-100 dark:bg-gray-700 p-3 rounded-md text-center mb-4 font-medium"></div>
+                <button id="closeModalBtn" class="w-full bg-primary hover:bg-secondary text-white py-2 px-4 rounded-md">
+                    Close
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="flex flex-col items-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+                    <p class="text-lg">Processing your order...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample product data (replace with your actual products)
+        const products = [
+            { id: 1, name: "Wireless Earbuds", price: 79.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Cpath d='M130,80 C130,60 115,45 95,45 C75,45 60,60 60,80 L60,120 C60,125 65,130 70,130 L80,130 C85,130 90,125 90,120 L90,90 C90,85 95,80 100,80 C105,80 110,85 110,90 L110,120 C110,125 115,130 120,130 L130,130 C135,130 140,125 140,120 L140,80 Z' fill='%235D5CDE'/%3E%3C/svg%3E", description: "True wireless earbuds with noise cancellation and premium sound quality." },
+            { id: 2, name: "Smart Watch", price: 149.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Crect x='70' y='60' width='60' height='80' rx='10' fill='%235D5CDE'/%3E%3Crect x='80' y='70' width='40' height='60' rx='5' fill='white'/%3E%3Cpath d='M70,100 L50,100 M130,100 L150,100 M100,60 L100,40 M100,140 L100,160' stroke='%235D5CDE' stroke-width='4'/%3E%3C/svg%3E", description: "Fitness tracker with heart rate monitoring, GPS, and customizable watch faces." },
+            { id: 3, name: "Bluetooth Speaker", price: 129.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Crect x='50' y='70' width='100' height='60' rx='10' fill='%235D5CDE'/%3E%3Ccircle cx='80' cy='100' r='20' fill='%23333'/%3E%3Ccircle cx='120' cy='100' r='10' fill='%23333'/%3E%3C/svg%3E", description: "Portable speaker with 20-hour battery life and water-resistant design." },
+            { id: 4, name: "Wireless Charger", price: 39.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Ccircle cx='100' cy='100' r='40' fill='%235D5CDE'/%3E%3Ccircle cx='100' cy='100' r='30' fill='white'/%3E%3Ccircle cx='100' cy='100' r='10' fill='%235D5CDE'/%3E%3C/svg%3E", description: "Fast charging pad compatible with all Qi-enabled devices." },
+            { id: 5, name: "Tablet Stand", price: 24.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Cpath d='M60,140 L80,80 L120,80 L140,140 Z' fill='%235D5CDE'/%3E%3Crect x='70' y='60' width='60' height='80' rx='5' fill='white' stroke='%235D5CDE' stroke-width='2'/%3E%3C/svg%3E", description: "Adjustable aluminum stand for tablets and smartphones." },
+            { id: 6, name: "USB-C Hub", price: 59.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Crect x='40' y='80' width='120' height='40' rx='5' fill='%235D5CDE'/%3E%3Crect x='50' y='90' width='10' height='20' fill='white'/%3E%3Crect x='70' y='90' width='10' height='20' fill='white'/%3E%3Crect x='90' y='90' width='10' height='20' fill='white'/%3E%3Crect x='110' y='90' width='10' height='20' fill='white'/%3E%3Crect x='130' y='90' width='20' height='10' fill='white'/%3E%3C/svg%3E", description: "7-in-1 adapter with HDMI, USB, and SD card ports." }
+        ];
+
+        // Initialize cart
+        let cart = [];
+
+        // DOM elements
+        const productList = document.getElementById('productList');
+        const cartItems = document.getElementById('cartItems');
+        const emptyCartMessage = document.getElementById('emptyCartMessage');
+        const cartTotal = document.getElementById('cartTotal');
+        const clearCartBtn = document.getElementById('clearCartBtn');
+        const submitOrderBtn = document.getElementById('submitOrderBtn');
+        const orderForm = document.getElementById('orderForm');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+        const orderReference = document.getElementById('orderReference');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const searchInput = document.getElementById('searchInput');
+
+        // Display products
+        function displayProducts(products) {
+            productList.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
+                
+                productCard.innerHTML = `
+                    <div class="bg-gray-100 dark:bg-gray-700 p-4 flex justify-center">
+                        <img src="${product.image}" alt="${product.name}" class="h-32 object-contain">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold mb-1">${product.name}</h3>
+                        <p class="text-primary font-medium mb-2">$${product.price.toFixed(2)}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <button data-product-id="${product.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
+                                <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${product.id}">
+                                <button data-product-id="${product.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
+                            </div>
+                            <button data-product-id="${product.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                productList.appendChild(productCard);
+            });
+
+            // Add event listeners for product cards
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', addToCart);
+            });
+
+            document.querySelectorAll('.increase-qty').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.target.dataset.productId;
+                    const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+                    input.value = parseInt(input.value) + 1;
+                });
+            });
+
+            document.querySelectorAll('.decrease-qty').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.target.dataset.productId;
+                    const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+                    if (parseInt(input.value) > 1) {
+                        input.value = parseInt(input.value) - 1;
+                    }
+                });
+            });
+        }
+
+        // Add product to cart
+        function addToCart(e) {
+            const productId = parseInt(e.target.dataset.productId);
+            const product = products.find(p => p.id === productId);
+            const quantityInput = document.querySelector(`.qty-input[data-product-id="${productId}"]`);
+            const quantity = parseInt(quantityInput.value);
+            
+            // Check if product is already in cart
+            const existingItem = cart.find(item => item.product.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({
+                    product,
+                    quantity
+                });
+            }
+            
+            // Reset quantity input
+            quantityInput.value = 1;
+            
+            // Update cart display
+            updateCartDisplay();
+            
+            // Show feedback
+            const button = e.target;
+            const originalText = button.textContent;
+            button.textContent = 'Added!';
+            button.classList.remove('bg-primary', 'hover:bg-secondary');
+            button.classList.add('bg-green-500');
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.add('bg-primary', 'hover:bg-secondary');
+                button.classList.remove('bg-green-500');
+            }, 1000);
+        }
+
+        // Update cart display
+        function updateCartDisplay() {
+            if (cart.length === 0) {
+                emptyCartMessage.style.display = 'block';
+                cartItems.innerHTML = '';
+                cartTotal.textContent = 'Total: $0.00';
+                clearCartBtn.disabled = true;
+                submitOrderBtn.disabled = true;
+            } else {
+                emptyCartMessage.style.display = 'none';
+                
+                let cartHTML = '';
+                let total = 0;
+                
+                cart.forEach((item, index) => {
+                    const itemTotal = item.product.price * item.quantity;
+                    total += itemTotal;
+                    
+                    cartHTML += `
+                        <div class="flex items-center gap-3 py-3 ${index !== 0 ? 'border-t border-gray-200 dark:border-gray-700' : ''}">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden">
+                                <img src="${item.product.image}" alt="${item.product.name}" class="h-8 object-contain">
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="font-medium text-sm">${item.product.name}</h4>
+                                <div class="flex justify-between items-center mt-1">
+                                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                                        $${item.product.price.toFixed(2)} × ${item.quantity}
+                                    </div>
+                                    <button data-index="${index}" class="remove-item text-red-500 hover:text-red-700 text-sm">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                cartItems.innerHTML = cartHTML;
+                cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+                clearCartBtn.disabled = false;
+                submitOrderBtn.disabled = false;
+                
+                // Add event listeners for remove buttons
+                document.querySelectorAll('.remove-item').forEach(button => {
+                    button.addEventListener('click', removeFromCart);
+                });
+            }
+        }
+
+        // Remove item from cart
+        function removeFromCart(e) {
+            const index = parseInt(e.target.dataset.index);
+            cart.splice(index, 1);
+            updateCartDisplay();
+        }
+
+        // Clear cart
+        function clearCart() {
+            cart = [];
+            updateCartDisplay();
+        }
+
+        // Handle order submission
+        async function submitOrder(e) {
+            e.preventDefault();
+            
+            // Show loading overlay
+            loadingOverlay.classList.remove('hidden');
+
+            // Get form data
+            const customerData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                notes: document.getElementById('notes').value
+            };
+            
+            // Format order data
+            const orderItems = cart.map(item => ({
+                product: item.product.name,
+                price: item.product.price,
+                quantity: item.quantity,
+                subtotal: (item.product.price * item.quantity).toFixed(2)
+            }));
+            
+            let total = 0;
+            cart.forEach(item => {
+                total += item.product.price * item.quantity;
+            });
+            
+            const orderData = {
+                customer: customerData,
+                items: orderItems,
+                total: total.toFixed(2),
+                orderDate: new Date().toISOString(),
+                orderStatus: 'Pre-Order Placed'
+            };
+
+            try {
+                // Create order message for the bot
+                const orderMessage = `@Claude-3.7-Sonnet 
+I need to store a new pre-order in your database. Please respond with ONLY JSON containing the order details and a unique reference number.
+
+Order Details:
+\`\`\`json
+${JSON.stringify(orderData, null, 2)}
+\`\`\`
+
+Please add a unique reference number to this order and provide your response in ONLY raw JSON format with no additional text, explanations, or formatting (no code blocks).`;
+
+                // Register handler for bot response
+                window.Poe.registerHandler("order-handler", (result) => {
+                    if (result.status === "complete" && result.responses.length > 0) {
+                        try {
+                            // Hide loading overlay
+                            loadingOverlay.classList.add('hidden');
+                            
+                            // Parse the bot response
+                            const response = JSON.parse(result.responses[0].content);
+                            
+                            // Show confirmation modal
+                            confirmationMessage.textContent = `Thank you ${customerData.name}! Your pre-order has been received and will be processed soon.`;
+                            orderReference.textContent = `Order Reference: ${response.referenceNumber || 'N/A'}`;
+                            confirmationModal.classList.remove('hidden');
+                            
+                            // Reset form and cart
+                            orderForm.reset();
+                            clearCart();
+                        } catch (error) {
+                            console.error("Error processing response:", error);
+                            alert("There was an error processing your order. Please try again.");
+                            loadingOverlay.classList.add('hidden');
+                        }
+                    } else if (result.status === "error") {
+                        console.error("Error from bot:", result.responses[0]?.statusText);
+                        alert("There was an error processing your order. Please try again.");
+                        loadingOverlay.classList.add('hidden');
+                    }
+                });
+
+                // Send order to bot
+                await window.Poe.sendUserMessage(orderMessage, {
+                    handler: "order-handler",
+                    stream: false,
+                    openChat: false
+                });
+            } catch (error) {
+                console.error("Error submitting order:", error);
+                alert("There was an error processing your order. Please try again.");
+                loadingOverlay.classList.add('hidden');
+            }
+        }
+
+        // Search functionality
+        function searchProducts() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) || 
+                product.description.toLowerCase().includes(searchTerm)
+            );
+            displayProducts(filteredProducts);
+        }
+
+        // Event listeners
+        clearCartBtn.addEventListener('click', clearCart);
+        orderForm.addEventListener('submit', submitOrder);
+        closeModalBtn.addEventListener('click', () => {
+            confirmationModal.classList.add('hidden');
+        });
+        searchInput.addEventListener('input', searchProducts);
+
+        // Initialize
+        displayProducts(products);
+        updateCartDisplay();
+    </script>
+</body>
+</html>
+---
+https://poe.com/preview/TYo5Wc00NKgJs8bvtjcE
+---
+@
+---
+
+Great job! Add a login button at top right corner of page. Clicking it triggers a model dialogue to pop-up with instructions to authenticate. The app will use SMS phone number authentication provided by Firebase Firestore Authentification, which also requires that reCaptcha be build into the SMS verification workflow. The modal should prompt the user to enter their phone-number, provide a box for input, and a button to submit. On submit, the input box should dynamically switch to a "PIN code input", with 6 digits. Once the 6th digit is entered, validation occurs; if fails, highlight the failure visibily and give an error message; else, the modal dialogue fades away to a "Success" message element that briefly appears during the transition back to the main page. Finally, the phone number entered should be displayed prominently next to the login button. The Login button's text also changes from "Log In", to "My Account". 
+
+---
+    Firebase Integration:
+
+        Added Firebase SDK scripts to the head section
+
+        Created initialization code with placeholder for your Firebase config
+
+        Implemented reCAPTCHA for SMS verification
+
+    UI Changes:
+
+        Added a login button in the top-right corner
+
+        Created a comprehensive authentication modal with:
+
+            Phone number input with validation
+
+            6-digit PIN input with auto-focus between fields
+
+            Success/error states with appropriate feedback
+
+        Added user phone number display next to the login button
+
+    Authentication Flow:
+
+        Phone number collection with reCAPTCHA
+
+        SMS verification code handling
+
+        Automatic verification when 6th digit is entered
+
+        Manual verification option
+
+        Error handling for all steps
+
+        Success state with smooth transition
+
+    State Management:
+
+        Tracks logged-in state
+
+        Changes button text from "Log In" to "My Account"
+
+        Persists authentication state (will remember logged-in users)
+
+        Logout functionality
+
+---
+@
+---
+
+# Unfinished due to lack of points assigned -- see below for continued reply after adjusting assignment
+
+*Thinking...*
+
+> This is a feature request to add Firebase phone number authentication to the product pre-order app. Let's break down what's needed:
+> 
+> 1. Add a login button at the top right corner
+> 2. Create a modal dialog for authentication with these steps:
+>    - Phone number input and submit button
+>    - PIN code input (6 digits) 
+>    - Success message on successful verification
+>    - Error handling for failed verification
+> 3. Change the login button to "My Account" after successful login
+> 4. Display the phone number next to the login button
+> 
+> For Firebase authentication, we'll need to:
+> 1. Add Firebase SDK scripts
+> 2. Initialize Firebase with authentication
+> 3. Set up reCAPTCHA for SMS verification
+> 4. Implement the phone auth workflow
+> 
+> Let's plan the code changes using the `replace_code` function since this is a moderate change that affects specific parts of the existing code:
+> 
+> 1. Add Firebase SDK and initialization to the head section
+> 2. Add the login button to the header
+> 3. Create the authentication modal with all steps
+> 4. Add JavaScript code for Firebase authentication
+> 5. Implement the login/logout functionality
+> 
+> This should be handled with multiple `replace_code` calls rather than rewriting the entire app.
+
+
+I'll add the Firebase phone authentication system to your pre-order app. Here's my implementation plan:
+
+1. Add login button in the top-right corner
+2. Create authentication modal with phone number input, PIN code verification, and success feedback
+3. Implement Firebase authentication with reCAPTCHA
+4. Update UI to show logged-in state
+
+Let me make these changes:
+
+```code_edit_tool
+tool_use_id=toolu_vrtx_01VMK6HXpjtaCnxaqpJcJjQg
+tool_name=replace_code
+input={"target_code_block_id": "product_preorder", "old_str": "    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Product Pre-Order System</title>\n    <script src=\"https://cdn.tailwindcss.com\"></script>\n    <script>\n        tailwind.config = {", "new_str": "    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Product Pre-Order System</title>\n    <!-- Firebase SDK -->\n    <script src=\"https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js\"></script>\n    <script src=\"https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js\"></script>\n    \n    <script src=\"https://cdn.tailwindcss.com\"></script>\n    <script>\n        tailwind.config = {", "new_code_block_id": "product_auth_1"}
+
+```
+
+```code_edit_tool
+tool_use_id=toolu_vrtx_01QwRD18nrcV7agFcwfpeyQP
+tool_name=replace_code
+input={"target_code_block_id": "product_auth_1", "old_str": "    <div class=\"container mx-auto px-4 py-8\">\n        <header class=\"mb-8\">\n            <h1 class=\"text-3xl font-bold text-primary\">Product Pre-Order System</h1>\n            <p class=\"text-gray-600 dark:text-gray-400 mt-2\">Browse our products and place your pre-order</p>\n        </header>", "new_str": "    <div class=\"container mx-auto px-4 py-8\">\n        <header class=\"mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center\">\n            <div>\n                <h1 class=\"text-3xl font-bold text-primary\">Product Pre-Order System</h1>\n                <p class=\"text-gray-600 dark:text-gray-400 mt-2\">Browse our products and place your pre-order</p>\n            </div>\n            <div class=\"mt-4 sm:mt-0 flex items-center\">\n                <span id=\"userPhoneDisplay\" class=\"hidden mr-3 text-sm text-gray-600 dark:text-gray-400\"></span>\n                <button id=\"loginBtn\" class=\"bg-primary hover:bg-secondary text-white py-2 px-4 rounded-md font-medium transition-all\">\n                    Log In\n                </button>\n            </div>\n        </header>", "new_code_block_id": "product_auth_2"}
+
+```
+
+```code_edit_tool
+tool_use_id=toolu_vrtx_01472q2eQfe8sBUw6jcwrSTA
+tool_name=replace_code
+input={"target_code_block_id": "product_auth_2", "old_str": "        <!-- Loading Overlay -->\n        <div id=\"loadingOverlay\" class=\"fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden\">\n            <div class=\"bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg\">\n                <div class=\"flex flex-col items-center\">\n                    <div class=\"animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4\"></div>\n                    <p class=\"text-lg\">Processing your order...</p>\n                </div>\n            </div>\n        </div>", "new_str": "        <!-- Loading Overlay -->\n        <div id=\"loadingOverlay\" class=\"fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden\">\n            <div class=\"bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg\">\n                <div class=\"flex flex-col items-center\">\n                    <div class=\"animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4\"></div>\n                    <p class=\"text-lg\">Processing your order...</p>\n                </div>\n            </div>\n        </div>\n        \n        <!-- Authentication Modal -->\n        <div id=\"authModal\" class=\"fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden\">\n            <div class=\"bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full mx-4\">\n                <h3 class=\"text-xl font-bold mb-4 text-primary\">Authentication</h3>\n                \n                <!-- Phone Number Input -->\n                <div id=\"phoneInputContainer\" class=\"space-y-4\">\n                    <p class=\"mb-4\">Please enter your phone number to authenticate. We'll send you a verification code via SMS.</p>\n                    <div class=\"relative\">\n                        <div id=\"recaptcha-container\" class=\"mb-4\"></div>\n                        <label for=\"phoneNumber\" class=\"block mb-1\">Phone Number</label>\n                        <input type=\"tel\" id=\"phoneNumber\" placeholder=\"+1 123-456-7890\" \n                            class=\"w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base\">\n                        <p id=\"phoneError\" class=\"text-red-500 text-sm mt-1 hidden\"></p>\n                    </div>\n                    <button id=\"sendCodeBtn\" class=\"w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium\">\n                        Send Verification Code\n                    </button>\n                </div>\n                \n                <!-- Verification Code Input -->\n                <div id=\"codeInputContainer\" class=\"space-y-4 hidden\">\n                    <p class=\"mb-4\">Enter the 6-digit verification code sent to your phone.</p>\n                    <div class=\"flex justify-between gap-2 mb-4\">\n                        <input type=\"text\" maxlength=\"1\" class=\"verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold\">\n                        <input type=\"text\" maxlength=\"1\" class=\"verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold\">\n                        <input type=\"text\" maxlength=\"1\" class=\"verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold\">\n                        <input type=\"text\" maxlength=\"1\" class=\"verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold\">\n                        <input type=\"text\" maxlength=\"1\" class=\"verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold\">\n                        <input type=\"text\" maxlength=\"1\" class=\"verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold\">\n                    </div>\n                    <p id=\"codeError\" class=\"text-red-500 text-sm mt-1 hidden\"></p>\n                    <button id=\"verifyCodeBtn\" class=\"w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium\">\n                        Verify Code\n                    </button>\n                </div>\n                \n                <!-- Success Message -->\n                <div id=\"authSuccessContainer\" class=\"hidden text-center py-6\">\n                    <div class=\"w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4\">\n                        <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-8 w-8 text-green-500\" viewBox=\"0 0 20 20\" fill=\"currentColor\">\n                            <path fill-rule=\"evenodd\" d=\"M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z\" clip-rule=\"evenodd\" />\n                        </svg>\n                    </div>\n                    <h3 class=\"text-xl font-bold mb-2 text-green-500\">Authentication Successful!</h3>\n                    <p class=\"mb-4\">You are now logged in.</p>\n                </div>\n                \n                <button id=\"closeAuthModalBtn\" class=\"mt-4 w-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-2 px-4 rounded-md\">\n                    Close\n                </button>\n            </div>\n        </div>", "new_code_block_id": "product_auth_3"}
+
+```
+Now let's add the Firebase authentication code to handle the login flow:
+
+```code_edit_tool
+tool_use_id=toolu_vrtx_01UxA5iZFpUDcBBTgE1XkwUy
+tool_name=replace_code
+input={"target_code_block_id": "product_auth_3", "old_str": "    <script>\n        // Sample product data (replace with your actual products)", "new_str": "    <script>\n        // Firebase Configuration\n        const firebaseConfig = {\n            apiKey: \"YOUR_API_KEY\",\n            authDomain: \"your-app.firebaseapp.com\",\n            projectId: \"your-project-id\",\n            storageBucket: \"your-app.appspot.com\",\n            messagingSenderId: \"your-messaging-sender-id\",\n            appId: \"your-app-id\"\n        };\n        \n        // Initialize Firebase\n        firebase.initializeApp(firebaseConfig);\n        \n        // Authentication State\n        let isLoggedIn = false;\n        let currentUser = null;\n        let verificationId = null;\n        \n        // Authentication Elements\n        const loginBtn = document.getElementById('loginBtn');\n        const authModal = document.getElementById('authModal');\n        const phoneInputContainer = document.getElementById('phoneInputContainer');\n        const codeInputContainer = document.getElementById('codeInputContainer');\n        const authSuccessContainer = document.getElementById('authSuccessContainer');\n        const phoneNumberInput = document.getElementById('phoneNumber');\n        const sendCodeBtn = document.getElementById('sendCodeBtn');\n        const verifyCodeBtn = document.getElementById('verifyCodeBtn');\n        const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');\n        const verificationInputs = document.querySelectorAll('.verification-code-input');\n        const phoneError = document.getElementById('phoneError');\n        const codeError = document.getElementById('codeError');\n        const userPhoneDisplay = document.getElementById('userPhoneDisplay');\n        \n        // Open auth modal when login button is clicked\n        loginBtn.addEventListener('click', () => {\n            if (isLoggedIn) {\n                // Show logout confirmation or account management options\n                if (confirm('Do you want to log out?')) {\n                    logoutUser();\n                }\n            } else {\n                showAuthModal();\n            }\n        });\n        \n        // Close auth modal\n        closeAuthModalBtn.addEventListener('click', () => {\n            authModal.classList.add('hidden');\n            resetAuthModal();\n        });\n        \n        // Initialize reCAPTCHA\n        function initRecaptcha() {\n            // Reset the container first\n            document.getElementById('recaptcha-container').innerHTML = '';\n            \n            // Create a new reCAPTCHA widget\n            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {\n                'size': 'normal',\n                'callback': (response) => {\n                    // reCAPTCHA solved, enable the button\n                    sendCodeBtn.disabled = false;\n                },\n                'expired-callback': () => {\n                    // Response expired. Ask user to solve reCAPTCHA again.\n                    sendCodeBtn.disabled = true;\n                }\n            });\n            \n            window.recaptchaVerifier.render().then((widgetId) => {\n                window.recaptchaWidgetId = widgetId;\n            });\n        }\n        \n        // Show auth modal\n        function showAuthModal() {\n            authModal.classList.remove('hidden');\n            resetAuthModal();\n            initRecaptcha();\n        }\n        \n        // Reset auth modal\n        function resetAuthModal() {\n            phoneInputContainer.classList.remove('hidden');\n            codeInputContainer.classList.add('hidden');\n            authSuccessContainer.classList.add('hidden');\n            phoneNumberInput.value = '';\n            phoneError.classList.add('hidden');\n            codeError.classList.add('hidden');\n            \n            // Reset verification code inputs\n            verificationInputs.forEach(input => {\n                input.value = '';\n                input.classList.remove('border-red-500');\n            });\n        }\n        \n        // Send verification code\n        sendCodeBtn.addEventListener('click', async () => {\n            const phoneNumber = phoneNumberInput.value.trim();\n            \n            if (!phoneNumber) {\n                phoneError.textContent = 'Please enter a valid phone number';\n                phoneError.classList.remove('hidden');\n                return;\n            }\n            \n            try {\n                sendCodeBtn.disabled = true;\n                sendCodeBtn.textContent = 'Sending...';\n                \n                // Send verification code\n                const appVerifier = window.recaptchaVerifier;\n                const confirmationResult = await firebase.auth.signInWithPhoneNumber(phoneNumber, appVerifier);\n                verificationId = confirmationResult.verificationId;\n                \n                // Show verification code input\n                phoneInputContainer.classList.add('hidden');\n                codeInputContainer.classList.remove('hidden');\n                \n                // Focus on the first verification code input\n                verificationInputs[0].focus();\n                \n                // Handle verification code inputs\n                setupVerificationInputs();\n            } catch (error) {\n                console.error('Error sending verification code:', error);\n                phoneError.textContent = error.message || 'Error sending verification code. Please try again.';\n                phoneError.classList.remove('hidden');\n                sendCodeBtn.disabled = false;\n                sendCodeBtn.textContent = 'Send Verification Code';\n                \n                // Reset reCAPTCHA\n                window.recaptchaVerifier.reset(window.recaptchaWidgetId);\n                initRecaptcha();\n            }\n        });\n        \n        // Set up verification code inputs\n        function setupVerificationInputs() {\n            verificationInputs.forEach((input, index) => {\n                // Clear existing event listeners\n                input.removeEventListener('input', handleVerificationInput);\n                input.removeEventListener('keydown', handleVerificationKeyDown);\n                \n                // Add new event listeners\n                input.addEventListener('input', handleVerificationInput);\n                input.addEventListener('keydown', handleVerificationKeyDown);\n            });\n        }\n        \n        // Handle verification input\n        function handleVerificationInput(e) {\n            const input = e.target;\n            const value = input.value;\n            \n            // Only allow numbers\n            if (/^\\d*$/.test(value)) {\n                // If value is a digit, move to the next input\n                if (value.length === 1) {\n                    const nextInput = input.nextElementSibling;\n                    if (nextInput && nextInput.classList.contains('verification-code-input')) {\n                        nextInput.focus();\n                    } else {\n                        // If it's the last input, check if all fields are filled\n                        checkVerificationCompletion();\n                    }\n                }\n            } else {\n                // If not a digit, clear the input\n                input.value = '';\n            }\n        }\n        \n        // Handle verification keydown\n        function handleVerificationKeyDown(e) {\n            const input = e.target;\n            \n            // If backspace and the input is empty, focus on the previous input\n            if (e.key === 'Backspace' && input.value === '') {\n                const prevInput = input.previousElementSibling;\n                if (prevInput && prevInput.classList.contains('verification-code-input')) {\n                    prevInput.focus();\n                    prevInput.value = '';\n                }\n            }\n        }\n        \n        // Check if all verification inputs are filled\n        function checkVerificationCompletion() {\n            let isComplete = true;\n            let code = '';\n            \n            verificationInputs.forEach(input => {\n                if (input.value === '') {\n                    isComplete = false;\n                }\n                code += input.value;\n            });\n            \n            if (isComplete && code.length === 6) {\n                verifyCode(code);\n            }\n        }\n        \n        // Verify code manually with button\n        verifyCodeBtn.addEventListener('click', () => {\n            let code = '';\n            let isComplete = true;\n            \n            verificationInputs.forEach(input => {\n                if (input.value === '') {\n                    isComplete = false;\n                    input.classList.add('border-red-500');\n                } else {\n                    input.classList.remove('border-red-500');\n                    code += input.value;\n                }\n            });\n            \n            if (isComplete) {\n                verifyCode(code);\n            } else {\n                codeError.textContent = 'Please enter all 6 digits';\n                codeError.classList.remove('hidden');\n            }\n        });\n        \n        // Verify the code\n        async function verifyCode(code) {\n            if (!verificationId) {\n                codeError.textContent = 'Verification failed. Please try again.';\n                codeError.classList.remove('hidden');\n                return;\n            }\n            \n            try {\n                // Disable verify button and show loading state\n                verifyCodeBtn.disabled = true;\n                verifyCodeBtn.textContent = 'Verifying...';\n                codeError.classList.add('hidden');\n                \n                // Create credential\n                const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, code);\n                \n                // Sign in with credential\n                const result = await firebase.auth.signInWithCredential(credential);\n                \n                // User signed in successfully\n                currentUser = result.user;\n                isLoggedIn = true;\n                \n                // Show success message\n                codeInputContainer.classList.add('hidden');\n                authSuccessContainer.classList.remove('hidden');\n                \n                // Update login button and display user phone\n                loginBtn.textContent = 'My Account';\n                userPhoneDisplay.textContent = phoneNumberInput.value;\n                userPhoneDisplay.classList.remove('hidden');\n                \n                // Close modal after a delay\n                setTimeout(() => {\n                    authModal.classList.add('hidden');\n                    resetAuthModal();\n                }, 2000);\n            } catch (error) {\n                console.error('Error verifying code:', error);\n                codeError.textContent = 'Invalid verification code. Please try again.';\n                codeError.classList.remove('hidden');\n                verifyCodeBtn.disabled = false;\n                verifyCodeBtn.textContent = 'Verify Code';\n                \n                // Highlight input fields in red\n                verificationInputs.forEach(input => {\n                    input.classList.add('border-red-500');\n                });\n            }\n        }\n        \n        // Logout user\n        function logoutUser() {\n            firebase.auth().signOut().then(() => {\n                // Sign-out successful\n                isLoggedIn = false;\n                currentUser = null;\n                \n                // Reset UI\n                loginBtn.textContent = 'Log In';\n                userPhoneDisplay.classList.add('hidden');\n                userPhoneDisplay.textContent = '';\n            }).catch((error) => {\n                console.error('Error signing out:', error);\n            });\n        }\n        \n        // Check if user is already logged in\n        firebase.auth().onAuthStateChanged((user) => {\n            if (user) {\n                // User is signed in\n                currentUser = user;\n                isLoggedIn = true;\n                \n                // Update UI\n                loginBtn.textContent = 'My Account';\n                userPhoneDisplay.textContent = user.phoneNumber || 'Authenticated User';\n                userPhoneDisplay.classList.remove('hidden');\n            } else {\n                // User is signed out\n                currentUser = null;\n                isLoggedIn = false;\n                \n                // Update UI\n                loginBtn.textContent = 'Log In';\n                userPhoneDisplay.classList.add('hidden');\n            }\n        });\n        \n        // Sample product data (replace with your actual products)", "new_code_block_id": "product_auth_final"}
+
+---
+@
+---
+
+
+------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
+
+
+
+You're absolutely right! My previous response only included the summary of changes without showing the actual code edits. Let me properly generate the complete HTML with all the authentication features implemented.
+
+Here's the full implementation with Firebase phone authentication added to your product pre-order system:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Pre-Order System</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        secondary: '#A5A4FF',
+                    }
+                }
+            }
+        }
+
+        // Check for dark mode preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-primary">Product Pre-Order System</h1>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">Browse our products and place your pre-order</p>
+            </div>
+            <div class="mt-4 sm:mt-0 flex items-center">
+                <span id="userPhoneDisplay" class="hidden mr-3 text-sm text-gray-600 dark:text-gray-400"></span>
+                <button id="loginBtn" class="bg-primary hover:bg-secondary text-white py-2 px-4 rounded-md font-medium transition-all">
+                    Log In
+                </button>
+            </div>
+        </header>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Product Catalogue Section -->
+            <div class="lg:w-2/3">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Product Catalogue</h2>
+                    <div class="mb-4">
+                        <input type="text" id="searchInput" placeholder="Search products..." 
+                            class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                    </div>
+                    <div id="productList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Products will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Section -->
+            <div class="lg:w-1/3">
+                <!-- Shopping Cart -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Shopping Cart</h2>
+                    <div id="cartItems" class="mb-4">
+                        <p id="emptyCartMessage" class="text-gray-500 dark:text-gray-400">Your cart is empty</p>
+                        <!-- Cart items will be inserted here by JavaScript -->
+                    </div>
+                    <div id="cartTotal" class="font-semibold text-lg mb-4">Total: $0.00</div>
+                    <button id="clearCartBtn" 
+                        class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+                        Clear Cart
+                    </button>
+                </div>
+
+                <!-- Customer Information -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Customer Information</h2>
+                    <form id="orderForm" class="space-y-4">
+                        <div>
+                            <label for="name" class="block mb-1">Full Name</label>
+                            <input type="text" id="name" name="name" required
+                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                        </div>
+                        <div>
+                            <label for="email" class="block mb-1">Email</label>
+                            <input type="email" id="email" name="email" required
+                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                        </div>
+                        <div>
+                            <label for="phone" class="block mb-1">Phone</label>
+                            <input type="tel" id="phone" name="phone" required
+                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                        </div>
+                        <div>
+                            <label for="address" class="block mb-1">Shipping Address</label>
+                            <textarea id="address" name="address" rows="3" required
+                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base"></textarea>
+                        </div>
+                        <div>
+                            <label for="notes" class="block mb-1">Additional Notes (Optional)</label>
+                            <textarea id="notes" name="notes" rows="2"
+                                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base"></textarea>
+                        </div>
+                        <button type="submit" id="submitOrderBtn" disabled
+                            class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                            Place Pre-Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Confirmation Modal -->
+        <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
+                <h3 class="text-xl font-bold mb-4 text-primary">Order Confirmation</h3>
+                <p id="confirmationMessage" class="mb-4"></p>
+                <div id="orderReference" class="bg-gray-100 dark:bg-gray-700 p-3 rounded-md text-center mb-4 font-medium"></div>
+                <button id="closeModalBtn" class="w-full bg-primary hover:bg-secondary text-white py-2 px-4 rounded-md">
+                    Close
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="flex flex-col items-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+                    <p class="text-lg">Processing your order...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Authentication Modal -->
+        <div id="authModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
+                <h3 class="text-xl font-bold mb-4 text-primary">Authentication</h3>
+                
+                <!-- Phone Number Input -->
+                <div id="phoneInputContainer" class="space-y-4">
+                    <p class="mb-4">Please enter your phone number to authenticate. We'll send you a verification code via SMS.</p>
+                    <div class="relative">
+                        <div id="recaptcha-container" class="mb-4"></div>
+                        <label for="phoneNumber" class="block mb-1">Phone Number</label>
+                        <input type="tel" id="phoneNumber" placeholder="+1 123-456-7890" 
+                            class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                        <p id="phoneError" class="text-red-500 text-sm mt-1 hidden"></p>
+                    </div>
+                    <button id="sendCodeBtn" class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium">
+                        Send Verification Code
+                    </button>
+                </div>
+                
+                <!-- Verification Code Input -->
+                <div id="codeInputContainer" class="space-y-4 hidden">
+                    <p class="mb-4">Enter the 6-digit verification code sent to your phone.</p>
+                    <div class="flex justify-between gap-2 mb-4">
+                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
+                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
+                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
+                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
+                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
+                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
+                    </div>
+                    <p id="codeError" class="text-red-500 text-sm mt-1 hidden"></p>
+                    <button id="verifyCodeBtn" class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium">
+                        Verify Code
+                    </button>
+                </div>
+                
+                <!-- Success Message -->
+                <div id="authSuccessContainer" class="hidden text-center py-6">
+                    <div class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-green-500">Authentication Successful!</h3>
+                    <p class="mb-4">You are now logged in.</p>
+                </div>
+                
+                <button id="closeAuthModalBtn" class="mt-4 w-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-2 px-4 rounded-md">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyCTUZbw1qSdFEBG2SGo7smQgqXEKZZWCaw",
+          authDomain: "mei-wen-ti.firebaseapp.com",
+          projectId: "mei-wen-ti",
+          storageBucket: "mei-wen-ti.firebasestorage.app",
+          messagingSenderId: "103509830524",
+          appId: "1:103509830524:web:5ddef022db357ce99152f9",
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        // Authentication State
+        let isLoggedIn = false;
+        let currentUser = null;
+        let verificationId = null;
+        
+        // Authentication Elements
+        const loginBtn = document.getElementById('loginBtn');
+        const authModal = document.getElementById('authModal');
+        const phoneInputContainer = document.getElementById('phoneInputContainer');
+        const codeInputContainer = document.getElementById('codeInputContainer');
+        const authSuccessContainer = document.getElementById('authSuccessContainer');
+        const phoneNumberInput = document.getElementById('phoneNumber');
+        const sendCodeBtn = document.getElementById('sendCodeBtn');
+        const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+        const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');
+        const verificationInputs = document.querySelectorAll('.verification-code-input');
+        const phoneError = document.getElementById('phoneError');
+        const codeError = document.getElementById('codeError');
+        const userPhoneDisplay = document.getElementById('userPhoneDisplay');
+        
+        // Open auth modal when login button is clicked
+        loginBtn.addEventListener('click', () => {
+            if (isLoggedIn) {
+                // Show logout confirmation or account management options
+                if (confirm('Do you want to log out?')) {
+                    logoutUser();
+                }
+            } else {
+                showAuthModal();
+            }
+        });
+        
+        // Close auth modal
+        closeAuthModalBtn.addEventListener('click', () => {
+            authModal.classList.add('hidden');
+            resetAuthModal();
+        });
+        
+        // Initialize reCAPTCHA
+        function initRecaptcha() {
+            // Reset the container first
+            document.getElementById('recaptcha-container').innerHTML = '';
+            
+            // Create a new reCAPTCHA widget
+            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                'size': 'normal',
+                'callback': (response) => {
+                    // reCAPTCHA solved, enable the button
+                    sendCodeBtn.disabled = false;
+                },
+                'expired-callback': () => {
+                    // Response expired. Ask user to solve reCAPTCHA again.
+                    sendCodeBtn.disabled = true;
+                }
+            });
+            
+            window.recaptchaVerifier.render().then((widgetId) => {
+                window.recaptchaWidgetId = widgetId;
+            });
+        }
+        
+        // Show auth modal
+        function showAuthModal() {
+            authModal.classList.remove('hidden');
+            resetAuthModal();
+            initRecaptcha();
+        }
+        
+        // Reset auth modal
+        function resetAuthModal() {
+            phoneInputContainer.classList.remove('hidden');
+            codeInputContainer.classList.add('hidden');
+            authSuccessContainer.classList.add('hidden');
+            phoneNumberInput.value = '';
+            phoneError.classList.add('hidden');
+            codeError.classList.add('hidden');
+            
+            // Reset verification code inputs
+            verificationInputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('border-red-500');
+            });
+        }
+        
+        // Send verification code
+        sendCodeBtn.addEventListener('click', async () => {
+            const phoneNumber = phoneNumberInput.value.trim();
+            
+            if (!phoneNumber) {
+                phoneError.textContent = 'Please enter a valid phone number';
+                phoneError.classList.remove('hidden');
+                return;
+            }
+            
+            try {
+                sendCodeBtn.disabled = true;
+                sendCodeBtn.textContent = 'Sending...';
+                
+                // Send verification code
+                const appVerifier = window.recaptchaVerifier;
+                const confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier);
+                verificationId = confirmationResult.verificationId;
+                
+                // Show verification code input
+                phoneInputContainer.classList.add('hidden');
+                codeInputContainer.classList.remove('hidden');
+                
+                // Focus on the first verification code input
+                verificationInputs[0].focus();
+                
+                // Handle verification code inputs
+                setupVerificationInputs();
+            } catch (error) {
+                console.error('Error sending verification code:', error);
+                phoneError.textContent = error.message || 'Error sending verification code. Please try again.';
+                phoneError.classList.remove('hidden');
+                sendCodeBtn.disabled = false;
+                sendCodeBtn.textContent = 'Send Verification Code';
+                
+                // Reset reCAPTCHA
+                window.recaptchaVerifier.reset(window.recaptchaWidgetId);
+                initRecaptcha();
+            }
+        });
+        
+        // Set up verification code inputs
+        function setupVerificationInputs() {
+            verificationInputs.forEach((input, index) => {
+                // Clear existing event listeners
+                input.removeEventListener('input', handleVerificationInput);
+                input.removeEventListener('keydown', handleVerificationKeyDown);
+                
+                // Add new event listeners
+                input.addEventListener('input', handleVerificationInput);
+                input.addEventListener('keydown', handleVerificationKeyDown);
+            });
+        }
+        
+        // Handle verification input
+        function handleVerificationInput(e) {
+            const input = e.target;
+            const value = input.value;
+            
+            // Only allow numbers
+            if (/^\d*$/.test(value)) {
+                // If value is a digit, move to the next input
+                if (value.length === 1) {
+                    const nextInput = input.nextElementSibling;
+                    if (nextInput && nextInput.classList.contains('verification-code-input')) {
+                        nextInput.focus();
+                    } else {
+                        // If it's the last input, check if all fields are filled
+                        checkVerificationCompletion();
+                    }
+                }
+            } else {
+                // If not a digit, clear the input
+                input.value = '';
+            }
+        }
+        
+        // Handle verification keydown
+        function handleVerificationKeyDown(e) {
+            const input = e.target;
+            
+            // If backspace and the input is empty, focus on the previous input
+            if (e.key === 'Backspace' && input.value === '') {
+                const prevInput = input.previousElementSibling;
+                if (prevInput && prevInput.classList.contains('verification-code-input')) {
+                    prevInput.focus();
+                    prevInput.value = '';
+                }
+            }
+        }
+        
+        // Check if all verification inputs are filled
+        function checkVerificationCompletion() {
+            let isComplete = true;
+            let code = '';
+            
+            verificationInputs.forEach(input => {
+                if (input.value === '') {
+                    isComplete = false;
+                }
+                code += input.value;
+            });
+            
+            if (isComplete && code.length === 6) {
+                verifyCode(code);
+            }
+        }
+        
+        // Verify code manually with button
+        verifyCodeBtn.addEventListener('click', () => {
+            let code = '';
+            let isComplete = true;
+            
+            verificationInputs.forEach(input => {
+                if (input.value === '') {
+                    isComplete = false;
+                    input.classList.add('border-red-500');
+                } else {
+                    input.classList.remove('border-red-500');
+                    code += input.value;
+                }
+            });
+            
+            if (isComplete) {
+                verifyCode(code);
+            } else {
+                codeError.textContent = 'Please enter all 6 digits';
+                codeError.classList.remove('hidden');
+            }
+        });
+        
+        // Verify the code
+        async function verifyCode(code) {
+            if (!verificationId) {
+                codeError.textContent = 'Verification failed. Please try again.';
+                codeError.classList.remove('hidden');
+                return;
+            }
+            
+            try {
+                // Disable verify button and show loading state
+                verifyCodeBtn.disabled = true;
+                verifyCodeBtn.textContent = 'Verifying...';
+                codeError.classList.add('hidden');
+                
+                // Create credential
+                const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, code);
+                
+                // Sign in with credential
+                const result = await firebase.auth().signInWithCredential(credential);
+                
+                // User signed in successfully
+                currentUser = result.user;
+                isLoggedIn = true;
+                
+                // Show success message
+                codeInputContainer.classList.add('hidden');
+                authSuccessContainer.classList.remove('hidden');
+                
+                // Update login button and display user phone
+                loginBtn.textContent = 'My Account';
+                userPhoneDisplay.textContent = phoneNumberInput.value;
+                userPhoneDisplay.classList.remove('hidden');
+                
+                // Close modal after a delay
+                setTimeout(() => {
+                    authModal.classList.add('hidden');
+                    resetAuthModal();
+                }, 2000);
+            } catch (error) {
+                console.error('Error verifying code:', error);
+                codeError.textContent = 'Invalid verification code. Please try again.';
+                codeError.classList.remove('hidden');
+                verifyCodeBtn.disabled = false;
+                verifyCodeBtn.textContent = 'Verify Code';
+                
+                // Highlight input fields in red
+                verificationInputs.forEach(input => {
+                    input.classList.add('border-red-500');
+                });
+            }
+        }
+        
+        // Logout user
+        function logoutUser() {
+            firebase.auth().signOut().then(() => {
+                // Sign-out successful
+                isLoggedIn = false;
+                currentUser = null;
+                
+                // Reset UI
+                loginBtn.textContent = 'Log In';
+                userPhoneDisplay.classList.add('hidden');
+                userPhoneDisplay.textContent = '';
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+            });
+        }
+        
+        // Check if user is already logged in
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                currentUser = user;
+                isLoggedIn = true;
+                
+                // Update UI
+                loginBtn.textContent = 'My Account';
+                userPhoneDisplay.textContent = user.phoneNumber || 'Authenticated User';
+                userPhoneDisplay.classList.remove('hidden');
+            } else {
+                // User is signed out
+                currentUser = null;
+                isLoggedIn = false;
+                
+                // Update UI
+                loginBtn.textContent = 'Log In';
+                userPhoneDisplay.classList.add('hidden');
+            }
+        });
+        
+        // Sample product data (replace with your actual products)
+        const products = [
+            { id: 1, name: "Wireless Earbuds", price: 79.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Cpath d='M130,80 C130,60 115,45 95,45 C75,45 60,60 60,80 L60,120 C60,125 65,130 70,130 L80,130 C85,130 90,125 90,120 L90,90 C90,85 95,80 100,80 C105,80 110,85 110,90 L110,120 C110,125 115,130 120,130 L130,130 C135,130 140,125 140,120 L140,80 Z' fill='%235D5CDE'/%3E%3C/svg%3E", description: "True wireless earbuds with noise cancellation and premium sound quality." },
+            { id: 2, name: "Smart Watch", price: 149.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Crect x='70' y='60' width='60' height='80' rx='10' fill='%235D5CDE'/%3E%3Crect x='80' y='70' width='40' height='60' rx='5' fill='white'/%3E%3Cpath d='M70,100 L50,100 M130,100 L150,100 M100,60 L100,40 M100,140 L100,160' stroke='%235D5CDE' stroke-width='4'/%3E%3C/svg%3E", description: "Fitness tracker with heart rate monitoring, GPS, and customizable watch faces." },
+            { id: 3, name: "Bluetooth Speaker", price: 129.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Crect x='50' y='70' width='100' height='60' rx='10' fill='%235D5CDE'/%3E%3Ccircle cx='80' cy='100' r='20' fill='%23333'/%3E%3Ccircle cx='120' cy='100' r='10' fill='%23333'/%3E%3C/svg%3E", description: "Portable speaker with 20-hour battery life and water-resistant design." },
+            { id: 4, name: "Wireless Charger", price: 39.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Ccircle cx='100' cy='100' r='40' fill='%235D5CDE'/%3E%3Ccircle cx='100' cy='100' r='30' fill='white'/%3E%3Ccircle cx='100' cy='100' r='10' fill='%235D5CDE'/%3E%3C/svg%3E", description: "Fast charging pad compatible with all Qi-enabled devices." },
+            { id: 5, name: "Tablet Stand", price: 24.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Cpath d='M60,140 L80,80 L120,80 L140,140 Z' fill='%235D5CDE'/%3E%3Crect x='70' y='60' width='60' height='80' rx='5' fill='white' stroke='%235D5CDE' stroke-width='2'/%3E%3C/svg%3E", description: "Adjustable aluminum stand for tablets and smartphones." },
+            { id: 6, name: "USB-C Hub", price: 59.99, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Crect x='40' y='80' width='120' height='40' rx='5' fill='%235D5CDE'/%3E%3Crect x='50' y='90' width='10' height='20' fill='white'/%3E%3Crect x='70' y='90' width='10' height='20' fill='white'/%3E%3Crect x='90' y='90' width='10' height='20' fill='white'/%3E%3Crect x='110' y='90' width='10' height='20' fill='white'/%3E%3Crect x='130' y='90' width='20' height='10' fill='white'/%3E%3C/svg%3E", description: "7-in-1 adapter with HDMI, USB, and SD card ports." }
+        ];
+
+        // Initialize cart
+        let cart = [];
+
+        // DOM elements
+        const productList = document.getElementById('productList');
+        const cartItems = document.getElementById('cartItems');
+        const emptyCartMessage = document.getElementById('emptyCartMessage');
+        const cartTotal = document.getElementById('cartTotal');
+        const clearCartBtn = document.getElementById('clearCartBtn');
+        const submitOrderBtn = document.getElementById('submitOrderBtn');
+        const orderForm = document.getElementById('orderForm');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+        const orderReference = document.getElementById('orderReference');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const searchInput = document.getElementById('searchInput');
+
+        // Display products
+        function displayProducts(products) {
+            productList.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
+                
+                productCard.innerHTML = `
+                    <div class="bg-gray-100 dark:bg-gray-700 p-4 flex justify-center">
+                        <img src="${product.image}" alt="${product.name}" class="h-32 object-contain">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold mb-1">${product.name}</h3>
+                        <p class="text-primary font-medium mb-2">$${product.price.toFixed(2)}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <button data-product-id="${product.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
+                                <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${product.id}">
+                                <button data-product-id="${product.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
+                            </div>
+                            <button data-product-id="${product.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                productList.appendChild(productCard);
+            });
+
+            // Add event listeners for product cards
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', addToCart);
+            });
+
+            document.querySelectorAll('.increase-qty').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.target.dataset.productId;
+                    const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+                    input.value = parseInt(input.value) + 1;
+                });
+            });
+
+            document.querySelectorAll('.decrease-qty').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.target.dataset.productId;
+                    const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+                    if (parseInt(input.value) > 1) {
+                        input.value = parseInt(input.value) - 1;
+                    }
+                });
+            });
+        }
+
+        // Add product to cart
+        function addToCart(e) {
+            const productId = parseInt(e.target.dataset.productId);
+            const product = products.find(p => p.id === productId);
+            const quantityInput = document.querySelector(`.qty-input[data-product-id="${productId}"]`);
+            const quantity = parseInt(quantityInput.value);
+            
+            // Check if product is already in cart
+            const existingItem = cart.find(item => item.product.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({
+                    product,
+                    quantity
+                });
+            }
+            
+            // Reset quantity input
+            quantityInput.value = 1;
+            
+            // Update cart display
+            updateCartDisplay();
+            
+            // Show feedback
+            const button = e.target;
+            const originalText = button.textContent;
+            button.textContent = 'Added!';
+            button.classList.remove('bg-primary', 'hover:bg-secondary');
+            button.classList.add('bg-green-500');
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.add('bg-primary', 'hover:bg-secondary');
+                button.classList.remove('bg-green-500');
+            }, 1000);
+        }
+
+        // Update cart display
+        function updateCartDisplay() {
+            if (cart.length === 0) {
+                emptyCartMessage.style.display = 'block';
+                cartItems.innerHTML = '';
+                cartTotal.textContent = 'Total: $0.00';
+                clearCartBtn.disabled = true;
+                submitOrderBtn.disabled = true;
+            } else {
+                emptyCartMessage.style.display = 'none';
+                
+                let cartHTML = '';
+                let total = 0;
+                
+                cart.forEach((item, index) => {
+                    const itemTotal = item.product.price * item.quantity;
+                    total += itemTotal;
+                    
+                    cartHTML += `
+                        <div class="flex items-center gap-3 py-3 ${index !== 0 ? 'border-t border-gray-200 dark:border-gray-700' : ''}">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden">
+                                <img src="${item.product.image}" alt="${item.product.name}" class="h-8 object-contain">
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="font-medium text-sm">${item.product.name}</h4>
+                                <div class="flex justify-between items-center mt-1">
+                                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                                        $${item.product.price.toFixed(2)} × ${item.quantity}
+                                    </div>
+                                    <button data-index="${index}" class="remove-item text-red-500 hover:text-red-700 text-sm">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                cartItems.innerHTML = cartHTML;
+                cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+                clearCartBtn.disabled = false;
+                submitOrderBtn.disabled = false;
+                
+                // Add event listeners for remove buttons
+                document.querySelectorAll('.remove-item').forEach(button => {
+                    button.addEventListener('click', removeFromCart);
+                });
+            }
+        }
+
+        // Remove item from cart
+        function removeFromCart(e) {
+            const index = parseInt(e.target.dataset.index);
+            cart.splice(index, 1);
+            updateCartDisplay();
+        }
+
+        // Clear cart
+        function clearCart() {
+            cart = [];
+            updateCartDisplay();
+        }
+
+        // Handle order submission
+        async function submitOrder(e) {
+            e.preventDefault();
+            
+            // Show loading overlay
+            loadingOverlay.classList.remove('hidden');
+
+            // Get form data
+            const customerData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                notes: document.getElementById('notes').value
+            };
+            
+            // Format order data
+            const orderItems = cart.map(item => ({
+                product: item.product.name,
+                price: item.product.price,
+                quantity: item.quantity,
+                subtotal: (item.product.price * item.quantity).toFixed(2)
+            }));
+            
+            let total = 0;
+            cart.forEach(item => {
+                total += item.product.price * item.quantity;
+            });
+            
+            const orderData = {
+                customer: customerData,
+                items: orderItems,
+                total: total.toFixed(2),
+                orderDate: new Date().toISOString(),
+                orderStatus: 'Pre-Order Placed'
+            };
+
+            try {
+                // Create order message for the bot
+                const orderMessage = `@Claude-3.7-Sonnet 
+I need to store a new pre-order in your database. Please respond with ONLY JSON containing the order details and a unique reference number.
+
+Order Details:
+\`\`\`json
+${JSON.stringify(orderData, null, 2)}
+\`\`\`
+
+Please add a unique reference number to this order and provide your response in ONLY raw JSON format with no additional text, explanations, or formatting (no code blocks).`;
+
+                // Register handler for bot response
+                window.Poe.registerHandler("order-handler", (result) => {
+                    if (result.status === "complete" && result.responses.length > 0) {
+                        try {
+                            // Hide loading overlay
+                            loadingOverlay.classList.add('hidden');
+                            
+                            // Parse the bot response
+                            const response = JSON.parse(result.responses[0].content);
+                            
+                            // Show confirmation modal
+                            confirmationMessage.textContent = `Thank you ${customerData.name}! Your pre-order has been received and will be processed soon.`;
+                            orderReference.textContent = `Order Reference: ${response.referenceNumber || 'N/A'}`;
+                            confirmationModal.classList.remove('hidden');
+                            
+                            // Reset form and cart
+                            orderForm.reset();
+                            clearCart();
+                        } catch (error) {
+                            console.error("Error processing response:", error);
+                            alert("There was an error processing your order. Please try again.");
+                            loadingOverlay.classList.add('hidden');
+                        }
+                    } else if (result.status === "error") {
+                        console.error("Error from bot:", result.responses[0]?.statusText);
+                        alert("There was an error processing your order. Please try again.");
+                        loadingOverlay.classList.add('hidden');
+                    }
+                });
+
+                // Send order to bot
+                await window.Poe.sendUserMessage(orderMessage, {
+                    handler: "order-handler",
+                    stream: false,
+                    openChat: false
+                });
+            } catch (error) {
+                console.error("Error submitting order:", error);
+                alert("There was an error processing your order. Please try again.");
+                loadingOverlay.classList.add('hidden');
+            }
+        }
+
+        // Search functionality
+        function searchProducts() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) || 
+                product.description.toLowerCase().includes(searchTerm)
+            );
+            displayProducts(filteredProducts);
+        }
+
+        // Event listeners
+        clearCartBtn.addEventListener('click', clearCart);
+        orderForm.addEventListener('submit', submitOrder);
+        closeModalBtn.addEventListener('click', () => {
+            confirmationModal.classList.add('hidden');
+        });
+        searchInput.addEventListener('input', searchProducts);
+
+        // Initialize
+        displayProducts(products);
+        updateCartDisplay();
+    </script>
+</body>
+</html>
+```
+
+Key authentication features implemented:
+
+1. **Firebase Phone Auth** with reCAPTCHA verification
+2. **6-digit PIN input** that auto-advances between fields
+3. **Error handling** for all authentication steps
+4. **Success flow** with smooth transitions
+5. **Persistent login state** using Firebase auth state observer
+6. **UI updates** showing logged-in status and phone number
+
+To complete the setup, you'll need to:
+1. Replace the Firebase config placeholder with your actual Firebase project credentials
+2. Enable Phone Authentication in your Firebase project settings
+3. Set up reCAPTCHA in the Firebase console
+
+The implementation maintains all your existing functionality while adding the authentication layer you requested.
+

@@ -1,0 +1,1050 @@
+<!-- To nav components, search for "// [Continued in next message...]" -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .tab-active {
+            border-bottom: 3px solid #5D5CDE;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Admin Header -->
+        <header class="mb-8 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-primary">Admin Dashboard</h1>
+            <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md">
+                Log Out
+            </button>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b mb-6">
+            <button id="ordersTab" class="tab-active px-4 py-2 mr-2">Orders</button>
+            <button id="productsTab" class="px-4 py-2 mr-2">Products</button>
+        </div>
+
+        <!-- Orders Section -->
+        <div id="ordersSection">
+            <!-- View Selector -->
+            <div class="flex mb-4 space-x-2">
+                <button id="chronologicalView" class="bg-primary text-white px-4 py-2 rounded-md">Chronological</button>
+                <button id="userView" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md">By User</button>
+                <button id="productView" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md">By Product</button>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="mb-6 flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
+                <input type="text" id="orderSearch" placeholder="Search orders..." class="p-2 border rounded-md flex-grow">
+                <select id="statusFilter" class="p-2 border rounded-md">
+                    <option value="all">All Statuses</option>
+                    <option value="pre-order">Pre-Order</option>
+                    <option value="processing">Processing</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                </select>
+                <input type="date" id="dateFilter" class="p-2 border rounded-md">
+            </div>
+
+            <!-- Orders Container -->
+            <div id="ordersContainer" class="grid grid-cols-1 gap-4">
+                <!-- Orders will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Products Section (Hidden by default) -->
+        <div id="productsSection" class="hidden">
+            <!-- Product management UI will go here -->
+            <div class="mb-6 flex justify-between">
+                <h2 class="text-2xl font-semibold">Product Management</h2>
+                <button id="addProductBtn" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md">
+                    Add New Product
+                </button>
+            </div>
+            
+            <div id="productsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div id="orderDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 max-w-4xl w-full max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Order Details</h3>
+                <button id="closeOrderModal" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="orderDetailContent"></div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold" id="productModalTitle">Add New Product</h3>
+                <button id="closeProductModal" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="productForm" class="space-y-4">
+                <input type="hidden" id="productId">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="productName" class="block mb-1">Product Name</label>
+                        <input type="text" id="productName" required class="w-full p-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="productPrice" class="block mb-1">Price</label>
+                        <input type="number" id="productPrice" step="0.01" required class="w-full p-2 border rounded-md">
+                    </div>
+                </div>
+                <div>
+                    <label for="productDescription" class="block mb-1">Description</label>
+                    <textarea id="productDescription" rows="3" class="w-full p-2 border rounded-md"></textarea>
+                </div>
+                <div>
+                    <label for="productImage" class="block mb-1">Image</label>
+                    <input type="file" id="productImage" accept="image/*" class="w-full p-2 border rounded-md">
+                    <div id="imagePreview" class="mt-2 hidden">
+                        <img id="previewImage" class="h-32 object-contain">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelProductBtn" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md">
+                        Cancel
+                    </button>
+                    <button type="submit" id="saveProductBtn" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md">
+                        Save Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyCTUZbw1qSdFEBG2SGo7smQgqXEKZZWCaw",
+          authDomain: "mei-wen-ti.firebaseapp.com",
+          projectId: "mei-wen-ti",
+          storageBucket: "mei-wen-ti.firebasestorage.app",
+          messagingSenderId: "103509830524",
+          appId: "1:103509830524:web:5ddef022db357ce99152f9",
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+////////////////////////////////////////////////////////////////////////
+
+        // Check authentication state
+        auth.onAuthStateChanged(user => {
+            if (!user) {
+                // Redirect to login if not authenticated
+                window.location.href = 'index.html';
+            } else {
+                // Load orders by default
+                loadOrders('chronological');
+            }
+        });
+
+////////////////////////////////////////////////////////////////////////
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        });
+
+        // Tab switching
+        document.getElementById('ordersTab').addEventListener('click', () => {
+            document.getElementById('ordersSection').classList.remove('hidden');
+            document.getElementById('productsSection').classList.add('hidden');
+            document.getElementById('ordersTab').classList.add('tab-active');
+            document.getElementById('productsTab').classList.remove('tab-active');
+        });
+
+        document.getElementById('productsTab').addEventListener('click', () => {
+            document.getElementById('ordersSection').classList.add('hidden');
+            document.getElementById('productsSection').classList.remove('hidden');
+            document.getElementById('ordersTab').classList.remove('tab-active');
+            document.getElementById('productsTab').classList.add('tab-active');
+            loadProducts();
+        });
+
+        // View switching
+        document.getElementById('chronologicalView').addEventListener('click', () => {
+            loadOrders('chronological');
+            updateActiveViewButton('chronologicalView');
+        });
+
+        document.getElementById('userView').addEventListener('click', () => {
+            loadOrders('user');
+            updateActiveViewButton('userView');
+        });
+
+        document.getElementById('productView').addEventListener('click', () => {
+            loadOrders('product');
+            updateActiveViewButton('productView');
+        });
+
+        function updateActiveViewButton(activeId) {
+            ['chronologicalView', 'userView', 'productView'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (id === activeId) {
+                    btn.classList.add('bg-primary', 'text-white');
+                    btn.classList.remove('bg-gray-300', 'hover:bg-gray-400');
+                } else {
+                    btn.classList.remove('bg-primary', 'text-white');
+                    btn.classList.add('bg-gray-300', 'hover:bg-gray-400');
+                }
+            });
+        }
+
+        // Helper for Group by User View component
+        function getStatusColor(status) {
+            const statusColors = {
+                'pre-order': 'text-blue-600',
+                'processing': 'text-yellow-600',
+                'shipped': 'text-green-600',
+                'delivered': 'text-gray-600'
+            };
+            return statusColors[status] || 'text-gray-600';
+        }
+
+        // Helper for Order Details Modal component
+        function getStatusBgColor(status) {
+            const statusColors = {
+                'pre-order': 'bg-blue-100 text-blue-800',
+                'processing': 'bg-yellow-100 text-yellow-800',
+                'shipped': 'bg-green-100 text-green-800',
+                'delivered': 'bg-gray-100 text-gray-800'
+            };
+            return statusColors[status] || 'bg-gray-100 text-gray-800';
+        }
+
+        // [Continued in next message...]
+
+// [Add this code after the existing JavaScript in admin.html]
+
+        // Order Loading Functions
+        async function loadOrders(viewType) {
+            const ordersContainer = document.getElementById('ordersContainer');
+            ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">Loading orders...</div>';
+            
+            try {
+                let query = db.collection('orders').orderBy('orderDate', 'desc');
+                const statusFilter = document.getElementById('statusFilter').value;
+                const dateFilter = document.getElementById('dateFilter').value;
+                
+                // Apply filters
+                if (statusFilter !== 'all') {
+                    query = query.where('status', '==', statusFilter);
+                }
+                if (dateFilter) {
+                    const startDate = new Date(dateFilter);
+                    const endDate = new Date(startDate);
+                    endDate.setDate(endDate.getDate() + 1);
+                    query = query.where('orderDate', '>=', startDate.toISOString())
+                                .where('orderDate', '<', endDate.toISOString());
+                }
+                
+                const snapshot = await query.get();
+                
+                if (snapshot.empty) {
+                    ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">No orders found</div>';
+                    return;
+                }
+                
+                let orders = [];
+                snapshot.forEach(doc => {
+                    orders.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Group orders based on view type
+                switch(viewType) {
+                    case 'user':
+                        displayOrdersByUser(orders);
+                        break;
+                    case 'product':
+                        displayOrdersByProduct(orders);
+                        break;
+                    default:
+                        displayChronologicalOrders(orders);
+                }
+                
+            } catch (error) {
+                console.error("Error loading orders:", error);
+                ordersContainer.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading orders: ${error.message}</div>`;
+            }
+        }
+
+        function displayChronologicalOrders(orders) {
+            const ordersContainer = document.getElementById('ordersContainer');
+            ordersContainer.innerHTML = '';
+            
+            orders.forEach(order => {
+                const orderDate = new Date(order.orderDate).toLocaleString();
+                const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0);
+                
+                const orderCard = document.createElement('div');
+                orderCard.className = 'bg-white rounded-lg shadow-md p-4 order-card transition-all';
+                orderCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-bold">Order #${order.id}</h3>
+                        <span class="text-sm ${getStatusColor(order.status)}">${order.status}</span>
+                    </div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span>${order.customer.name}</span>
+                        <span>${orderDate}</span>
+                    </div>
+                    <div class="text-sm mb-2">
+                        <span class="font-medium">${totalItems} items</span> - 
+                        <span class="text-primary font-bold">$${order.total}</span>
+                    </div>
+                    <button data-order-id="${order.id}" class="view-details-btn text-primary hover:text-secondary text-sm font-medium">
+                        View Details
+                    </button>
+                `;
+                ordersContainer.appendChild(orderCard);
+            });
+            
+            // Add event listeners to view buttons
+            document.querySelectorAll('.view-details-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const orderId = e.target.getAttribute('data-order-id');
+                    showOrderDetails(orders.find(o => o.id === orderId));
+                });
+            });
+        }
+
+        // [Continued in next message...]
+
+// [Add this code after displayChronologicalOrders function]
+
+        function displayOrdersByUser(orders) {
+            const ordersContainer = document.getElementById('ordersContainer');
+            ordersContainer.innerHTML = '';
+            
+            // Group orders by user
+            const usersMap = orders.reduce((acc, order) => {
+                const userKey = order.customer.userPhone || order.customer.phone;
+                if (!acc[userKey]) {
+                    acc[userKey] = {
+                        customer: order.customer,
+                        orders: [],
+                        totalSpent: 0,
+                        totalOrders: 0
+                    };
+                }
+                acc[userKey].orders.push(order);
+                acc[userKey].totalSpent += parseFloat(order.total);
+                acc[userKey].totalOrders++;
+                return acc;
+            }, {});
+
+            // Convert to array and sort by total spent
+            const userGroups = Object.values(usersMap).sort((a, b) => b.totalSpent - a.totalSpent);
+
+            userGroups.forEach(userGroup => {
+                const userSection = document.createElement('div');
+                userSection.className = 'bg-white rounded-lg shadow-md p-4 mb-6';
+                userSection.innerHTML = `
+                    <div class="border-b pb-3 mb-3">
+                        <h3 class="font-bold text-lg">
+                            ${userGroup.customer.name || 'Guest Customer'}
+                            ${userGroup.customer.userPhone ? `<span class="text-sm font-normal text-gray-600">(Registered User)</span>` : ''}
+                        </h3>
+                        <div class="flex justify-between text-sm">
+                            <span>${userGroup.customer.phone}</span>
+                            <div>
+                                <span class="mr-4">Orders: ${userGroup.totalOrders}</span>
+                                <span class="text-primary font-bold">Total: $${userGroup.totalSpent.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-orders space-y-3">
+                        ${userGroup.orders.map(order => `
+                            <div class="order-item pl-3 border-l-2 border-primary">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <span class="font-medium">Order #${order.id}</span>
+                                        <span class="text-sm text-gray-600 ml-2">${new Date(order.orderDate).toLocaleDateString()}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm ${getStatusColor(order.status)}">${order.status}</span>
+                                        <button data-order-id="${order.id}" 
+                                            class="view-details-btn text-primary hover:text-secondary text-sm font-medium">
+                                            View
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="text-sm">
+                                    ${order.items.length} items - $${order.total}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                ordersContainer.appendChild(userSection);
+            });
+
+            // Add event listeners to view buttons
+            document.querySelectorAll('.view-details-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const orderId = e.target.getAttribute('data-order-id');
+                    const order = orders.find(o => o.id === orderId);
+                    showOrderDetails(order);
+                });
+            });
+        }
+
+        // MOVED to top beneath firebase
+        // // [Add this utility function at the top with other helpers]
+        // function getStatusColor(status) {
+        //     const statusColors = {
+        //         'pre-order': 'text-blue-600',
+        //         'processing': 'text-yellow-600',
+        //         'shipped': 'text-green-600',
+        //         'delivered': 'text-gray-600'
+        //     };
+        //     return statusColors[status] || 'text-gray-600';
+        // }
+
+// [Continued in next message...]
+
+        // [Add this code after displayOrdersByUser function]
+
+        function displayOrdersByProduct(orders) {
+            const ordersContainer = document.getElementById('ordersContainer');
+            ordersContainer.innerHTML = '';
+            
+            // Aggregate product data across all orders
+            const productsMap = orders.reduce((acc, order) => {
+                order.items.forEach(item => {
+                    const key = item.productId || item.productName;
+                    if (!acc[key]) {
+                        acc[key] = {
+                            productId: item.productId,
+                            name: item.productName,
+                            price: item.price,
+                            totalQuantity: 0,
+                            totalRevenue: 0,
+                            orders: [],
+                            customers: new Set(),
+                            firstOrderDate: order.orderDate,
+                            lastOrderDate: order.orderDate
+                        };
+                    }
+                    
+                    acc[key].totalQuantity += item.quantity;
+                    acc[key].totalRevenue += item.quantity * item.price;
+                    acc[key].orders.push(order.id);
+                    acc[key].customers.add(order.customer.userPhone || order.customer.phone);
+                    
+                    // Update date range
+                    if (new Date(order.orderDate) < new Date(acc[key].firstOrderDate)) {
+                        acc[key].firstOrderDate = order.orderDate;
+                    }
+                    if (new Date(order.orderDate) > new Date(acc[key].lastOrderDate)) {
+                        acc[key].lastOrderDate = order.orderDate;
+                    }
+                });
+                return acc;
+            }, {});
+
+            // Convert to array and sort by total quantity
+            const productGroups = Object.values(productsMap).sort((a, b) => b.totalQuantity - a.totalQuantity);
+
+            productGroups.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'bg-white rounded-lg shadow-md p-4 mb-6';
+                productCard.innerHTML = `
+                    <div class="border-b pb-3 mb-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-lg">${product.name}</h3>
+                                <p class="text-sm text-gray-600">$${product.price.toFixed(2)} per unit</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-primary font-bold text-xl">${product.totalQuantity}</div>
+                                <div class="text-sm">units sold</div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2 text-sm">
+                            <div>
+                                <div class="text-gray-600">Revenue</div>
+                                <div class="font-medium">$${product.totalRevenue.toFixed(2)}</div>
+                            </div>
+                            <div>
+                                <div class="text-gray-600">Customers</div>
+                                <div class="font-medium">${product.customers.size}</div>
+                            </div>
+                            <div>
+                                <div class="text-gray-600">First Ordered</div>
+                                <div class="font-medium">${new Date(product.firstOrderDate).toLocaleDateString()}</div>
+                            </div>
+                            <div>
+                                <div class="text-gray-600">Last Ordered</div>
+                                <div class="font-medium">${new Date(product.lastOrderDate).toLocaleDateString()}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-orders">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-medium">Recent Orders</h4>
+                            <button class="toggle-orders text-primary hover:text-secondary text-sm font-medium">
+                                Show/Hide Orders
+                            </button>
+                        </div>
+                        <div class="orders-list hidden space-y-2">
+                            ${product.orders.slice(0, 5).map(orderId => {
+                                const order = orders.find(o => o.id === orderId);
+                                return `
+                                    <div class="flex justify-between items-center text-sm p-2 bg-gray-50 rounded">
+                                        <div>
+                                            <span class="font-medium">Order #${orderId}</span>
+                                            <span class="text-gray-600 ml-2">
+                                                ${new Date(order.orderDate).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                        <button data-order-id="${orderId}" 
+                                            class="view-details-btn text-primary hover:text-secondary font-medium">
+                                            View
+                                        </button>
+                                    </div>
+                                `;
+                            }).join('')}
+                            ${product.orders.length > 5 ? 
+                                `<div class="text-center text-sm text-gray-600 mt-2">
+                                    + ${product.orders.length - 5} more orders
+                                </div>` : ''}
+                        </div>
+                    </div>
+                `;
+                ordersContainer.appendChild(productCard);
+
+                // Add toggle functionality
+                const toggleBtn = productCard.querySelector('.toggle-orders');
+                const ordersList = productCard.querySelector('.orders-list');
+                toggleBtn.addEventListener('click', () => {
+                    ordersList.classList.toggle('hidden');
+                    toggleBtn.textContent = ordersList.classList.contains('hidden') 
+                        ? 'Show Orders' 
+                        : 'Hide Orders';
+                });
+            });
+
+            // Add event listeners to view buttons
+            document.querySelectorAll('.view-details-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const orderId = e.target.getAttribute('data-order-id');
+                    const order = orders.find(o => o.id === orderId);
+                    showOrderDetails(order);
+                });
+            });
+        }
+
+// [Continued in next message...]
+
+        // [Add this code after the product view functions]
+
+        // Order Detail Modal Functions
+        async function showOrderDetails(order) {
+            const modal = document.getElementById('orderDetailModal');
+            const content = document.getElementById('orderDetailContent');
+            
+            // Show loading state
+            content.innerHTML = '<div class="text-center py-8">Loading order details...</div>';
+            modal.classList.remove('hidden');
+
+            try {
+                // Format dates
+                const orderDate = new Date(order.orderDate).toLocaleString();
+                const updateDate = order.lastUpdated 
+                    ? new Date(order.lastUpdated.toDate()).toLocaleString() 
+                    : 'N/A';
+
+                // Build order items table
+                const itemsTable = order.items.map(item => `
+                    <tr class="border-b border-gray-200">
+                        <td class="py-3">${item.productName}</td>
+                        <td class="text-center">${item.quantity}</td>
+                        <td class="text-right">$${item.price.toFixed(2)}</td>
+                        <td class="text-right">$${item.subtotal}</td>
+                    </tr>
+                `).join('');
+
+                // Build status options
+                const statusOptions = ['pre-order', 'processing', 'shipped', 'delivered']
+                    .map(status => `
+                        <option value="${status}" ${order.status === status ? 'selected' : ''}>
+                            ${status.charAt(0).toUpperCase() + status.slice(1)}
+                        </option>
+                    `).join('');
+
+                // Populate modal content
+                content.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h4 class="font-bold mb-2">Order Information</h4>
+                            <div class="space-y-1 text-sm">
+                                <div class="flex">
+                                    <span class="w-32 text-gray-600">Order ID:</span>
+                                    <span>${order.id}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-32 text-gray-600">Date:</span>
+                                    <span>${orderDate}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-32 text-gray-600">Last Updated:</span>
+                                    <span>${updateDate}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-32 text-gray-600">Status:</span>
+                                    <select id="orderStatus" class="p-1 border rounded ${getStatusBgColor(order.status)}">
+                                        ${statusOptions}
+                                    </select>
+                                    <button id="saveStatusBtn" class="ml-2 bg-primary hover:bg-secondary text-white px-3 py-1 rounded text-sm">
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold mb-2">Customer Information</h4>
+                            <div class="space-y-1 text-sm">
+                                <div class="flex">
+                                    <span class="w-32 text-gray-600">Name:</span>
+                                    <span>${order.customer.name}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-32 text-gray-600">Phone:</span>
+                                    <span>${order.customer.phone}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-32 text-gray-600">Email:</span>
+                                    <span>${order.customer.email || 'N/A'}</span>
+                                </div>
+                                ${order.customer.userId ? `
+                                <div class="flex">
+                                    <span class="w-32 text-gray-600">User ID:</span>
+                                    <span class="text-xs">${order.customer.userId}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-bold mb-2">Shipping Address</h4>
+                        <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-sm">
+                            ${order.customer.address.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-bold mb-2">Order Items</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-gray-300">
+                                        <th class="text-left pb-2">Product</th>
+                                        <th class="text-center pb-2">Qty</th>
+                                        <th class="text-right pb-2">Price</th>
+                                        <th class="text-right pb-2">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${itemsTable}
+                                    <tr class="border-t border-gray-300 font-bold">
+                                        <td colspan="3" class="text-right pt-3">Total:</td>
+                                        <td class="text-right pt-3">$${order.total}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    ${order.customer.notes ? `
+                    <div class="mb-6">
+                        <h4 class="font-bold mb-2">Customer Notes</h4>
+                        <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-sm">
+                            ${order.customer.notes.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="flex justify-end space-x-2">
+                        <button id="printOrderBtn" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md">
+                            Print
+                        </button>
+                        <button id="closeModalBtn" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md">
+                            Close
+                        </button>
+                    </div>
+                `;
+
+                // Add event listeners
+                document.getElementById('saveStatusBtn').addEventListener('click', () => updateOrderStatus(order.id));
+                document.getElementById('printOrderBtn').addEventListener('click', printOrder);
+                document.getElementById('closeOrderModal').addEventListener('click', () => {
+                    modal.classList.add('hidden');
+                });
+
+            } catch (error) {
+                console.error("Error loading order details:", error);
+                content.innerHTML = `
+                    <div class="text-center py-8 text-red-500">
+                        Error loading order details: ${error.message}
+                    </div>
+                    <div class="flex justify-end">
+                        <button id="closeModalBtn" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md">
+                            Close
+                        </button>
+                    </div>
+                `;
+                document.getElementById('closeModalBtn').addEventListener('click', () => {
+                    modal.classList.add('hidden');
+                });
+            }
+        }
+
+        async function updateOrderStatus(orderId) {
+            const newStatus = document.getElementById('orderStatus').value;
+            const saveBtn = document.getElementById('saveStatusBtn');
+            
+            try {
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving...';
+                
+                await db.collection('orders').doc(orderId).update({
+                    status: newStatus,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Update UI
+                document.getElementById('orderStatus').className = `p-1 border rounded ${getStatusBgColor(newStatus)}`;
+                saveBtn.textContent = 'Updated!';
+                
+                // Refresh order list after a delay
+                setTimeout(() => {
+                    const currentView = document.querySelector('[id$="View"].bg-primary').id;
+                    loadOrders(currentView.replace('View', ''));
+                    document.getElementById('closeOrderModal').click();
+                }, 1000);
+                
+            } catch (error) {
+                console.error("Error updating status:", error);
+                saveBtn.textContent = 'Error! Try Again';
+                saveBtn.disabled = false;
+            }
+        }
+
+        function printOrder() {
+            const printContent = document.getElementById('orderDetailContent').innerHTML;
+            const originalContent = document.body.innerHTML;
+            
+            document.body.innerHTML = `
+                <div class="container mx-auto p-6" style="font-size: 14px;">
+                    <h1 class="text-2xl font-bold mb-4">Order Details</h1>
+                    ${printContent}
+                </div>
+            `;
+            
+            window.print();
+            document.body.innerHTML = originalContent;
+            // Re-attach event listeners after restoring content
+            document.getElementById('closeOrderModal').addEventListener('click', () => {
+                document.getElementById('orderDetailModal').classList.add('hidden');
+            });
+        }
+
+        // MOVED to top with other helpers
+        // // [Add this utility function with other helpers]
+        // function getStatusBgColor(status) {
+        //     const statusColors = {
+        //         'pre-order': 'bg-blue-100 text-blue-800',
+        //         'processing': 'bg-yellow-100 text-yellow-800',
+        //         'shipped': 'bg-green-100 text-green-800',
+        //         'delivered': 'bg-gray-100 text-gray-800'
+        //     };
+        //     return statusColors[status] || 'bg-gray-100 text-gray-800';
+        // }
+
+// [Continued in next message...]
+
+        // [Add this code after the order modal functions]
+
+        // Product Management Functions
+        async function loadProducts() {
+            const productsList = document.getElementById('productsList');
+            productsList.innerHTML = '<div class="col-span-full text-center py-8">Loading products...</div>';
+            
+            try {
+                // // No Products collection created in Firestore so the below won't work! 
+                // const snapshot = await db.collection('products').orderBy('name').get();
+                const snapshot = [
+                    { id: 1, name: "Product 1", price: 3.99, imageUrl: "./images-v2/A_meticulously_organized_arran(1).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 2, name: "Product 2", price: 4.99, imageUrl: "./images-v2/A_meticulously_organized_arran(10).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 3, name: "Product 3", price: 7.99, imageUrl: "./images-v2/A_meticulously_organized_arran(11).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 4, name: "Product 4", price: 13.99, imageUrl: "./images-v2/A_meticulously_organized_arran(13).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 5, name: "Product 5", price: 4.99, imageUrl: "./images-v2/A_meticulously_organized_arran(17).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 6, name: "Product 6", price: 5.99, imageUrl: "./images-v2/A_meticulously_organized_arran(2).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 7, name: "Product 7", price: 21.99, imageUrl: "./images-v2/A_meticulously_organized_arran(20).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 8, name: "Product 8", price: 15.99, imageUrl: "./images-v2/A_meticulously_organized_arran(21).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 9, name: "Product 9", price: 12.99, imageUrl: "./images-v2/A_meticulously_organized_arran(23).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 10, name: "Product 10", price: 32.99, imageUrl: "./images-v2/A_meticulously_organized_arran(29).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 11, name: "Product 11", price: 6.99, imageUrl: "./images-v2/A_meticulously_organized_arran(3).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 12, name: "Product 12", price: 9.99, imageUrl: "./images-v2/A_meticulously_organized_arran(30).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 13, name: "Product 13", price: 13.99, imageUrl: "./images-v2/A_meticulously_organized_arran(32).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 14, name: "Product 14", price: 4.99, imageUrl: "./images-v2/A_meticulously_organized_arran(33).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 15, name: "Product 15", price: 32.99, imageUrl: "./images-v2/A_meticulously_organized_arran(34).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 16, name: "Product 16", price: 3.99, imageUrl: "./images-v2/A_meticulously_organized_arran(4).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 17, name: "Product 17", price: 4.99, imageUrl: "./images-v2/A_meticulously_organized_arran(5).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 18, name: "Product 18", price: 7.99, imageUrl: "./images-v2/A_meticulously_organized_arran(6).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 19, name: "Product 19", price: 13.99, imageUrl: "./images-v2/A_meticulously_organized_arran(7).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 20, name: "Product 20", price: 4.99, imageUrl: "./images-v2/A_meticulously_organized_arran(8).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 21, name: "Product 21", price: 5.99, imageUrl: "./images-v2/A_meticulously_organized_arran(9).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 22, name: "Product 22", price: 21.99, imageUrl: "./images-v2/painterly_anime_artwork_A_meti(1).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 23, name: "Product 23", price: 15.99, imageUrl: "./images-v2/painterly_anime_artwork_A_meti(2).jpeg", description: "This is a placeholder text for the description of the product." },
+                    { id: 24, name: "Product 24", price: 12.99, imageUrl: "./images-v2/painterly_anime_artwork_A_meti.jpeg", description: "This is a placeholder text for the description of the product." },
+                ]
+
+                if (snapshot.empty) {
+                    productsList.innerHTML = '<div class="col-span-full text-center py-8">No products found</div>';
+                    return;
+                }
+                
+                productsList.innerHTML = '';
+                snapshot.forEach((product) => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden';
+                    productCard.innerHTML = `
+                        <div class="h-48 bg-gray-100 flex items-center justify-center">
+                            ${product.imageUrl ? 
+                                `<img src="${product.imageUrl}" alt="${product.name}" class="h-full object-contain">` : 
+                                '<div class="text-gray-400">No Image</div>'}
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">${product.name}</h3>
+                            <p class="text-primary font-bold mb-2">$${product.price.toFixed(2)}</p>
+                            <p class="text-sm text-gray-600 line-clamp-2 mb-4">${product.description || 'No description'}</p>
+                            <div class="flex justify-between">
+                                <button data-product-id="${product.id}" class="edit-product-btn text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded">
+                                    Edit
+                                </button>
+                                <button data-product-id="${product.id}" class="delete-product-btn text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    productsList.appendChild(productCard);
+                });
+                
+                // Add event listeners
+                document.querySelectorAll('.edit-product-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const productId = e.target.getAttribute('data-product-id');
+                        openProductModal(productId);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-product-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const productId = e.target.getAttribute('data-product-id');
+                        confirmDeleteProduct(productId);
+                    });
+                });
+                
+            } catch (error) {
+                console.error("Error loading products:", error);
+                productsList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading products: ${error.message}</div>`;
+            }
+        }
+
+        function openProductModal(productId = null) {
+            const modal = document.getElementById('productModal');
+            const form = document.getElementById('productForm');
+            const imagePreview = document.getElementById('imagePreview');
+            
+            // Reset form
+            form.reset();
+            imagePreview.classList.add('hidden');
+            document.getElementById('productId').value = '';
+            
+            // Set title
+            document.getElementById('productModalTitle').textContent = 
+                productId ? 'Edit Product' : 'Add New Product';
+
+            // const productArray = [
+            //         { id: 1, name: "Product 1", price: 3.99, imageUrl: "./images-v2/A_meticulously_organized_arran(1).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 2, name: "Product 2", price: 4.99, imageUrl: "./images-v2/A_meticulously_organized_arran(10).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 3, name: "Product 3", price: 7.99, imageUrl: "./images-v2/A_meticulously_organized_arran(11).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 4, name: "Product 4", price: 13.99, imageUrl: "./images-v2/A_meticulously_organized_arran(13).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 5, name: "Product 5", price: 4.99, imageUrl: "./images-v2/A_meticulously_organized_arran(17).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 6, name: "Product 6", price: 5.99, imageUrl: "./images-v2/A_meticulously_organized_arran(2).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 7, name: "Product 7", price: 21.99, imageUrl: "./images-v2/A_meticulously_organized_arran(20).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 8, name: "Product 8", price: 15.99, imageUrl: "./images-v2/A_meticulously_organized_arran(21).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 9, name: "Product 9", price: 12.99, imageUrl: "./images-v2/A_meticulously_organized_arran(23).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 10, name: "Product 10", price: 32.99, imageUrl: "./images-v2/A_meticulously_organized_arran(29).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 11, name: "Product 11", price: 6.99, imageUrl: "./images-v2/A_meticulously_organized_arran(3).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 12, name: "Product 12", price: 9.99, imageUrl: "./images-v2/A_meticulously_organized_arran(30).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 13, name: "Product 13", price: 13.99, imageUrl: "./images-v2/A_meticulously_organized_arran(32).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 14, name: "Product 14", price: 4.99, imageUrl: "./images-v2/A_meticulously_organized_arran(33).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 15, name: "Product 15", price: 32.99, imageUrl: "./images-v2/A_meticulously_organized_arran(34).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 16, name: "Product 16", price: 3.99, imageUrl: "./images-v2/A_meticulously_organized_arran(4).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 17, name: "Product 17", price: 4.99, imageUrl: "./images-v2/A_meticulously_organized_arran(5).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 18, name: "Product 18", price: 7.99, imageUrl: "./images-v2/A_meticulously_organized_arran(6).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 19, name: "Product 19", price: 13.99, imageUrl: "./images-v2/A_meticulously_organized_arran(7).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 20, name: "Product 20", price: 4.99, imageUrl: "./images-v2/A_meticulously_organized_arran(8).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 21, name: "Product 21", price: 5.99, imageUrl: "./images-v2/A_meticulously_organized_arran(9).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 22, name: "Product 22", price: 21.99, imageUrl: "./images-v2/painterly_anime_artwork_A_meti(1).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 23, name: "Product 23", price: 15.99, imageUrl: "./images-v2/painterly_anime_artwork_A_meti(2).jpeg", description: "This is a placeholder text for the description of the product." },
+            //         { id: 24, name: "Product 24", price: 12.99, imageUrl: "./images-v2/painterly_anime_artwork_A_meti.jpeg", description: "This is a placeholder text for the description of the product." },
+            //     ]
+            
+            // // If editing, load product data
+            // if (product.id) {
+            //     db.collection('products').doc(product.id).get().then(doc => {
+            //         if (doc.exists) {
+            //             const product = doc.data();
+            //             document.getElementById('productId').value = doc.id;
+            //             document.getElementById('productName').value = product.name;
+            //             document.getElementById('productPrice').value = product.price;
+            //             document.getElementById('productDescription').value = product.description || '';
+                        
+            //             if (product.imageUrl) {
+            //                 document.getElementById('previewImage').src = product.imageUrl;
+            //                 imagePreview.classList.remove('hidden');
+            //             }
+            //         }
+            //     });
+            // }
+            
+            // Show modal
+            modal.classList.remove('hidden');
+        }
+
+        // Handle image preview
+        document.getElementById('productImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('previewImage').src = event.target.result;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Save product
+        document.getElementById('productForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const saveBtn = document.getElementById('saveProductBtn');
+            const cancelBtn = document.getElementById('cancelProductBtn');
+            const productId = document.getElementById('productId').value;
+            
+            saveBtn.disabled = true;
+            cancelBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+            
+            try {
+                const productData = {
+                    name: document.getElementById('productName').value,
+                    price: parseFloat(document.getElementById('productPrice').value),
+                    description: document.getElementById('productDescription').value,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                // Handle image upload if a file was selected
+                const imageFile = document.getElementById('productImage').files[0];
+                if (imageFile) {
+                    const storageRef = firebase.storage().ref();
+                    const fileRef = storageRef.child(`products/${Date.now()}_${imageFile.name}`);
+                    await fileRef.put(imageFile);
+                    productData.imageUrl = await fileRef.getDownloadURL();
+                }
+                
+                // Save to Firestore
+                if (productId) {
+                    // Update existing product
+                    await db.collection('products').doc(productId).update(productData);
+                } else {
+                    // Add new product
+                    productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('products').add(productData);
+                }
+                
+                // Update UI
+                saveBtn.textContent = 'Saved!';
+                setTimeout(() => {
+                    document.getElementById('closeProductModal').click();
+                    loadProducts();
+                }, 1000);
+                
+            } catch (error) {
+                console.error("Error saving product:", error);
+                saveBtn.textContent = 'Error! Try Again';
+                saveBtn.disabled = false;
+                cancelBtn.disabled = false;
+            }
+        });
+
+        // Delete product
+        function confirmDeleteProduct(productId) {
+            if (confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+                db.collection('products').doc(productId).delete()
+                    .then(() => {
+                        loadProducts();
+                    })
+                    .catch(error => {
+                        console.error("Error deleting product:", error);
+                        alert('Error deleting product. Please try again.');
+                    });
+            }
+        }
+
+        // Modal close handlers
+        document.getElementById('closeProductModal').addEventListener('click', () => {
+            document.getElementById('productModal').classList.add('hidden');
+        });
+
+        document.getElementById('cancelProductBtn').addEventListener('click', () => {
+            document.getElementById('productModal').classList.add('hidden');
+        });
+
+        // Initialize Firebase Storage (add to your Firebase config section)
+        // Add this to your Firebase imports at the top of the file: "<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></scrip"
+
+    </script>
+</body>
+</html>
