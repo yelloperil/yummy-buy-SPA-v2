@@ -1000,6 +1000,7 @@
                     name: document.getElementById('productName').value,
                     price: parseFloat(document.getElementById('productPrice').value),
                     description: document.getElementById('productDescription').value,
+                    status: document.getElementById('productStatus').value,
                     lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
@@ -1016,22 +1017,29 @@
                 if (productId) {
                     // Update existing product
                     await db.collection('products').doc(productId).update(productData);
+                    
+                    // Show success message
+                    showToast('Product updated successfully!');
                 } else {
                     // Add new product
                     productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                     await db.collection('products').add(productData);
+                    
+                    // Show success message
+                    showToast('Product added successfully!');
                 }
                 
                 // Update UI
                 saveBtn.textContent = 'Saved!';
                 setTimeout(() => {
                     document.getElementById('closeProductModal').click();
-                    loadProducts();
+                    loadProducts(); // Reload products to show changes
                 }, 1000);
                 
             } catch (error) {
                 console.error("Error saving product:", error);
-                saveBtn.textContent = 'Error! Try Again';
+                showToast('Error saving product: ' + error.message, 'error');
+                saveBtn.textContent = 'Save Product';
                 saveBtn.disabled = false;
                 cancelBtn.disabled = false;
             }
