@@ -35,16 +35,124 @@
             }
         });
     </script>
+    <style>
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .tab-active {
+            border-bottom: 3px solid #5D5CDE;
+            font-weight: 600;
+        }
+        /* Add toast styles here */
+        .toast {
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
 </head>
 <body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
     <div class="container mx-auto px-4 py-8">
-        <header class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+        
+    <!-- START of CURRENT header section -->
+
+        <header class="my-8 pb-16 flex flex-col sm:grid sm:grid-cols-14 items-center gap-y-6">
+            <div class="flex items-center gap-4 w-full sm:col-start-1 sm:col-span-2">
+
+                <!-- CONTAINER: LOGO -->
+                <img 
+                    src="./images-v2/YummyBuy_Customized_Logo_A_BG-Removed.png" 
+                    alt="Yummy Buy Mascot" 
+                    class="w-36 h-36 transition-transform duration-300 ease-in-out hover:scale-125 hover:shadow-[0px_0px_20px_rgba(173,216,230,0.8)]" 
+                />
+
+                <!-- LOGO TEXT -->
+                <div class="flex flex-col gap-3">
+
+                    <!-- LOGO TEXT: Yummy Buy 😋 -->
+                    <h1 class="text-3xl sm:text-4xl font-bold text-primary">
+                        <a href="index.html" class="hover:text-secondary transition-colors duration-200">
+                            Yummy Buy 😋
+                        </a>
+                    </h1>
+
+                    <!-- LOGO TEXT: nǐ. 你   |   è. 饿   |   le. 了   |   ma. 吗 ? -->
+                    <p class="ml-2 text-md text-gray-600 dark:text-gray-300">
+                        nǐ. 你   |   è. 饿   |   le. 了   |   ma. 吗 ?
+                        <!--  "The Miranda Market" "守望者" "WC: mxie185" "Miranda's" WC 守望者的商店 微信 mxie185 -->
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- CONTAINER: NAVIGATION LINKS -->
+            <div class="self-center sm:col-start-3 sm:col-span-2">
+            
+               <!-- NAVIGATION LINKS -->
+                <nav class="flex justify-around justify-center px-12 py-3 outline outline-1 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105">
+
+                    <!-- NAVIGATION LINKS: Home -->
+                    <a href="index.html" class="text-gray-700 dark:text-primary hover:text-primary dark:hover:text-secondary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">Home</a>
+
+                    <!-- NAVIGATION LINKS: Products -->
+                    <span class="text-indigo-100 hover:text-primary font-black border-b-2 border-primary hover:border-b-2 hover:border-indigo-100 px-1 transition-colors duration-200">Products</span>
+
+                    <!-- NAVIGATION LINKS: Orders -->
+                    <span class="text-gray-700 dark:text-primary hover:text-primary dark:hover:text-secondary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">Orders</span>
+                    <!-- <a href="history.html" class="text-gray-700 dark:text-primary hover:text-primary dark:hover:text-secondary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">Orders</a> -->
+                </nav>
+
+            </div>
+
+            <!-- CONTAINER: HIDDEN ADMIN LINK, HIDDEN USER PHONE DISPLAY, LOGIN BUTTON -->
+            <div class="flex items-end gap-4 sm:col-start-13 sm:col-span-1">
+
+                <!-- HIDDEN ADMIN LINK -->
+                <h3 id="adminLink" class="hidden">
+                    <a href="admin.html" class="block text-primary hover:text-white bg-transparent hover:bg-primary px-3 py-2 rounded-md font-semibold transition-all duration-200 border border-primary hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-secondary">
+                        Admin Dashboard
+                    </a>
+                </h3>
+
+                <!-- HIDDEN USER PHONE DISPLAY -->
+                <span id="userPhoneDisplay" class="hidden mr-3 text-sm text-gray-600 dark:text-gray-400"></span>
+
+                <!-- LOGIN BUTTON -->
+                <button id="loginBtn" class="bg-primary hover:bg-secondary ml-auto text-white py-2.5 px-8 rounded-lg font-semibold transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                Log In
+                </button>
+            </div>
+            </header>
+
+
+
+    <!-- END of CURRENT header section -->
+    
+    
+    
+            <!-- start of version 2.0 -->
+                    
+                    
+                    
+            <!-- end of version 2.0 -->
+
+
+    
+    <!-- start of version 1.0 -->
+
+        <!-- <header class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center">
             <div>
                 <h1 class="text-3xl font-bold text-primary"><a href="index.html">Yummy Buy 😋</a></h1>
                 <p class="text-gray-600 dark:text-gray-400 mt-2">Browse our products and place your pre-order</p>
             </div>
             <div>
-                <!-- NAVIGATION LINKS -->
+                NAVIGATION LINKS
                 <nav class="flex gap-6">
                     <a href="index.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">Home</a>
                     <span class="text-indigo-100 font-black">Products</span>
@@ -52,22 +160,22 @@
                 </nav>
             </div>
             <div class="mt-4 sm:mt-0 flex items-center">
-                <!-- HIDDEN LINK TO ADMIN DASHBOARD -->
+                HIDDEN LINK TO ADMIN DASHBOARD
                 <h3 id="adminLink" class="hidden">
                     <a href="admin.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">Admin Dashboard</a>
                 </h3>
             </div>
             <div>
-                <!-- HIDDEN USER INFO DISPLAY -->
+                HIDDEN USER INFO DISPLAY
                 <span id="userPhoneDisplay" class="hidden mr-3 text-sm text-gray-600 dark:text-gray-400"></span>
             </div>
             <div class="mt-4 sm:mt-0 flex items-center">
-                <!-- LOGIN BUTTON: TRIGGERS AUTH MODAL -->
+                LOGIN BUTTON: TRIGGERS AUTH MODAL
                 <button id="loginBtn" class="bg-primary hover:bg-secondary text-white py-2 px-4 rounded-md font-medium transition-all">
                     Log In
                 </button>
             </div>
-        </header>
+        </header> -->
 
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Product Catalogue Section -->
