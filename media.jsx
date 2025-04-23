@@ -3,6 +3,8 @@ import cover_1 from "./images-v2/smiling-powerful-woman.jpg"
 import cover_2 from "./images-v2/la-mujer-dice-ok-vector(1).jpg"
 import logo_1 from "./images-v2/vecteezy_african-civet-mascot_413_BG-Removed.png"
 import logo_2 from "./images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png"
+import logo_3 from "./images-v2/YummyBuy_Customized_Logo_A_BG-Removed.png"
+import logo_4 from "./images-v2/vecteezy_cute-sloth-emblem-logo-cartoon_279.svg"
 
 // Food Related
 import product_1 from "./images-v2/A_meticulously_organized_arran(1).jpeg"
@@ -56,6 +58,13 @@ product_22
 product_23
 product_24
 
+
+"./images-v2/smiling-powerful-woman.jpg"
+"./images-v2/la-mujer-dice-ok-vector(1).jpg"
+"./images-v2/vecteezy_african-civet-mascot_413_BG-Removed.png"
+"./images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png"
+"./images-v2/YummyBuy_Customized_Logo_A_BG-Removed.png"
+"./images-v2/vecteezy_cute-sloth-emblem-logo-cartoon_279.svg"
 
 "./images-v2/A_meticulously_organized_arran(1).jpeg"
 "./images-v2/A_meticulously_organized_arran(10).jpeg"
