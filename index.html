@@ -42,7 +42,13 @@
     <!-- Version 4.0 - 14 columns + 3 spacer columns -->
         <header class="my-8 pb-16 flex flex-col sm:grid sm:grid-cols-14 items-center gap-y-6">
             <div class="flex items-center gap-4 w-full sm:col-start-1 sm:col-span-2">
-                <img src="./images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png" alt="Yummy Buy Mascot" class="w-24 h-24" />
+                <!-- <img src="./images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png" alt="Yummy Buy Mascot" class="w-24 h-24" /> -->
+                <!-- <img src="./images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png" alt="Yummy Buy Mascot" class="w-24 h-24 transition-transform duration-500 ease-in-out hover:scale-150" /> -->
+                <img 
+                    src="./images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png" 
+                    alt="Yummy Buy Mascot" 
+                    class="w-24 h-24 transition-transform duration-300 ease-in-out hover:scale-125 hover:shadow-[0px_0px_20px_rgba(173,216,230,0.8)]" 
+                />
                 <div class="flex flex-col gap-3">
                     <h1 class="text-3xl sm:text-4xl font-bold text-primary">
                         <a href="index.html" class="hover:text-secondary transition-colors duration-200">
@@ -55,10 +61,29 @@
                 </div>
             </div>
             <div class="self-center sm:col-start-3 sm:col-span-2">
-                <nav class="flex justify-around justify-center px-12 py-3 border border-indigo-100 rounded-full">
-                    <a href="index.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">Home</a>
+                <!-- <nav class="flex justify-around justify-center px-12 py-3 border border-indigo-100 hover:border-2 hover:border-indigo-200 rounded-full transition-colors duration-200"> -->
+                <!-- <nav class="flex justify-around justify-center px-12 py-3 border border-indigo-100 hover:border-2 hover:border-indigo-200 rounded-full transition-all duration-200 ease-in-out"> -->
+            <!-- changed from border to outline for better transition effect -->
+                <nav class="flex justify-around justify-center px-12 py-3 outline outline-1 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105">
+                    <span class="text-indigo-100 hover:text-primary font-black border-b-2 border-primary hover:border-b-2 hover:border-indigo-100 px-1 transition-colors duration-200">Home</span>
+                    <a href="products.html" class="text-gray-700 dark:text-primary hover:text-primary dark:hover:text-secondary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">Products</a>
+                    <a href="history.html" class="text-gray-700 dark:text-primary hover:text-primary dark:hover:text-secondary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">Orders</a>
+                    
+                <!-- alternate version, no underline effect -->
+                    <!-- <span class="text-indigo-100 font-black border-b-2 border-indigo-100 px-1">Home</span> -->
+                    <!-- <a href="products.html" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-secondary font-medium transition-colors duration-200">Products</a> -->
+                    <!-- <a href="history.html" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-secondary font-medium transition-colors duration-200">Orders</a> -->
+
+                <!-- imported from products.html -->
+                    <!-- <a href="index.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">Home</a>
                     <span class="text-indigo-100 font-black">Products</span>
-                    <a href="history.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">Orders</a>
+                    <a href="history.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">Orders</a> -->
+                    
+                <!-- old version, has underline effect -->
+                    <!-- <span class="text-primary font-bold border-b-2 border-primary px-1">Home</span>
+                    <a href="products.html" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-secondary font-medium transition-colors duration-200">Products</a>
+                    <a href="history.html" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-secondary font-medium transition-colors duration-200">Orders</a> -->
+    
                 </nav>
             </div>
             <div class="flex items-end gap-4 sm:col-start-13 sm:col-span-1">
