@@ -1,5 +1,3 @@
-<!-- https://chat.deepseek.com/a/chat/s/b6c2e464-7adc-4528-b9a3-e8c112e01a41 -->
-<!-- git@github.com:myopicOracle/mei-wen-ti-v0.git -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,27 +38,142 @@
 </head>
 <body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
     <div class="container mx-auto px-4 py-8">
-        <header class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+
+    <!-- Version 4.0 - 14 columns + 3 spacer columns -->
+        <header class="my-8 pb-16 flex flex-col sm:grid sm:grid-cols-14 items-center gap-y-6">
+            <div class="flex items-center gap-4 w-full sm:col-start-1 sm:col-span-2">
+                <img src="./images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png" alt="Yummy Buy Mascot" class="w-24 h-24" />
+                <div class="flex flex-col gap-3">
+                    <h1 class="text-3xl sm:text-4xl font-bold text-primary"><a href="index.html" class="hover:text-secondary transition-colors duration-200">Yummy Buy 😋</a></h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Browse our products and place your pre-order</p>
+                </div>
+            </div>
+            <div class="self-center sm:col-start-3 sm:col-span-2">
+                <nav class="flex justify-around justify-center px-12 py-3 border border-indigo-100 rounded-full">
+                    <a href="index.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">Home</a>
+                    <span class="text-indigo-100 font-black">Products</span>
+                    <a href="history.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">Orders</a>
+                </nav>
+            </div>
+            <div class="flex items-end gap-4 sm:col-start-13 sm:col-span-2">
+                <h3 id="adminLink" class="hidden">
+                    <a href="admin.html" class="block text-primary hover:text-white bg-transparent hover:bg-primary px-3 py-2 rounded-md font-semibold transition-all duration-200 border border-primary hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-secondary">
+                        Admin Dashboard
+                    </a>
+                </h3>
+                <span id="userPhoneDisplay" class="hidden mr-3 text-sm text-gray-600 dark:text-gray-400"></span>
+                <button id="loginBtn" class="bg-primary hover:bg-secondary text-white py-2 px-4 rounded-md font-medium transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                Log In
+                </button>
+            </div>
+            </header>
+
+
+    <!-- Version 3.0, 2.0, 1.0 -- make sure to comment out the other versions when testing -->
+        <!-- <header class="my-8 pb-16 flex flex-col sm:grid sm:grid-cols-4 items-center">
+        <header class="my-8 pb-16 flex flex-col sm:flex-row justify-between items-center sm:items-center">
+        <header class="my-8 pb-16 flex flex-col sm:grid sm:grid-cols-14 items-center gap-y-6">
+            <div class="flex items-center gap-4 w-full sm:w-auto">
+            <div class="flex items-center gap-4 w-full sm:col-start-1 sm:col-span-1">
+            <div class="flex items-center gap-4 w-full sm:col-start-1 sm:col-span-4">
+              Doubled logo size
+              <img src="./images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png" alt="Yummy Buy Mascot" class="w-24 h-24" />
+              <div class="flex flex-col gap-3">
+                Increased font size for h1
+                <h1 class="text-3xl sm:text-4xl font-bold text-primary"><a href="index.html" class="hover:text-secondary transition-colors duration-200">Yummy Buy 😋</a></h1>
+                Increased spacing between h1 and p by using gap-3 on the parent
+                <p class="text-sm text-gray-600 dark:text-gray-300">Browse our products and place your pre-order</p>
+              </div>
+            </div>
+            
+        Bottom-aligned navigation
+            <div class="self-center mt-6 sm:mt-0">
+            <div class="self-center mt-6 sm:mt-0 sm:col-start-2 sm:col-span-1">
+            <div class="self-center sm:col-start-6 sm:col-span-4">
+              <nav class="flex gap-6">
+                <nav class="flex gap-8 px-12 py-3 border border-indigo-100 rounded-full">
+                <a href="index.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">Home</a>
+                <span class="text-indigo-100 font-black">Products</span>
+                <a href="history.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">Orders</a>
+              </nav>
+            </div>
+
+        slot 3 is intentionally blank
+
+            <div class="flex items-end gap-4 mt-6 sm:mt-0">
+            <div class="flex items-end gap-4 mt-6 sm:mt-0 sm:col-start-4 sm:col-span-1">
+            <div class="flex items-end gap-4 sm:col-start-13 sm:col-span-2">
+              Enhanced admin link with better visibility and interaction feedback
+              <h3 id="adminLink" class="hidden">
+                <a href="admin.html" class="block text-primary hover:text-white bg-transparent hover:bg-primary px-3 py-2 rounded-md font-semibold transition-all duration-200 border border-primary hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-secondary">
+                  Admin Dashboard
+                </a>
+              </h3>
+              
+              User info display
+              <span id="userPhoneDisplay" class="hidden mr-3 text-sm text-gray-600 dark:text-gray-400"></span>
+              
+              Login button with enhanced styling
+              <button id="loginBtn" class="bg-primary hover:bg-secondary text-white py-2 px-4 rounded-md font-medium transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                Log In
+              </button>
+            </div>
+          </header> -->
+
+
+    <!-- Version 2.0 -->
+        <!-- <header class="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6 py-6 mb-6">
+            Logo and Title Section: Aligned with flex and gap
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                Added penguin logo image with appropriate size and alt text
+                <img src="./images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png" alt="Yummy Buy Mascot" class="w-12 h-12" />
+                <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-primary"><a href="index.html" class="hover:text-secondary transition-colors duration-200">Yummy Buy</a></h1>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Locally-sourced farm-to-table produce! 😋</p>
+                </div>
+            </div>
+            
+            Navigation: Improved spacing, alignment and hover states
+            <nav class="flex items-center gap-8 w-full sm:w-auto justify-center my-2 sm:my-0">
+                <span class="text-primary font-bold border-b-2 border-primary px-1">Home</span>
+                <a href="products.html" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-secondary font-medium transition-colors duration-200">Products</a>
+                <a href="history.html" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-secondary font-medium transition-colors duration-200">Orders</a>
+            </nav>
+            
+            User Actions: Grouped logically with consistent spacing
+            <div class="flex items-center gap-4 w-full sm:w-auto justify-end">
+                <span id="userPhoneDisplay" class="hidden text-sm text-gray-600 dark:text-gray-400"></span>
+                <a href="admin.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">ADMIN</a>
+                <button id="loginBtn" class="bg-primary hover:bg-secondary text-white py-2 px-4 rounded-md font-medium transition-all duration-200 focus:ring-2 focus:ring-secondary focus:ring-opacity-50">
+                Log In
+                </button>
+            </div>
+        </header> -->
+
+
+    <!-- Version 1.0 -->
+        <!-- <header class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center">
             <div>
-                <h1 class="text-3xl font-bold text-primary">Yummy Buy 😋</h1>
+                <h1 class="text-3xl font-bold text-primary"><a href="index.html">Yummy Buy 😋</a></h1>
                 <p class="text-gray-600 dark:text-gray-400 mt-2">Browse our products and place your pre-order</p>
             </div>
             <div>
-                <!-- NAVIGATION LINKS -->
-                <nav class="flex gap-4">
+                NAVIGATION LINKS
+                <nav class="flex gap-6">
+                    <span class="text-indigo-100 font-black">Home</span>
                     <a href="products.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">Products</a>
-                    <a href="history.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">History</a>
+                    <a href="history.html" class="text-primary hover:text-secondary font-medium transition-colors duration-200">Orders</a>
                 </nav>
             </div>
             <div class="mt-4 sm:mt-0 flex items-center">
-                <!-- LINK TO ADMIN DASHBOARD -->
+                LINK TO ADMIN DASHBOARD
                 <h3><a href="admin.html">ADMIN</a></h3>
                 <span id="userPhoneDisplay" class="hidden mr-3 text-sm text-gray-600 dark:text-gray-400"></span>
                 <button id="loginBtn" class="bg-primary hover:bg-secondary text-white py-2 px-4 rounded-md font-medium transition-all">
                     Log In
                 </button>
             </div>
-        </header>
+        </header> -->
 
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Product Catalogue Section -->

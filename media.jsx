@@ -1,8 +1,8 @@
 // Logo and Cover photo
-import cover_1 from "../assets/images-v2/smiling-powerful-woman.jpg"
-import cover_2 from "../assets/images-v2/la-mujer-dice-ok-vector(1).jpg"
-import logo_1 from "../assets/images-v2/vecteezy_african-civet-mascot_413_BG-Removed.png"
-import logo_2 from "../assets/images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png"
+import cover_1 from "./images-v2/smiling-powerful-woman.jpg"
+import cover_2 from "./images-v2/la-mujer-dice-ok-vector(1).jpg"
+import logo_1 from "./images-v2/vecteezy_african-civet-mascot_413_BG-Removed.png"
+import logo_2 from "./images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png"
 
 // Food Related
 import product_1 from "./images-v2/A_meticulously_organized_arran(1).jpeg"
