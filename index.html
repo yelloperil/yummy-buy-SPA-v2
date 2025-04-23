@@ -9,33 +9,54 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts -->
+<link
+  href="https://fonts.googleapis.com/css2?family=Roboto&family=Lora&family=DM+Mono&family=Zen+Maru+Gothic&family=Zen+Old+Mincho&family=IBM+Plex+Sans+JP&family=Iansui&family=Klee+One&family=Dela+Gothic+One&family=Yusei+Magic&family=Noto+Sans+SC&family=Zen+Kaku+Gothic+Antique&family=Noto+Sans+JP&family=DotGothic16&family=Noto+Sans+TC&display=swap"
+  rel="stylesheet"
+>
+
+<script>
+    tailwind.config = {
+        darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
                         primary: '#5D5CDE',
                         secondary: '#A5A4FF',
-                    }
-                }
-            }
-        }
-        
-        // Check for dark mode preference
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-        }
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (event.matches) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        });
-        <!-- https://tailwindcss.com/docs/dark-mode -->
-    </script>
+                    },
+                    fontFamily: {
+                        roboto: ['Roboto', 'sans-serif'],
+                        lora: ['Lora', 'serif'],
+                        'dm-mono': ['DM Mono', 'monospace'],
+                        'zen-maru-gothic': ['Zen Maru Gothic', 'sans-serif'],
+                        'zen-old-mincho': ['Zen Old Mincho', 'serif'],
+                        'ibm-plex-sans-jp': ['IBM Plex Sans JP', 'sans-serif'],
+                        iansui: ['Iansui', 'sans-serif'],
+                        'klee-one': ['Klee One', 'cursive'],
+                        'dela-gothic-one': ['Dela Gothic One', 'sans-serif'],
+                        'yusei-magic': ['Yusei Magic', 'sans-serif'],
+                        'noto-sans-sc': ['Noto Sans SC', 'sans-serif'],
+                        'zen-kaku-gothic-antique': ['Zen Kaku Gothic Antique', 'sans-serif'],
+                        'noto-sans-jp': ['Noto Sans JP', 'sans-serif'],
+                        dotgothic16: ['DotGothic16', 'sans-serif'],
+                        'noto-sans-tc': ['Noto Sans TC', 'sans-serif'],
+                    },
+                },
+            },
+    };
+
+    // Check for dark mode preference
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+        document.documentElement.classList.toggle('dark', event.matches);
+    });
+</script>
+
     <style>
         .order-card:hover {
             transform: translateY(-2px);
@@ -62,7 +83,7 @@
 
     
     <!-- Version 5.0 - Title text deleted, logo image link wrapper added, 3 columns instead of 14 -->
-     
+
         <!-- START of CURRENT header section -->
         <header class="my-8 pb-16 flex flex-col sm:grid sm:grid-cols-14 items-center gap-y-6">
             <div class="flex items-center gap-4 w-full sm:col-start-1 sm:col-span-2">
@@ -79,7 +100,43 @@
                 </a>
                 <div class="flex flex-col gap-3">
                     
-                    <!-- LOGO TEXT: Yummy Buy 😋 -->
+                    <!-- LOGO TEXT: 呀蜜佰 -->
+
+                    <h1 class="text-3xl sm:text-4xl font-zen-maru-gothic font-bold text-indigo-100">
+                    <!-- <h1 class="text-3xl sm:text-4xl font-zen-old-mincho font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-3xl sm:text-4xl font-ibm-plex-sans-jp font-bold text-indigo-100"> -->
+                    <h1 class="text-3xl sm:text-4xl font-iansui font-bold text-indigo-100">
+                    <h1 class="text-3xl sm:text-4xl font-klee-one font-bold text-indigo-100">
+                    <!-- <h1 class="text-3xl sm:text-4xl font-dela-gothic-one font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-3xl sm:text-4xl font-yusei-magic font-bold text-indigo-100"> -->
+                    <h1 class="text-3xl sm:text-4xl font-noto-sans-sc font-bold text-indigo-100">
+                    <!-- <h1 class="text-3xl sm:text-4xl font-zen-kaku-gothic-antique font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-3xl sm:text-4xl font-noto-sans-jp font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-3xl sm:text-4xl font-dotgothic16 font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-3xl sm:text-4xl font-noto-sans-tc font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-3xl sm:text-4xl font-roboto font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-3xl sm:text-4xl font-lora font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-3xl sm:text-4xl font-dm-mono font-bold text-indigo-100"> -->
+                        <a href="index.html" class="hover:text-secondary transition-colors duration-200">
+                            呀蜜佰 😋
+                        </a>
+                    </h1>
+                    <!-- https://fonts.google.com/specimen/Zen+Maru+Gothic -->
+                    <!-- https://fonts.google.com/specimen/Zen+Old+Mincho -->
+                    <!-- https://fonts.google.com/specimen/IBM+Plex+Sans+JP -->
+                    <!-- https://fonts.google.com/specimen/Iansui -->
+                    <!-- https://fonts.google.com/specimen/Klee+One -->
+                    <!-- https://fonts.google.com/specimen/Dela+Gothic+One -->
+                    <!-- https://fonts.google.com/specimen/Yusei+Magic -->
+                    <!-- https://fonts.google.com/specimen/Noto+Sans+SC -->
+                    <!-- https://fonts.google.com/specimen/Zen+Kaku+Gothic+Antique -->
+                    <!-- https://fonts.google.com/specimen/Noto+Sans+JP -->
+                    <!-- https://fonts.google.com/specimen/DotGothic16 -->
+                    <!-- https://fonts.google.com/specimen/Noto+Sans+TC -->
+
+
+                    
+                    <!-- LOGO TEXT: Yummy Buy -->
                     <!-- <h1 class="text-3xl sm:text-4xl font-bold text-primary">
                         <a href="index.html" class="hover:text-secondary transition-colors duration-200">
                             Yummy Buy 😋
