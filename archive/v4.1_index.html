@@ -681,9 +681,8 @@
         
         // Check if user is already logged in
         firebase.auth().onAuthStateChanged((user) => {
-            const websiteAdmins = ['+17789569063', '+16049778798', '+15054443986', '+17788929401', '+1-778-956-9063', '+1-604-977-8798', '+1-505-444-3986', '+1-778-892-9401' ]
-            if (user && websiteAdmins.includes(user.phoneNumber)) {
-                // User is signed in and is an admin
+            if (user) {
+                // User is signed in
                 currentUser = user;
                 isLoggedIn = true;
                 
@@ -691,17 +690,6 @@
                 loginBtn.textContent = 'Log Out';
                 userPhoneDisplay.textContent = user.phoneNumber || 'Authenticated User';
                 userPhoneDisplay.classList.remove('hidden');
-                document.getElementById('adminLink').classList.remove('hidden');
-            } else if (user) {
-                // User is signed in but not an admin
-                currentUser = user;
-                isLoggedIn = true;
-                
-                // Update UI
-                loginBtn.textContent = 'Log Out';
-                userPhoneDisplay.textContent = user.phoneNumber || 'Authenticated User';
-                userPhoneDisplay.classList.remove('hidden');
-                document.getElementById('adminLink').classList.add('hidden');
             } else {
                 // User is signed out
                 currentUser = null;
@@ -710,7 +698,6 @@
                 // Update UI
                 loginBtn.textContent = 'Log In';
                 userPhoneDisplay.classList.add('hidden');
-                document.getElementById('adminLink').classList.add('hidden');
             }
         });
         
