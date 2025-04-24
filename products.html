@@ -1004,7 +1004,7 @@
             items: orderItems,
             total: total.toFixed(2),
             orderDate: new Date().toISOString(),
-            status: 'pre-order',
+            status: 'order placed',
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         };
 
@@ -1016,7 +1016,7 @@
             loadingOverlay.classList.add('hidden');
             
             // Show confirmation modal
-            confirmationMessage.textContent = `Thank you ${customerData.name}! Your pre-order #${docRef.id} has been received.`;
+            confirmationMessage.textContent = `Thank you ${customerData.name}! Your order #${docRef.id} has been received.`;
             orderReference.textContent = `Order Reference: ${docRef.id}`;
             confirmationModal.classList.remove('hidden');
             

@@ -777,26 +777,26 @@
                         </div>
                     </div>
                     
-                    <div class="mb-6">
-                        <h4 class="font-bold mb-2">Shipping Address</h4>
-                        <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-sm">
+                    <div class="my-4">
+                        <h4 class="bg-[#938cd9] p-3 rounded text-indigo-50 font-bold mb-2">Shipping Address</h4>
+                        <div class="bg-white border-b border-[#5a5198] p-3 pb-2 mx-2 text-sm font-medium text-black">
                             ${order.customer.address.replace(/\n/g, '<br>')}
                         </div>
                     </div>
                     
-                    <div class="mb-6">
-                        <h4 class="font-bold mb-2">Order Items</h4>
+                    <div class="my-8">
+                        <h4 class="bg-[#938cd9] p-3 rounded text-indigo-50 font-bold mb-6">Order Items</h4>
                         <div class="overflow-x-auto">
-                            <table class="w-full">
+                            <table class="w-full max-w-[97%] mx-auto">
                                 <thead>
                                     <tr class="border-b border-gray-300">
-                                        <th class="text-left pb-2">Product</th>
-                                        <th class="text-center pb-2">Qty</th>
-                                        <th class="text-right pb-2">Price</th>
-                                        <th class="text-right pb-2">Subtotal</th>
+                                        <th class="text-left text-lg pb-2">Product</th>
+                                        <th class="text-center text-lg pb-2">Qty</th>
+                                        <th class="text-right text-lg pb-2">Price</th>
+                                        <th class="text-right text-lg pb-2">Subtotal</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody">
                                     ${itemsTable}
                                     <tr class="border-t border-gray-300 font-bold">
                                         <td colspan="3" class="text-right pt-3">Total:</td>
@@ -808,9 +808,9 @@
                     </div>
                     
                     ${order.customer.notes ? `
-                    <div class="mb-6">
-                        <h4 class="font-bold mb-2">Customer Notes</h4>
-                        <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-sm">
+                    <div class="my-8">
+                        <h4 class="bg-[#938cd9] p-3 rounded text-indigo-50 font-bold mb-2">Customer Notes</h4>
+                        <div class="bg-white border-b border-[#5a5198] p-3 pb-2 mx-2 text-sm font-medium text-black">
                             ${order.customer.notes.replace(/\n/g, '<br>')}
                         </div>
                     </div>
