@@ -336,6 +336,52 @@
         const db = firebase.firestore(); // Add Firestore reference
         const auth = firebase.auth();
         
+        // Initialize cart
+        let cart = [];
+        
+        // Initialize cart-related DOM elements
+        const emptyCartMessage = document.getElementById('emptyCartMessage');
+        const cartItems = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        const clearCartBtn = document.getElementById('clearCartBtn');
+        const submitOrderBtn = document.getElementById('submitOrderBtn');
+        const productList = document.getElementById('productList');
+        const searchInput = document.getElementById('searchInput');
+        const orderForm = document.getElementById('orderForm');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+        const orderReference = document.getElementById('orderReference');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        
+        // Toast function
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-4 right-4 p-4 rounded-lg shadow-lg ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } text-white transition-all duration-300 transform translate-y-20 opacity-0`;
+            
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => {
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            }, 100);
+            
+            // Hide toast after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+                
+                // Remove toast from DOM after animation
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+        
         // Authentication State
         let isLoggedIn = false;
         let currentUser = null;
@@ -700,6 +746,9 @@
             }
         }
 
+        // Product cache
+        let productCache = new Map();
+
         // Display products
         async function displayProducts() {
             productList.innerHTML = '<div class="col-span-full text-center py-8">Loading products...</div>';
@@ -712,9 +761,19 @@
                     return;
                 }
                 
+                // Clear existing cache
+                productCache.clear();
+                
                 productList.innerHTML = '';
                 snapshot.forEach((doc) => {
-                    const product = doc.data();
+                    const product = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    
+                    // Cache the product
+                    productCache.set(doc.id, product);
+                    
                     const productCard = document.createElement('div');
                     productCard.className = 'border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
                     
@@ -780,17 +839,13 @@
             const quantity = parseInt(quantityInput.value);
             
             try {
-                // Fetch the product details from Firestore
-                const productDoc = await db.collection('products').doc(productId).get();
-                if (!productDoc.exists) {
+                // Get product from cache instead of Firestore
+                const product = productCache.get(productId);
+                
+                if (!product) {
                     showToast('Product not found', 'error');
                     return;
                 }
-                
-                const product = {
-                    id: productId,
-                    ...productDoc.data()
-                };
                 
                 // Check if product is already in cart
                 const existingItem = cart.find(item => item.product.id === productId);
