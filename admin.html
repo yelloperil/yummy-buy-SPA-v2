@@ -96,7 +96,7 @@
         <!-- Admin Header -->
         <header class="mb-8 py-8 flex justify-between items-center">
 
-            <!-- back to home -->
+            <!-- BACK TO HOME -->
             <span class="text-primary text-lg font-bold hover:text-secondary flex gap-2 items-center">
                 <!-- <img src="/assets/icons/left-arrow.gif" alt="link back to home" class="w-8 h-8"> -->
                 <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-8 h-8">
@@ -106,28 +106,34 @@
                 <a href="index.html" class="text-primary hover:text-secondary pb-1 pl-2">back to home</a>
             </span>
 
-            <!-- title -->
-            
-            <!-- <h1 class="font-lora text-3xl font-bold text-primary">瞭望塔</h1> -->
-            <!-- <h1 class="font-dmMono text-3xl font-bold text-primary">瞭望塔</h1> -->
-            <h1 class="font-zenMaru text-6xl font-bold text-primary pb-6">瞭望塔</h1>
-            <!-- <h1 class="font-zenMincho text-3xl font-bold text-primary">瞭望塔</h1> -->
-            <!-- <h1 class="font-ibm-plex-sans-jp text-3xl font-bold text-primary">瞭望塔</h1> -->
-            <!-- <h1 class="font-iansui text-3xl font-bold text-primary">瞭望塔</h1> -->
-            <!-- <h1 class="font-klee-one text-3xl font-bold text-primary">瞭望塔</h1> -->
-            <!-- <h1 class="font-dela-gothic-one text-3xl font-bold text-primary">瞭望塔</h1> -->
-            <!-- <h1 class="font-yusei-magic text-3xl font-bold text-primary">瞭望塔</h1> -->
-            <!-- <h1 class="font-noto-sans-sc text-3xl font-bold text-primary">瞭望塔</h1> -->
-            <!-- <h1 class="font-zen-kaku-gothic-antique text-3xl font-bold text-primary">瞭望塔</h1> -->
-            <!-- <h1 class="font-noto-sans-jp text-3xl font-bold text-primary">瞭望塔</h1> -->
-            <!-- <h1 class="font-dotgothic16 text-3xl font-bold text-primary">瞭望塔</h1> -->
-            <!-- <h1 class="font-noto-sans-tc text-3xl font-bold text-primary">瞭望塔</h1> -->
-            
-            <!-- <h1 class=" text-3xl font-bold text-primary">瞭望塔</h1> -->
+            <!-- TITLE CONTAINER -->
+            <div class="flex items-center gap-2 pr-24">
+                
+                <!-- TITLE IMAGE -->
+                <img src="/assets/icons/radar-0_no_bg.gif" alt="link back to home" class="w-24 h-24">
+                <!-- <img src="/assets/icons/dashboard_no_bg.gif" alt="link back to home" class="w-24 h-24"> -->
+                
+                <!-- TITLE TEXT -->
+                <h1 class="self-end font-zenMaru text-6xl font-bold text-primary pb-6">瞭望塔</h1>
+                <!-- <h1 class="font-lora text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-dmMono text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-zenMincho text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-ibm-plex-sans-jp text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-iansui text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-klee-one text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-dela-gothic-one text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-yusei-magic text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-noto-sans-sc text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-zen-kaku-gothic-antique text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-noto-sans-jp text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-dotgothic16 text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-noto-sans-tc text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="text-3xl font-bold text-primary">瞭望塔</h1> -->
                 <!-- <h1 class="text-3xl font-bold text-primary">指挥中心</h1> -->
                 <!-- <h1 class="text-3xl font-bold text-primary">大本营 - 控制面板</h1> -->
                 <!-- <h1 class="text-3xl font-bold text-primary">Admin Dashboard</h1> -->
-            </h1>
+
+            </div>
 
             <!-- logout -->
             <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md">
@@ -146,7 +152,7 @@
         <div id="ordersSection">
             <!-- View Selector -->
             <div class="flex mb-4 space-x-2">
-                <button id="chronologicalView" class="bg-primary text-white px-4 py-2 rounded-md">Chronological</button>
+                <button id="chronologicalView" class="bg-primary text-white px-4 py-2 rounded-md">By Order Time</button>
                 <button id="userView" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md">By User</button>
                 <button id="productView" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md">By Product</button>
             </div>
@@ -435,15 +441,15 @@
                         <span class="bg-[#f1f0fb] px-3 py-1 rounded text-sm font-semibold ${getStatusColor(order.status)}">${order.status}</span>
                     </div>
                     <div class="flex justify-between text-sm">
-                        <span class="font-medium">Order #${order.id}</span>
-                        <span>${orderDate}</span>
+                        <span class="font-medium"><strong>Order ID:</strong> #${order.id}</span>
+                        <span class="font-medium"><strong>Order Date:</strong> ${orderDate}</span>
                     </div>
-                    <div class="my-3">
-                        <span class="bg-[#f1f0fb] px-3 py-1 rounded text-sm text-[#7b6fce] font-semibold">${extractMonthDay(orderDate)}</span>
+                    <div class="my-3 mt-6">
+                        <span class="bg-[#f1f0fb] px-3 py-1 rounded text-lg text-[#aca9e4] font-bold">${extractMonthDay(orderDate)}</span>
                     </div>
                     <div class="flex justify-between items-end">
-                        <div class="flex text-lg items-center">
-                            <span class="text-primary font-bold">$${order.total}</span>
+                        <div class="flex items-center">
+                            <span class="text-xl text-primary font-bold">$${order.total}</span>
                             <span class="text-base font-medium mx-2"> – </span>
                             <span class="text-base font-medium">(${totalItems} items)</span>
                         </div>
@@ -499,15 +505,15 @@
 
             userGroups.forEach(userGroup => {
                 const userSection = document.createElement('div');
-                userSection.className = 'bg-white rounded-lg shadow-md p-4 mb-6';
+                userSection.className = 'bg-white rounded-lg shadow-md p-6 mb-6';
                 userSection.innerHTML = `
                     <div class="border-b pb-3 mb-3">
-                        <h3 class="font-bold text-lg">
+                        <h3 class="text-primary font-bold text-xl mb-1">
                             ${userGroup.customer.name || 'Guest Customer'}
                             ${userGroup.customer.userPhone ? `<span class="text-sm font-normal text-gray-600">(Registered User)</span>` : ''}
                         </h3>
-                        <div class="flex justify-between text-sm">
-                            <span>${userGroup.customer.phone}</span>
+                        <div class="flex justify-between text-sm font-medium">
+                            <span>Phone: ${userGroup.customer.phone} ${userGroup.customer.wechat ? `| WeChat: ${userGroup.customer.wechat}` : ''}</span>
                             <div>
                                 <span class="mr-4">Orders: ${userGroup.totalOrders}</span>
                                 <span class="text-primary font-bold">Total: $${userGroup.totalSpent.toFixed(2)}</span>
