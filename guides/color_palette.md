@@ -59,6 +59,7 @@ background lighter+2: #4d6cb0 = blue-600
 | `text-8xl` | 6rem (96px) | 1 |
 | `text-9xl` | 8rem (128px) | 1 |
 
+
 | Tailwind Class         | CSS `font-weight` | Supported by Zen Maru Gothic? |
 |------------------------|-------------------|------------------------------|
 | `font-thin`            | 100               | No (falls back to 400)       |

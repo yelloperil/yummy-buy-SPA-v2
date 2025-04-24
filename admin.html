@@ -428,23 +428,30 @@
                 const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0);
                 
                 const orderCard = document.createElement('div');
-                orderCard.className = 'bg-white rounded-lg shadow-md p-4 order-card transition-all';
+                orderCard.className = 'flex flex-col bg-white rounded-lg shadow-md p-6 order-card transition-all';
                 orderCard.innerHTML = `
                     <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-bold">Order #${order.id}</h3>
-                        <span class="text-sm ${getStatusColor(order.status)}">${order.status}</span>
+                        <h3 class="text-primary text-xl font-bold">${order.customer.name}</h3>
+                        <span class="bg-[#f1f0fb] px-3 py-1 rounded text-sm font-semibold ${getStatusColor(order.status)}">${order.status}</span>
                     </div>
-                    <div class="flex justify-between text-sm mb-2">
-                        <span>${order.customer.name}</span>
+                    <div class="flex justify-between text-sm">
+                        <span class="font-medium">Order #${order.id}</span>
                         <span>${orderDate}</span>
                     </div>
-                    <div class="text-sm mb-2">
-                        <span class="font-medium">${totalItems} items</span> - 
-                        <span class="text-primary font-bold">$${order.total}</span>
+                    <div class="my-3">
+                        <span class="bg-[#f1f0fb] px-3 py-1 rounded text-sm text-[#7b6fce] font-semibold">${extractMonthDay(orderDate)}</span>
                     </div>
-                    <button data-order-id="${order.id}" class="view-details-btn text-primary hover:text-secondary text-sm font-medium">
-                        View Details
-                    </button>
+                    <div class="flex justify-between items-end">
+                        <div class="flex text-lg items-center">
+                            <span class="text-primary font-bold">$${order.total}</span>
+                            <span class="text-base font-medium mx-2"> – </span>
+                            <span class="text-base font-medium">(${totalItems} items)</span>
+                        </div>
+                        <button data-order-id="${order.id}" class="view-details-btn bg-primary text-white hover:bg-secondary text-sm font-medium px-3 py-2 rounded-md ml-auto">
+                            View Details
+                        </button>
+                    </div>
+                        
                 `;
                 ordersContainer.appendChild(orderCard);
             });
@@ -1179,8 +1186,23 @@
             document.getElementById('productModal').classList.add('hidden');
         });
 
-        // Initialize Firebase Storage (add to your Firebase config section)
-        // Add this to your Firebase imports at the top of the file: "<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></scrip"
+
+////////////////////////////////////////////////////////////////////////////////////////
+// // Random functions below // //
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+        // For dateString in format "4/21/2025, 12:49:56 AM"
+        function extractMonthDay(dateString) {
+            const datePart = dateString.split(",")[0];
+            const [month, day] = datePart.split("/");
+            const monthNames = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            return `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
+        }
+
 
     </script>
 </body>
