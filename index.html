@@ -9,53 +9,53 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
-<!-- Tailwind CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- Google Fonts -->
-<link
-  href="https://fonts.googleapis.com/css2?family=Roboto&family=Lora&family=DM+Mono&family=Zen+Maru+Gothic&family=Zen+Old+Mincho&family=IBM+Plex+Sans+JP&family=Iansui&family=Klee+One&family=Dela+Gothic+One&family=Yusei+Magic&family=Noto+Sans+SC&family=Zen+Kaku+Gothic+Antique&family=Noto+Sans+JP&family=DotGothic16&family=Noto+Sans+TC&display=swap"
-  rel="stylesheet"
->
+    <!-- Google Fonts -->
+    <link
+    href="https://fonts.googleapis.com/css2?family=Roboto&family=Lora&family=DM+Mono&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Zen+Old+Mincho&family=IBM+Plex+Sans+JP&family=Iansui&family=Klee+One&family=Dela+Gothic+One&family=Yusei+Magic&family=Noto+Sans+SC&family=Zen+Kaku+Gothic+Antique&family=Noto+Sans+JP&family=DotGothic16&family=Noto+Sans+TC&display=swap"
+    rel="stylesheet"
+    >
 
-<script>
-    tailwind.config = {
-        darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#5D5CDE',
-                        secondary: '#A5A4FF',
-                    },
-                    fontFamily: {
-                        roboto: ['Roboto', 'sans-serif'],
-                        lora: ['Lora', 'serif'],
-                        'dm-mono': ['DM Mono', 'monospace'],
-                        'zen-maru-gothic': ['Zen Maru Gothic', 'sans-serif'],
-                        'zen-old-mincho': ['Zen Old Mincho', 'serif'],
-                        'ibm-plex-sans-jp': ['IBM Plex Sans JP', 'sans-serif'],
-                        iansui: ['Iansui', 'sans-serif'],
-                        'klee-one': ['Klee One', 'cursive'],
-                        'dela-gothic-one': ['Dela Gothic One', 'sans-serif'],
-                        'yusei-magic': ['Yusei Magic', 'sans-serif'],
-                        'noto-sans-sc': ['Noto Sans SC', 'sans-serif'],
-                        'zen-kaku-gothic-antique': ['Zen Kaku Gothic Antique', 'sans-serif'],
-                        'noto-sans-jp': ['Noto Sans JP', 'sans-serif'],
-                        dotgothic16: ['DotGothic16', 'sans-serif'],
-                        'noto-sans-tc': ['Noto Sans TC', 'sans-serif'],
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#5D5CDE',
+                            secondary: '#A5A4FF',
+                        },
+                        fontFamily: {
+                            roboto: ['Roboto', 'sans-serif'],
+                            lora: ['Lora', 'serif'],
+                            dmMono: ['DM Mono', 'monospace'],
+                            zenMaru: ['"Zen Maru Gothic"', 'sans-serif'],
+                            zenMincho: ['Zen Old Mincho', 'serif'],
+                            'ibm-plex-sans-jp': ['IBM Plex Sans JP', 'sans-serif'],
+                            iansui: ['Iansui', 'sans-serif'],
+                            'klee-one': ['Klee One', 'cursive'],
+                            'dela-gothic-one': ['Dela Gothic One', 'sans-serif'],
+                            'yusei-magic': ['Yusei Magic', 'sans-serif'],
+                            'noto-sans-sc': ['Noto Sans SC', 'sans-serif'],
+                            'zen-kaku-gothic-antique': ['Zen Kaku Gothic Antique', 'sans-serif'],
+                            'noto-sans-jp': ['Noto Sans JP', 'sans-serif'],
+                            dotgothic16: ['DotGothic16', 'sans-serif'],
+                            'noto-sans-tc': ['Noto Sans TC', 'sans-serif'],
+                        },
                     },
                 },
-            },
-    };
+        };
 
-    // Check for dark mode preference
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.classList.add('dark');
-    }
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-        document.documentElement.classList.toggle('dark', event.matches);
-    });
-</script>
+        // Check for dark mode preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            document.documentElement.classList.toggle('dark', event.matches);
+        });
+    </script>
 
     <style>
         .order-card:hover {
@@ -101,26 +101,35 @@
                 <div class="flex flex-col gap-3">
                     
                     <!-- LOGO TEXT: 呀蜜佰 -->
-
-                    <h1 class=" font-zen-maru-gothic text-3xl sm:text-4xl font-bold text-indigo-100">
-                    <!-- <h1 class="text-3xl sm:text-4xl font-zen-old-mincho font-bold text-indigo-100"> -->
-                    <!-- <h1 class="text-3xl sm:text-4xl font-ibm-plex-sans-jp font-bold text-indigo-100"> -->
-                    <!-- <h1 class="text-3xl sm:text-4xl font-iansui font-bold text-indigo-100"> -->
-                    <!-- <h1 class="text-3xl sm:text-4xl font-klee-one font-bold text-indigo-100"> -->
-                    <!-- <h1 class="text-3xl sm:text-4xl font-dela-gothic-one font-bold text-indigo-100"> -->
-                    <!-- <h1 class="text-3xl sm:text-4xl font-yusei-magic font-bold text-indigo-100"> -->
-                    <!-- <h1 class="text-3xl sm:text-4xl font-noto-sans-sc font-bold text-indigo-100"> -->
-                    <!-- <h1 class="text-3xl sm:text-4xl font-zen-kaku-gothic-antique font-bold text-indigo-100"> -->
-                    <!-- <h1 class="text-3xl sm:text-4xl font-noto-sans-jp font-bold text-indigo-100"> -->
-                    <!-- <h1 class="text-3xl sm:text-4xl font-dotgothic16 font-bold text-indigo-100"> -->
-                    <!-- <h1 class="text-3xl sm:text-4xl font-noto-sans-tc font-bold text-indigo-100"> -->
-                    <!-- <h1 class="text-3xl sm:text-4xl font-roboto font-bold text-indigo-100"> -->
-                    <!-- <h1 class="text-3xl sm:text-4xl font-lora font-bold text-indigo-100"> -->
-                    <!-- <h1 class="text-3xl sm:text-4xl font-dm-mono font-bold text-indigo-100"> -->
+                    <h1 class="font-zenMaru text-xl sm:text-5xl font-bold text-indigo-100">
                         <a href="index.html" class="hover:text-secondary transition-colors duration-200">
                             呀蜜佰 😋
                         </a>
                     </h1>
+
+                    <!-- <h1 class="font-zenMaru text-xl sm:text-5xl font-normal text-indigo-100"> -->
+                    <!-- <h1 class="font-zenMaru text-xl sm:text-5xl font-medium text-indigo-100"> -->
+                    <!-- <h1 class="font-zenMaru text-xl sm:text-5xl font-bold text-indigo-100"> -->
+                    <!-- <h1 class="font-zenMaru text-xl sm:text-5xl font-black text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-zen-maru-gothic font-medium text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-zen-maru-gothic font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-zenMaru font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-zen-maru-gothic font-black text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-roboto font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-zen-old-mincho font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-ibm-plex-sans-jp font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-iansui font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-klee-one font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-dela-gothic-one font-thin text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-yusei-magic font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-noto-sans-sc font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-zen-kaku-gothic-antique font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-noto-sans-jp font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-dotgothic16 font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-noto-sans-tc font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-lora font-bold text-indigo-100"> -->
+                    <!-- <h1 class="text-xl sm:text-5xl font-dm-mono font-bold text-indigo-100"> -->
+
                     <!-- https://fonts.google.com/specimen/Zen+Maru+Gothic -->
                     <!-- https://fonts.google.com/specimen/Zen+Old+Mincho -->
                     <!-- https://fonts.google.com/specimen/IBM+Plex+Sans+JP -->
@@ -133,8 +142,6 @@
                     <!-- https://fonts.google.com/specimen/Noto+Sans+JP -->
                     <!-- https://fonts.google.com/specimen/DotGothic16 -->
                     <!-- https://fonts.google.com/specimen/Noto+Sans+TC -->
-
-
                     
                     <!-- LOGO TEXT: Yummy Buy -->
                     <!-- <h1 class="text-3xl sm:text-4xl font-bold text-primary">
@@ -144,29 +151,65 @@
                     </h1> -->
                     
                     <!-- LOGO TEXT: nǐ. 你   |   è. 饿   |   le. 了   |   ma. 吗 ? -->
-                    <p class="ml-2 text-md text-gray-600 dark:text-gray-300">
-                        <a href="index.html" class="hover:text-secondary transition-colors duration-200">
+                    <!-- <p class="ml-2 text-md text-gray-600 dark:text-gray-300"> -->
+                        <!-- <a href="index.html" class="hover:text-secondary transition-colors duration-200"> -->
                             <!-- nǐ. 你   |   è. 饿   |   le. 了   |   ma. 吗 ? -->
                             <!-- 你   .  饿   .   了   .   吗  -->
-                        </a>
-                    </p>
+                        <!-- </a> -->
+                    <!-- </p> -->
                 </div>
             </div>
             
             <!-- CONTAINER: NAVIGATION LINKS -->
-            <div class="self-center sm:col-start-3 sm:col-span-2">
-               
+            <div class="self-center sm:col-start-6 sm:col-span-3">
+                <!-- 
+                primary: #5D5CDE - indigo-500
+                secondary: #A5A4FF - indigo-300
+                logo text: #7B6FCE indigo-500 (Venus Violet)
+                    Tints (Venus Violet): {
+                        #7b6fce,
+                        #877ed4, 
+                        #938cd9, 
+                        #9f9adf, 
+                        #aca9e4, 
+                        #b9b7e9, 
+                        #c7c5ee, 
+                        #d5d3f2, 
+                        #e2e2f7, 
+                        #f1f0fb, 
+                    },
+                    Shades (Venus Violet): {
+                        #7b6fce
+                        #6a60b3
+                        #5a5198,
+                        #4a427f,
+                        #3a3466,
+                        #2c274e,
+                        #1e1a38,
+                        #100e23,
+                        #05040f,
+                        #010102,
+                    },
+                light text: indigo-200
+                background: #111827 - gray-900
+                background lighter+1: #354a79 = blue-900
+                background lighter+2: #4d6cb0 = blue-600 
+                -->
                 <!-- NAVIGATION LINKS -->
-                <nav class="flex justify-around justify-center px-12 py-3 outline outline-1 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105">
+                <nav class="flex justify-around justify-center px-12 pl-13 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105">
+                <!-- <nav class="flex justify-around justify-center px-12 py-3 outline outline-1 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105"> -->
+                <!-- <nav class="flex justify-around justify-center px-12 py-3 rounded-full transition-transform ease-in-out duration-200 hover:scale-105"> -->
                     
                     <!-- NAVIGATION LINKS: Home -->
                     <span class="text-indigo-100 hover:text-primary font-black border-b-2 border-primary hover:border-b-2 hover:border-indigo-100 px-1 transition-colors duration-200">Home</span>
                     
                     <!-- NAVIGATION LINKS: Products -->
-                    <a href="products.html" class="text-gray-700 dark:text-primary hover:text-primary dark:hover:text-secondary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">Products</a>
+                    <span class="text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">
+                        <a href="products.html">Products</a>
+                    </span>
                     
                     <!-- NAVIGATION LINKS: Orders -->
-                    <span class="text-gray-700 dark:text-primary hover:text-primary dark:hover:text-secondary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">Orders</span>
+                    <span class="text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">Orders</span>
                 </nav>
             </div>
             
@@ -184,7 +227,7 @@
                 <span id="userPhoneDisplay" class="hidden mr-3 text-sm text-gray-600 dark:text-gray-400"></span>
                 
                 <!-- LOGIN BUTTON -->
-                <button id="loginBtn" class="bg-primary hover:bg-secondary ml-auto text-white py-2.5 px-8 rounded-lg font-semibold transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                <button id="loginBtn" class="bg-[#4a427f] hover:bg-secondary ml-auto text-white py-2.5 px-8 rounded-lg font-semibold transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                 Log In
                 </button>
             </div>
