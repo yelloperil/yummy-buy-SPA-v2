@@ -95,7 +95,7 @@
     <!-- @@@ MAIN HEADER SECTION -->
         
         <!-- Version 5.0 - Title text deleted, logo image link wrapper added, 3 columns instead of 14 -->
-        <header class="my-8 pb-16 flex flex-col sm:grid sm:grid-cols-14 items-center gap-y-6">
+        <header class="my-2 pb-12 flex flex-col sm:grid sm:grid-cols-14 items-center gap-y-6">
             <div class="flex items-center gap-4 w-full sm:col-start-1 sm:col-span-2">
                 
                 <!-- LOGO -- Pulsating Glow Effect + Expand on Hover -->
@@ -151,7 +151,8 @@
                 <span id="userPhoneDisplay" class="hidden mr-3 text-sm text-gray-600 dark:text-gray-400"></span>
                 
                 <!-- LOGIN BUTTON -->
-                <button id="loginBtn" class="bg-[#4a427f] hover:bg-secondary ml-auto text-white py-2.5 px-8 rounded-lg font-semibold transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                <!-- <button id="loginBtn" class="bg-[#4a427f] hover:bg-secondary ml-auto text-white py-2.5 px-8 rounded-lg font-semibold transition-all duration-200 ring-1 ring-offset-1 ring-primary focus:ring-2 focus:ring-offset-2 focus:ring-primary"> -->
+                    <button id="loginBtn" class="bg-[#4a427f] hover:bg-secondary ml-auto text-white py-2.5 px-8 rounded-lg font-semibold transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                 Log In
                 </button>
             </div>
@@ -161,6 +162,7 @@
         
         <!-- Version 5.0 - Product Catalogue Section, Shopping Cart Section, Order Section -->
         <div class="flex flex-col lg:flex-row gap-8">
+
             <!-- Product Catalogue Section -->
             <div class="lg:w-2/3">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
@@ -176,25 +178,61 @@
             </div>
 
             <!-- Order Section -->
-            <div class="lg:w-1/3">
-                <!-- Shopping Cart -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+            
+            <!-- STICKY ON SCROLL -->
+            <div class="lg:w-1/3 sticky top-8 z-10 h-full flex flex-col items-center">
+
+                <!-- Shopping Cart Container -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6 w-full">
+
+                    <!-- Shopping Cart Title -->
                     <h2 class="text-xl font-semibold mb-4">Shopping Cart</h2>
-                    <div id="cartItems" class="mb-4">
-                        <p id="emptyCartMessage" class="text-gray-500 dark:text-gray-400">Your cart is empty</p>
-                        <!-- Cart items will be inserted here by JavaScript -->
+                    
+                    <!-- Cart Items Container -->
+                    <div id="cartItemsContainer" class="mb-4 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 min-h-[33.33vh] flex flex-col items-center justify-center">
+
+                        <!-- Empty Cart Image -->   
+                        <img id="emptyCartImage" src="./images-v2/gif-shopping-cart-stencil-gray-orange-300x300.gif" alt="Empty Cart" class="w-1/2 h-auto mb-4 mr-10 hidden">
+
+                        <!-- Empty Cart Message -->
+                        <p id="emptyCartMessage" class="text-gray-500 dark:text-gray-400 hidden">Wow, so empty!</p>
+                        <!-- "Your cart is empty!" -->
+                        <!-- "Looks like you haven't added anything yet." -->
+                        <!-- "Start shopping to fill your cart!" -->
+                        <!-- "No items in your cart. Let's change that!" -->
+                        <!-- "Your cart is as empty as a desert!" -->
+                        <!-- "Wow, such empty!" (inspired by Reddit) -->
+                        <!-- "Nothing here yet. Browse our products!" -->
+
+                        <!-- Cart Items -->
+                        <div id="cartItems" class="mb-4 flex flex-col items-center justify-center">
+                            <!-- Cart items will be inserted here by JavaScript -->
+                        </div>
+                        
                     </div>
+
+                    <!-- Cart Total -->
                     <div id="cartTotal" class="font-semibold text-lg mb-4">Total: $0.00</div>
-                    <button id="clearCartBtn" 
-                        class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+                    
+                    <!-- Redesigned Place Order Button -->
+                    <!-- <button id="toggleOrderFormBtn" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-2 rounded-md font-bold transition duration-200 ease-in-out"> -->
+                    <button id="toggleOrderFormBtn" class="w-full bg-[#6a60b3] hover:bg-[#a5a4ff] text-white py-3 px-2 my-3 rounded-md font-bold transition duration-200 ease-in-out">
+                        Checkout
+                    </button>
+                    
+                    <!-- Redesigned Clear Cart Button -->
+                    <!-- <button id="clearCartBtn" class="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-2 rounded-md font-medium transition duration-200 ease-in-out"> -->
+                    <button id="clearCartBtn" class="w-full bg-[#ff6f61] hover:bg-[#ffccbc] text-white py-3 px-2 my-3 rounded-md font-bold transition duration-200 ease-in-out">
                         Clear Cart
                     </button>
                 </div>
 
                 <!-- Customer Information -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+                <div id="orderFormContainer" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6 w-full hidden">
+
                     <h2 class="text-xl font-semibold mb-4">Finalize Order</h2>
-                    <form id="orderForm" class="space-y-4">
+
+                    <form id="orderForm" class="space-y-4 hidden">
 
                         <!-- Customer Name -->
                         <div>
@@ -235,11 +273,18 @@
                         </div>
 
                         <button type="submit" id="submitOrderBtn" disabled
-                            class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                            class="w-full bg-[#44b34e] hover:bg-white text-white hover:text-[#44b34e] py-3 px-2 my-3 rounded-md font-bold transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
                             Place Order
                         </button>
 
                     </form>
+                </div>
+
+                <!-- Centered Image -->
+                <div class="h-full flex items-center justify-center w-full">
+                    <img src="./images-v2/BG_REMOVED_YummyBuy_Customized_Logo_B_001.png" 
+                         alt="Yummy Buy Mascot" 
+                         class="w-1/2 h-auto aspect-square object-contain md:w-1/3 lg:w-1/2">
                 </div>
             </div>
         </div>
@@ -735,6 +780,7 @@
         // DOM elements
         const productList = document.getElementById('productList');
         const cartItems = document.getElementById('cartItems');
+        const emptyCartImage = document.getElementById('emptyCartImage');
         const emptyCartMessage = document.getElementById('emptyCartMessage');
         const cartTotal = document.getElementById('cartTotal');
         const clearCartBtn = document.getElementById('clearCartBtn');
@@ -857,13 +903,15 @@
         // Update cart display
         function updateCartDisplay() {
             if (cart.length === 0) {
-                emptyCartMessage.style.display = 'block';
+                emptyCartImage.classList.remove('hidden');
+                emptyCartMessage.classList.remove('hidden');
                 cartItems.innerHTML = '';
                 cartTotal.textContent = 'Total: $0.00';
                 clearCartBtn.disabled = true;
                 submitOrderBtn.disabled = true;
             } else {
-                emptyCartMessage.style.display = 'none';
+                emptyCartImage.classList.add('hidden');
+                emptyCartMessage.classList.add('hidden');
                 
                 let cartHTML = '';
                 let total = 0;
@@ -968,7 +1016,7 @@
             loadingOverlay.classList.add('hidden');
             
             // Show confirmation modal
-            confirmationMessage.textContent = `Thank you ${customerData.name}! Your order #${docRef.id} has been received.`;
+            confirmationMessage.textContent = `Thank you ${customerData.name}! &#127870; Your order #${docRef.id} has been received.`;
             orderReference.textContent = `Order Reference: ${docRef.id}`;
             confirmationModal.classList.remove('hidden');
             
@@ -979,7 +1027,7 @@
         } catch (error) {
             console.error("Error submitting order:", error);
             loadingOverlay.classList.add('hidden');
-            alert("There was an error processing your order. Please try again.");
+            alert("&excl; There was an error processing your order. Please try again.");
         }
     }
 
@@ -1021,7 +1069,50 @@
         // Handle default delivery type on page load
         function handleDefaultDeliveryType() {
             deliveryTypeSelect.value = 'Pickup';
-        } 
+        }
+
+        // Function to toggle the visibility of the order form
+        function toggleOrderForm() {
+            const orderFormContainer = document.getElementById('orderFormContainer');
+            const orderForm = document.getElementById('orderForm');
+
+            // Toggle the visibility of the order form container
+            if (orderFormContainer.classList.contains('hidden')) {
+                orderFormContainer.classList.remove('hidden'); // Show the order form
+                orderForm.classList.remove('hidden'); // Show the form inside the container
+            } else {
+                orderFormContainer.classList.add('hidden'); // Hide the order form
+                orderForm.classList.add('hidden'); // Hide the form inside the container
+            }
+        }
+
+        // Add event listener to the toggle button
+        document.getElementById('toggleOrderFormBtn').addEventListener('click', toggleOrderForm);
+
+        // Updated submitOrderBtn click event
+        submitOrderBtn.addEventListener('click', (e) => {
+            // Prevent default form submission
+            e.preventDefault();
+
+            // Check if the user is logged in
+            if (!isLoggedIn) {
+                alert("&excl; Please sign in to place your order.");
+                return;
+            }
+
+            // Check if required fields are filled
+            const requiredFields = [document.getElementById('name'), document.getElementById('wechat'), document.getElementById('deliveryType')];
+            const allFilled = requiredFields.every(field => field.value.trim() !== '');
+
+            if (!allFilled) {
+                alert("&excl; Please fill out all required fields.");
+                return;
+            }
+
+            // If all checks pass, proceed with form submission
+            orderForm.submit();
+        });
+
 
     </script>
 </body>
