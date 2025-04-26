@@ -125,15 +125,19 @@
                 <nav class="flex justify-around justify-center gap-2 px-11 pl-13 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105">
                     
                     <!-- NAVIGATION LINKS: Home -->
-                    <span class="text-base text-indigo-100 hover:text-primary font-black border-b-2 border-primary hover:border-b-2 hover:border-indigo-100 px-1 transition-colors duration-200">Home</span>
-                    
-                    <!-- NAVIGATION LINKS: Products -->
                     <span class="text-base text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">
-                        <a href="products.html">Products</a>
+                        <a href="index.html">Home</a>
                     </span>
+
+                    <!-- NAVIGATION LINKS: Products -->
+                    <span class="text-base text-indigo-100 hover:text-primary font-black border-b-2 border-primary hover:border-b-2 hover:border-indigo-100 px-1 transition-colors duration-200">Products</span>
                     
                     <!-- NAVIGATION LINKS: Orders -->
-                    <span class="text-base text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">Orders</span>
+                    <!-- <span class="text-base text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">Orders</span> -->
+                    <span class="text-base text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">
+                        <a href="history.html">Your Orders</a>
+                    </span>
+                    
                 </nav>
             </div>
             
@@ -1004,7 +1008,7 @@
             items: orderItems,
             total: total.toFixed(2),
             orderDate: new Date().toISOString(),
-            status: 'pre-order',
+            status: 'order placed',
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         };
 
@@ -1016,7 +1020,7 @@
             loadingOverlay.classList.add('hidden');
             
             // Show confirmation modal
-            confirmationMessage.textContent = `Thank you ${customerData.name}! Your pre-order #${docRef.id} has been received.`;
+            confirmationMessage.textContent = `Thank you ${customerData.name}! Your order #${docRef.id} has been received.`;
             orderReference.textContent = `Order Reference: ${docRef.id}`;
             confirmationModal.classList.remove('hidden');
             

@@ -744,7 +744,7 @@
                             <div class="space-y-1 text-sm">
                                 <div class="flex">
                                     <span class="w-32 text-gray-600">Order ID:</span>
-                                    <span>${order.id}</span>
+                                    <span>${order.id.toUpperCase()}</span>
                                 </div>
                                 <div class="flex">
                                     <span class="w-32 text-gray-600">Date:</span>
@@ -783,7 +783,7 @@
                                 ${order.customer.userId ? `
                                 <div class="flex">
                                     <span class="w-32 text-gray-600">User ID:</span>
-                                    <span class="text-xs">${order.customer.userId}</span>
+                                    <span class="text-sm">${order.customer.userId.toUpperCase()}</span>
                                 </div>
                                 ` : ''}
                             </div>

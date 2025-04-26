@@ -99,7 +99,7 @@
         <!-- Version 7.0 - HYBRID - structure of old, responsiveness of new -->
         <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
-        <header class="my-2 pb-12 flex flex-col sm:grid sm:grid-cols-14 items-center gap-y-6">
+        <header class="relative flex-col sm:grid sm:grid-cols-14 items-center gap-y-6 my-2 pb-12">
             <div class="flex items-center gap-4 w-full sm:col-start-1 sm:col-span-2">
                 
                 <!-- LOGO -- Pulsating Glow Effect + Expand on Hover -->
@@ -131,7 +131,15 @@
             <div class="self-center sm:col-start-6 sm:col-span-3">
 
                 <!-- NAVIGATION LINKS -->
-                <nav class="flex justify-around justify-center gap-2 px-11 pl-13 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105">
+                <!-- <nav class="flex justify-around justify-center gap-2 px-9 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105"> -->
+                    <nav class="flex justify-around justify-center bg-[#292f3d] gap-2 px-9 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105">
+                <!-- <nav class="flex justify-around justify-center bg-[#05070c] gap-2 px-9 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105"> -->
+                <!-- <nav class="flex justify-around justify-center bg-[#414652] gap-2 px-9 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105"> -->
+                <!-- <nav class="flex justify-around justify-center bg-[#374151] gap-2 px-9 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105"> -->
+                <!-- <nav class="flex justify-around justify-center bg-[#1F2937] gap-2 px-9 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105"> -->
+                <!-- <nav class="flex justify-around justify-center bg-[#0a0e17] gap-2 px-9 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105"> -->
+                <!-- <nav class="flex justify-around justify-center bg-[#0e131f] gap-2 px-9 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105"> -->
+                <!-- <nav class="flex justify-around justify-center bg-[#585d68] gap-2 px-9 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105"> -->
                     
                     <!-- NAVIGATION LINKS: Home -->
                     <span class="text-base text-indigo-100 hover:text-primary font-black border-b-2 border-primary hover:border-b-2 hover:border-indigo-100 px-1 transition-colors duration-200">Home</span>
@@ -151,13 +159,13 @@
             
             <!-- CONTAINER: HIDDEN ADMIN LINK, HIDDEN USER PHONE DISPLAY, LOGIN BUTTON -->
 
-            <div class="items-end gap-4 mt-8 sm:col-start-13 sm:col-span-1">
+            <div class="items-end gap-4 sm:col-start-13 sm:col-span-1">
 
                 <div class="flex items-end gap-2">
                                 
                     <!-- HIDDEN ADMIN LINK -->
                     <h3 id="adminLink" class="hidden">
-                        <a href="admin.html" class="block hover:text-[#f13dc3] text-white bg-transparent hover:bg-primary px-3 py-2 pb-2.5 ml-1 rounded-md font-semibold transition-all duration-200 border border-[#f13dc3] hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-secondary">
+                        <a href="admin.html" class="block hover:text-[#f13dc3] text-white bg-transparent hover:bg-primary px-8 pt-2 pb-3 pb-2.5 ml-1 rounded-md font-semibold transition-all duration-200 border border-[#f13dc3] hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-secondary">
                             Admin
                         </a>
                     </h3>
@@ -171,18 +179,25 @@
     
                 </div>
     
-    
-                <div class="flex items-end mt-3">
-                    <!-- HIDDEN USER PHONE DISPLAY -->
-                    <span id="userPhoneDisplay" class="text-sm font-bold text-indigo-100 border-b-2 border-[#f13dc3] ml-auto pr-1 pb-1">
-                        <!-- User's phone number will be displayed here -->
-                    </span>
-                </div>
-
             </div>
 
+            <!-- ABSOLUTE POSITIONED HIDDEN -->
+            <div class="absolute flex items-end top-4 right-0">
+                <span id="userPhoneDisplay" class="text-sm font-bold text-indigo-100 border-b-2 border-[#f13dc3] ml-auto pr-0.5 pb-1">
+                    <!-- User's phone number will be displayed here -->
+                </span>
+            </div>
 
         </header>
+
+    <!-- @@@ EXTRA SECTION FOR LOGGED IN USER DISPLAY -->
+     
+        <!-- <div class="flex items-end mt-3">
+            HIDDEN USER PHONE DISPLAY
+            <span id="userPhoneDisplay" class="text-sm font-bold text-indigo-100 border-b-2 border-[#f13dc3] ml-auto pr-1 pb-1">
+                User's phone number will be displayed here
+            </span>
+        </div> -->          
 
 
     <!-- Version 6.0 - NEW HEADER - refactored for responsiveness -->
