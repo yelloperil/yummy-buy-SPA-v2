@@ -116,16 +116,17 @@
     <div class="container mx-auto px-4 py-8">
 
         <!-- Header -->
-        <header class="mb-8 py-6 flex justify-between items-center">
+        <header class="mb-16 py-6 flex justify-between items-center">
 
             <!-- BACK TO HOME -->
-            <span class="text-primary text-lg font-bold hover:text-secondary flex gap-2 self-end pb-3">
+            <span class="flex gap-2 self-end pb-3">
+            <!-- <span class="text-primary text-lg font-bold hover:text-secondary flex gap-2 self-end pb-3"> -->
                 <!-- <img src="/assets/icons/left-arrow.gif" alt="link back to home" class="w-8 h-8"> -->
-                <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-8 h-auto">
+                <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-8 h-auto -mb-1 pt-1">
                 <!-- <img src="/assets/icons/left-arrow_002.png" alt="link back to home" class="w-8 h-8"> -->
                 <!-- <img src="/assets/icons/backward.gif" alt="link back to home" class="w-8 h-8"> -->
                 <!-- <img src="/assets/icons/backward(1).gif" alt="link back to home" class="w-8 h-8"> -->
-                <a href="index.html" class="text-primary hover:text-secondary pb-1 pl-2">back to home</a>
+                <a href="index.html" class="self-end text-primary text-lg font-bold text-indigo-100 border-b-2 border-[#f13dc3] hover:text-secondary pl-0.5 ml-2">home</a>
             </span>
 
             <!-- TITLE CONTAINER -->
@@ -174,7 +175,7 @@
         </header>
 
         <!-- Navigation Tabs -->
-        <div class="flex border-b mb-6">
+        <div class="hidden flex border-b mb-6">
             <h3 id="ordersTab" class="tab-active px-4 py-2 mr-2">Orders</h3>
             <!-- <button id="ordersTab" class="tab-active px-4 py-2 mr-2">Orders</button> -->
             <!-- <button id="productsTab" class="px-4 py-2 mr-2">Products</button> -->
@@ -685,7 +686,7 @@
             
             if (filteredOrders.length === 0) {
                 
-                ordersContainer.innerHTML = '<div class="col-span-full text-xl text-center font-bold py-8">No orders found.<img src="/assets/images/gif-orca-blue-bg.gif" alt="Orca pod swimming - loading" class="w-auto h-[50vh] mx-auto my-12 rounded-[12em]"></div>';
+                ordersContainer.innerHTML = '<div class="col-span-full text-lg text-center font-bold py-2">No orders found.<img src="/assets/images/gif-orca-blue-bg.gif" alt="Orca pod swimming - loading" class="w-auto h-[50vh] mx-auto my-6 rounded-[12em]"></div>';
 
                 // ordersContainer.innerHTML = `
                 //     <div class="col-span-full text-center py-8">
