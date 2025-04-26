@@ -121,7 +121,7 @@
             <!-- BACK TO HOME -->
             <span class="text-primary text-lg font-bold hover:text-secondary flex gap-2 items-center">
                 <!-- <img src="/assets/icons/left-arrow.gif" alt="link back to home" class="w-8 h-8"> -->
-                <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-8 h-8">
+                <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-8 h-auto">
                 <!-- <img src="/assets/icons/left-arrow_002.png" alt="link back to home" class="w-8 h-8"> -->
                 <!-- <img src="/assets/icons/backward.gif" alt="link back to home" class="w-8 h-8"> -->
                 <!-- <img src="/assets/icons/backward(1).gif" alt="link back to home" class="w-8 h-8"> -->
@@ -468,6 +468,48 @@
         window.location.href = 'index.html';
     });
 
+
+
+    // Function to fetch and populate user data
+    async function fetchAndPopulateUserData(phoneNumber) {
+        try {
+            // Query Firestore for the user's most recent order
+            const ordersRef = db.collection('orders');
+            const querySnapshot = await ordersRef
+                .where('customer.phone', '==', phoneNumber)
+                .orderBy('orderDate', 'desc')
+                .limit(1)
+                .get();
+
+            if (!querySnapshot.empty) {
+                const mostRecentOrder = querySnapshot.docs[0].data();
+                const customerData = mostRecentOrder.customer;
+
+                // Populate form fields
+                document.getElementById('name').value = customerData.name || '';
+                document.getElementById('wechat').value = customerData.wechat || '';
+                
+                // Set delivery type and handle address
+                const deliveryTypeSelect = document.getElementById('deliveryType');
+                deliveryTypeSelect.value = customerData.deliveryType || 'Pickup';
+                
+                // Trigger the change event to show/hide address field
+                const event = new Event('change');
+                deliveryTypeSelect.dispatchEvent(event);
+                
+                // If delivery was selected, populate address
+                if (customerData.deliveryType === 'Delivery' && customerData.address) {
+                    document.getElementById('address').value = customerData.address;
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    }
+
+
+////////////////////////////////////////////////////////////////////////
+
     // Logout user
     // function logoutUser() {
     //     firebase.auth().signOut().then(() => {
@@ -482,9 +524,6 @@
     //         console.error('Error signing out:', error);
     //     });
     // }
-
-
-
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -511,6 +550,7 @@
     //     document.getElementById('productsTab').classList.add('tab-active');
     //     loadProducts();
     // });
+
 
     // View switching
     document.getElementById('chronologicalView').addEventListener('click', () => {
@@ -577,50 +617,73 @@
     }
 
 
-    // Order Loading Functions
+
+    // Global cached orders array
+    let myOrders = null;
+
     async function loadOrders(viewType) {
         const ordersContainer = document.getElementById('ordersContainer');
         ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">Loading orders...</div>';
         
         try {
-            let query = db.collection('orders').orderBy('orderDate', 'desc');
+            // Only fetch orders once
+            if (!myOrders) {
+                const query = db.collection('orders').orderBy('orderDate', 'desc');
+                const snapshot = await query.get();
+                
+                if (snapshot.empty) {
+                    ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">No orders found</div>';
+                    return;
+                }
+                
+                // Cache orders with deep data structure
+                allOrders = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                    // Ensure nested objects are properly preserved
+                    customer: { ...doc.data().customer },
+                    items: doc.data().items.map(item => ({ ...item })),
+                    total: doc.data().total,
+                    status: doc.data().status,
+                    orderDate: doc.data().orderDate
+                }));
+
+                myOrders = allOrders.filter( order => order.customer.userPhone === currentUser.userPhone )
+
+            }
+
+            // Use cached orders for filtering
+            let filteredOrders = [...myOrders];
             const statusFilter = document.getElementById('statusFilter').value;
             const dateFilter = document.getElementById('dateFilter').value;
             
-            // Apply filters
+            // Apply filters to cached data
             if (statusFilter !== 'all') {
-                query = query.where('status', '==', statusFilter);
+                filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
             }
             if (dateFilter) {
                 const startDate = new Date(dateFilter);
                 const endDate = new Date(startDate);
                 endDate.setDate(endDate.getDate() + 1);
-                query = query.where('orderDate', '>=', startDate.toISOString())
-                            .where('orderDate', '<', endDate.toISOString());
+                
+                filteredOrders = filteredOrders.filter(order => {
+                    const orderDate = new Date(order.orderDate);
+                    return orderDate >= startDate && orderDate < endDate;
+                });
             }
             
-            const snapshot = await query.get();
-            
-            if (snapshot.empty) {
+            if (filteredOrders.length === 0) {
                 ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">No orders found</div>';
                 return;
             }
-            
-            let orders = [];
-            snapshot.forEach(doc => {
-                orders.push({ id: doc.id, ...doc.data() });
-            });
-            
-            // Group orders based on view type
+
+            // Group orders based on view type using filtered data
             switch(viewType) {
-                // case 'user':
-                //     displayOrdersByUser(orders);
-                //     break;
                 case 'product':
-                    displayOrdersByProduct(orders);
+                    displayOrdersByProduct(filteredOrders);
                     break;
                 default:
-                    displayChronologicalOrders(orders);
+                    displayChronologicalOrders(filteredOrders);
             }
             
         } catch (error) {
@@ -628,6 +691,88 @@
             ordersContainer.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading orders: ${error.message}</div>`;
         }
     }
+
+    
+    function refreshOrderCache() {
+        myOrders = null;
+        loadOrders(); // Call with current view type
+    }
+
+
+    // // Order Loading Functions
+    // async function loadOrders(viewType) {
+    //     const ordersContainer = document.getElementById('ordersContainer');
+    //     ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">Loading orders...</div>';
+        
+    //     try {
+    //         let query = db.collection('orders').orderBy('orderDate', 'desc');
+    //         const statusFilter = document.getElementById('statusFilter').value;
+    //         const dateFilter = document.getElementById('dateFilter').value;
+            
+    //         // Apply filters
+    //         if (statusFilter !== 'all') {
+    //             query = query.where('status', '==', statusFilter);
+    //         }
+    //         if (dateFilter) {
+    //             const startDate = new Date(dateFilter);
+    //             const endDate = new Date(startDate);
+    //             endDate.setDate(endDate.getDate() + 1);
+    //             query = query.where('orderDate', '>=', startDate.toISOString())
+    //                         .where('orderDate', '<', endDate.toISOString());
+    //         }
+            
+    //         const snapshot = await query.get();
+            
+    //         if (snapshot.empty) {
+    //             ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">No orders found</div>';
+    //             return;
+    //         }
+            
+    //         let orders = [];
+
+    //         snapshot.forEach(doc => {
+    //             if (doc.data().customer.userPhone === user.userPhone) {
+    //                 orders.push({ id: doc.id, ...doc.data() })
+    //             } else if (ordersContainer.innerHTML === '') {
+    //                 ordersContainer.innerHTML = `
+    //                     <h3>No orders found.</h3>
+    //                 `
+    //             }
+    //         });
+            
+    //         // Group orders based on view type
+    //         switch(viewType) {
+    //             // case 'user':
+    //             //     displayOrdersByUser(orders);
+    //             //     break;
+    //             case 'product':
+    //                 displayOrdersByProduct(orders);
+    //                 break;
+    //             default:
+    //                 displayChronologicalOrders(orders);
+    //         }
+            
+    //     } catch (error) {
+    //         console.error("Error loading orders:", error);
+    //         ordersContainer.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading orders: ${error.message}</div>`;
+    //     }
+    // }
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+    // Init Load Orders on Page Load
+    ////////////////////////////////////////////////////////////////////////
+    loadOrders('chronological')
+    ////////////////////////////////////////////////////////////////////////
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     function displayChronologicalOrders(orders) {
@@ -642,11 +787,10 @@
             orderCard.className = 'flex flex-col bg-white rounded-lg shadow-md p-6 order-card transition-all';
             orderCard.innerHTML = `
                 <div class="flex justify-between items-start mb-2">
-                    <h3 class="text-primary text-xl font-bold">${order.customer.name}</h3>
+                    <h3 class="text-primary text-xl font-bold">Order ID: ${order.id.toUpperCase()}</h3>
                     <span class="bg-[#f1f0fb] px-3 py-1 rounded text-sm font-semibold ${getStatusColor(order.status)}">${order.status}</span>
                 </div>
                 <div class="flex justify-between text-sm">
-                    <span class="font-medium"><strong>Order ID:</strong> #${order.id}</span>
                     <span class="font-medium"><strong>Order Date:</strong> ${orderDate}</span>
                 </div>
                 <div class="my-3 mt-6">
@@ -665,13 +809,7 @@
                     
             `;
 
-            if (order.customer.userPhone === user.userPhone) {
-                ordersContainer.appendChild(orderCard);
-            } else if (ordersContainer.innerHTML === '') {
-                ordersContainer.innerHTML = `
-                    <h3>No orders found.</h3>
-                `
-            }
+            ordersContainer.appendChild(orderCard);
 
         });
         
@@ -828,52 +966,30 @@
 
         productGroups.forEach(product => {
             const productCard = document.createElement('div');
-            productCard.className = 'bg-white rounded-lg shadow-md p-4 mb-6';
+            productCard.className = 'bg-white rounded-lg shadow-md p-6';
             productCard.innerHTML = `
-                <div class="border-b pb-3 mb-3">
+                <div class="border-b pb-3 mb-6">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="font-bold text-lg">${product.name}</h3>
-                            <p class="text-sm text-gray-600">$${product.price.toFixed(2)} per unit</p>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-primary font-bold text-xl">${product.totalQuantity}</div>
-                            <div class="text-sm">units sold</div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2 text-sm">
-                        <div>
-                            <div class="text-gray-600">Revenue</div>
-                            <div class="font-medium">$${product.totalRevenue.toFixed(2)}</div>
-                        </div>
-                        <div>
-                            <div class="text-gray-600">Customers</div>
-                            <div class="font-medium">${product.customers.size}</div>
-                        </div>
-                        <div>
-                            <div class="text-gray-600">First Ordered</div>
-                            <div class="font-medium">${new Date(product.firstOrderDate).toLocaleDateString()}</div>
-                        </div>
-                        <div>
-                            <div class="text-gray-600">Last Ordered</div>
-                            <div class="font-medium">${new Date(product.lastOrderDate).toLocaleDateString()}</div>
+                            <h3 class="text-primary text-xl font-bold">${product.name}</h3>
+                            <p class="text-gray-700 text-base font-semibold py-2">$${product.price.toFixed(2)} per unit</p>
                         </div>
                     </div>
                 </div>
                 <div class="product-orders">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="font-medium">Recent Orders</h4>
-                        <button class="toggle-orders text-primary hover:text-secondary text-sm font-medium">
-                            Show/Hide Orders
+                    <div class="flex justify-between items-center">
+                        <h4 class="list-title hidden text-gray-900 text-base font-semibold">Recently Ordered </h4>
+                        <button class="toggle-orders ml-auto hover:text-secondary bg-[#f1f0fb] text-blue-600 text-base font-semibold px-4 py-2 rounded">
+                            Show Orders
                         </button>
                     </div>
-                    <div class="orders-list hidden space-y-2">
+                    <div class="orders-list hidden space-y-2 mt-6 mb-2">
                         ${product.orders.slice(0, 5).map(orderId => {
                             const order = orders.find(o => o.id === orderId);
                             return `
                                 <div class="flex justify-between items-center text-sm p-2 bg-gray-50 rounded">
                                     <div>
-                                        <span class="font-medium">Order #${orderId}</span>
+                                        <span class="font-medium">Order #${orderId.toUpperCase()}</span>
                                         <span class="text-gray-600 ml-2">
                                             ${new Date(order.orderDate).toLocaleDateString()}
                                         </span>
@@ -894,20 +1010,14 @@
             `;
 
             ordersContainer.appendChild(productCard);
-            
-            // if (order.customer.userPhone === user.userPhone) {
-            //     ordersContainer.appendChild(productCard);
-            // } else if (ordersContainer.innerHTML === '') {
-            //     ordersContainer.innerHTML = `
-            //     <h3>No orders found.</h3>
-            //     `
-            // }
 
             // Add toggle functionality
             const toggleBtn = productCard.querySelector('.toggle-orders');
             const ordersList = productCard.querySelector('.orders-list');
+            const listTitle = productCard.querySelector('.list-title');
             toggleBtn.addEventListener('click', () => {
                 ordersList.classList.toggle('hidden');
+                listTitle.classList.toggle('hidden');
                 toggleBtn.textContent = ordersList.classList.contains('hidden') 
                     ? 'Show Orders' 
                     : 'Hide Orders';
@@ -930,6 +1040,14 @@
     // ### Order Management - Details Modal ### <nav>@@@</nav>
 
 ////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+    document.getElementById('closeOrderModal').addEventListener('click', () => {
+        document.getElementById('orderDetailModal').classList.add('hidden');
+    });
+
 ////////////////////////////////////////////////////////////////////////////////////////
 
     // Order Detail Modal Functions
@@ -974,7 +1092,7 @@
                         <div class="space-y-1 text-sm">
                             <div class="flex">
                                 <span class="w-32 text-gray-600">Order ID:</span>
-                                <span>${order.id}</span>
+                                <span>${order.id.toUpperCase()}</span>
                             </div>
                             <div class="flex">
                                 <span class="w-32 text-gray-600">Date:</span>
@@ -1007,13 +1125,13 @@
                                 <span>${order.customer.phone}</span>
                             </div>
                             <div class="flex">
-                                <span class="w-32 text-gray-600">Email:</span>
-                                <span>${order.customer.email || 'N/A'}</span>
+                                <span class="w-32 text-gray-600">Wechat:</span>
+                                <span>${order.customer.wechat || 'N/A'}</span>
                             </div>
                             ${order.customer.userId ? `
                             <div class="flex">
                                 <span class="w-32 text-gray-600">User ID:</span>
-                                <span class="text-xs">${order.customer.userId}</span>
+                                <span class="text-sm">${order.customer.userId.toUpperCase()}</span>
                             </div>
                             ` : ''}
                         </div>
@@ -1072,9 +1190,10 @@
             // Add event listeners
             // document.getElementById('saveStatusBtn').addEventListener('click', () => updateOrderStatus(order.id));
             document.getElementById('printOrderBtn').addEventListener('click', printOrder);
-            document.getElementById('closeOrderModal').addEventListener('click', () => {
+            document.getElementById('closeModalBtn').addEventListener('click', () => {
                 modal.classList.add('hidden');
             });
+
 
         } catch (error) {
             console.error("Error loading order details:", error);
@@ -1093,6 +1212,7 @@
             });
         }
     }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -1176,6 +1296,19 @@
                 "July", "August", "September", "October", "November", "December"
             ];
             return `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
+        }
+
+        // Convert +1########## into (###) ###-####
+        function formatPhoneNumber(phoneNumber) {
+            // Remove the leading '+' and country code
+            const cleaned = phoneNumber.replace(/^\+1/, ''); // Assuming the country code is always +1
+            // Extract area code and the rest of the number
+            const areaCode = cleaned.slice(0, 3);
+            const firstPart = cleaned.slice(3, 6);
+            const secondPart = cleaned.slice(6, 10);
+            
+            // Format the phone number
+            return `(${areaCode}) ${firstPart}-${secondPart}`;
         }
 
 
