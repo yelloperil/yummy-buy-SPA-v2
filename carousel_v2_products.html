@@ -90,9 +90,10 @@
             opacity: 1;
             transform: translateY(0);
         }
-        
-    /* IMAGE CAROUSEL - PRODUCTS CAROUSEL & GALLERY MODAL */
 
+
+    /* SWIPER - PRODUCTS CAROUSEL & GALLERY MODAL */
+        
         /* Image carousel container styles */
         .product-carousel {
             width: 100%;
@@ -102,6 +103,47 @@
             background-color: #f0f0f0;
         }
 
+        /* Product carousel controls */
+        .product-carousel .swiper-button-next,
+        .product-carousel .swiper-button-prev {
+            color: white;
+            background: rgba(0, 0, 0, 0.4);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            backdrop-filter: blur(2px);
+            transition: opacity 0.3s ease;
+            display: none; /* Hidden by default on mobile */
+        }
+
+        .product-carousel .swiper-button-next::after,
+        .product-carousel .swiper-button-prev::after {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .product-carousel .swiper-pagination {
+            display: none; /* Hidden by default on mobile */
+        }
+
+        /* Show controls on hover/desktop */
+        @media (hover: hover) and (pointer: fine) {
+            .product-carousel:hover .swiper-button-next,
+            .product-carousel:hover .swiper-button-prev {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .product-carousel .swiper-button-next,
+            .product-carousel .swiper-button-prev,
+            .product-carousel .swiper-pagination {
+                display: block;
+            }
+        }
+        
         /* Gallery modal */
         .gallery-modal {
             position: fixed;
@@ -116,54 +158,26 @@
             align-items: center;
             transition: opacity 0.3s ease;
         }
-
+        
         .gallery-modal.active {
             display: flex;
         }
-
+        
         /* Swiper customization */
         .swiper-pagination-bullet {
             background: #5D5CDE;
-            opacity: 0.7;
         }
-
+        
         .swiper-pagination-bullet-active {
             background: #A5A4FF;
-            opacity: 1;
         }
-
-        /* Product card swipers */
-        .product-carousel .swiper-button-next,
-        .product-carousel .swiper-button-prev {
-            color: white;
-            background: rgba(0, 0, 0, 0.3);
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            --swiper-navigation-size: 18px;
-        }
-
-        .product-carousel .swiper-button-next:hover,
-        .product-carousel .swiper-button-prev:hover {
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        /* Make sure pagination is visible on product cards */
-        .product-carousel .swiper-pagination {
-            bottom: 5px;
-        }
-
-        /* Image count badge */
-        .image-count {
-            z-index: 10;
-        }
-
+        
         /* Zoom effect for modal */
         .modal-img-container {
             max-width: 90vw;
             max-height: 90vh;
         }
-
+        
         .modal-img-container img {
             max-width: 100%;
             max-height: 90vh;
@@ -541,23 +555,100 @@
                 },
             });
         }
-        
+
         // Initialize after DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize modal swiper first
             initModalSwiper();
             
-            // Close modal when clicking close button
+            // Initialize product carousel swipers
+            const productSwipers = document.querySelectorAll('[class^="swiper-"]:not(.modalSwiper)');
+            productSwipers.forEach(swiperEl => {
+                if (swiperEl.swiper) return; // Skip already initialized instances
+                
+                const hasMultipleSlides = swiperEl.querySelectorAll('.swiper-slide').length > 1;
+                if (hasMultipleSlides) {
+                    new Swiper(swiperEl, {
+                        loop: true,
+                        slidesPerView: 1,
+                        pagination: {
+                            el: swiperEl.querySelector('.swiper-pagination'),
+                            clickable: true,
+                        },
+                        navigation: {
+                            nextEl: swiperEl.querySelector('.swiper-button-next'),
+                            prevEl: swiperEl.querySelector('.swiper-button-prev'),
+                        },
+                        keyboard: {
+                            enabled: true,
+                            onlyInViewport: true,
+                        },
+                    });
+                }
+            });
+
+            // Close modal handlers (existing code remains)
             document.getElementById('closeModal').addEventListener('click', function() {
                 galleryModal.classList.remove('active');
             });
             
-            // Close modal when clicking outside the image
             galleryModal.addEventListener('click', function(e) {
                 if (e.target === galleryModal) {
                     galleryModal.classList.remove('active');
                 }
             });
         });
+
+        // ********Dynamic Product Initialization********
+        // If you're loading products dynamically (AJAX/fetch), call this initialization code again after new products are added to the DOM
+        // Call: initializeProductSwipers();
+        function initializeProductSwipers() {
+            const productSwipers = document.querySelectorAll('[class^="swiper-"]:not(.modalSwiper)');
+            productSwipers.forEach(swiperEl => {
+                if (swiperEl.swiper) return; // Skip already initialized instances
+                
+                const hasMultipleSlides = swiperEl.querySelectorAll('.swiper-slide').length > 1;
+                if (hasMultipleSlides) {
+                    new Swiper(swiperEl, {
+                        loop: true,
+                        slidesPerView: 1,
+                        pagination: {
+                            el: swiperEl.querySelector('.swiper-pagination'),
+                            clickable: true,
+                        },
+                        navigation: {
+                            nextEl: swiperEl.querySelector('.swiper-button-next'),
+                            prevEl: swiperEl.querySelector('.swiper-button-prev'),
+                        },
+                        keyboard: {
+                            enabled: true,
+                            onlyInViewport: true,
+                        },
+                    });
+                }
+            });
+        }
+
+        // ********Call this after any dynamic content load********
+        // ********initializeProductSwipers();********
+        
+        
+        // // Initialize after DOM is loaded
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     initModalSwiper();
+            
+        //     // Close modal when clicking close button
+        //     document.getElementById('closeModal').addEventListener('click', function() {
+        //         galleryModal.classList.remove('active');
+        //     });
+            
+        //     // Close modal when clicking outside the image
+        //     galleryModal.addEventListener('click', function(e) {
+        //         if (e.target === galleryModal) {
+        //             galleryModal.classList.remove('active');
+        //         }
+        //     });
+        // });
 
         // Initialize delivery type DOM elements
         const deliveryTypeSelect = document.getElementById('deliveryType');
@@ -1003,17 +1094,10 @@
                     el: `.swiper-pagination-${productId}`,
                     clickable: true,
                 },
-                navigation: {
-                    nextEl: `.swiper-button-next-${productId}`,
-                    prevEl: `.swiper-button-prev-${productId}`,
-                },
                 on: {
                     click: function(swiper, event) {
-                        // Only open gallery if not clicking on navigation
-                        if (!event.target.classList.contains('swiper-button-next') && 
-                            !event.target.classList.contains('swiper-button-prev')) {
-                            openGalleryModal(productId, swiper.realIndex);
-                        }
+                        // Open gallery when clicking on carousel image
+                        openGalleryModal(productId, swiper.realIndex);
                     }
                 }
             });
@@ -1149,33 +1233,34 @@
                     if (product.images && product.images.length > 0) {
                         // Create swiper carousel with images
                         carouselHTML = `
-                            <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[250px] p-1.5 pb-0 overflow-hidden">
+                            <div class="product-carousel bg-gray-100 dark:bg-gray-700">
                                 <div class="swiper swiper-${doc.id}">
                                     <div class="swiper-wrapper">
                                         ${product.images.map(image => `
                                             <div class="swiper-slide">
-                                                <img src="${image.url}" alt="${product.name}" class="w-full h-full rounded-t-lg">
+                                                <img src="${image.url}" alt="${product.name}" class="w-full h-full object-cover">
                                             </div>
                                         `).join('')}
                                     </div>
-                                    <div class="swiper-pagination swiper-pagination-${doc.id}"></div>
-                                    <div class="swiper-button-prev swiper-button-prev-${doc.id}"></div>
-                                    <div class="swiper-button-next swiper-button-next-${doc.id}"></div>
-                                    ${product.images.length > 1 ? `<div class="image-count absolute top-1.5 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">${product.images.length} images</div>` : ''}
+                                    ${product.images.length > 1 ? `
+                                        <div class="swiper-pagination swiper-pagination-${doc.id}"></div>
+                                        <div class="swiper-button-next swiper-button-next-${doc.id}"></div>
+                                        <div class="swiper-button-prev swiper-button-prev-${doc.id}"></div>
+                                    ` : ''}
                                 </div>
                             </div>
                         `;
                     } else if (product.imageUrl) {
                         // Fallback to legacy imageUrl
                         carouselHTML = `
-                            <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[250px] p-1.5 pb-0 overflow-hidden">
-                                <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover rounded-t-lg">
+                            <div class="product-carousel bg-gray-100 dark:bg-gray-700">
+                                <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover">
                             </div>
                         `;
                     } else {
                         // No image
                         carouselHTML = `
-                            <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[250px] p-1.5 pb-0 overflow-hidden flex items-center justify-center">
+                            <div class="product-carousel bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
                                 <div class="text-gray-400">No Image</div>
                             </div>
                         `;
@@ -1202,7 +1287,7 @@
                             </div>
                         </div>
                     `;
-        
+           
                     productList.appendChild(productCard);
                     
                     // Initialize swiper for this product if it has multiple images
