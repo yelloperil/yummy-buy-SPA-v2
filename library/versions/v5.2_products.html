@@ -53,7 +53,7 @@
                         animation: {
                             // name: keyframes   duration   timing   iterations
                             'pulse-glow': 'pulse-glow 3s   ease-in-out infinite',
-                        }                                                
+                        },                                                
                     },
                 },
         };
@@ -86,16 +86,33 @@
             opacity: 1;
             transform: translateY(0);
         }
+        .product-image-container {
+            width: 200px; /* Set a fixed width */
+            height: 200px; /* Set a fixed height */
+            overflow: hidden; /* Hide overflow */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0; /* Optional: background color for empty images */
+        }
+
+        .product-image-container img {
+            width: 100%; /* Scale image to fit the container */
+            height: auto; /* Maintain aspect ratio */
+            object-fit: cover; /* Cover the container while maintaining aspect ratio */
+        }
     </style>
 </head>
 <body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
-    <div class="container mx-auto px-4 py-8">
-
     
-    <!-- @@@ MAIN HEADER SECTION -->
-        
-        <!-- Version 5.0 - Title text deleted, logo image link wrapper added, 3 columns instead of 14 -->
-        <header class="my-8 pb-16 flex flex-col sm:grid sm:grid-cols-14 items-center gap-y-6">
+    <!-- @@@ OUTER WRAPPER Outer Wrapper -->
+    <div class="container mx-auto px-4 py-8">
+    
+    <!-- <HEADER /> -->
+
+        <!-- Version 7.0 - HYBRID - structure of old, responsiveness of new -->
+        <header class="relative flex-col sm:grid sm:grid-cols-14 items-center gap-y-6 my-2 pb-12">
+
             <div class="flex items-center gap-4 w-full sm:col-start-1 sm:col-span-2">
                 
                 <!-- LOGO -- Pulsating Glow Effect + Expand on Hover -->
@@ -103,14 +120,14 @@
                     <img
                         src="./images-v2/YummyBuy_Customized_Logo_A_BG-Removed.png"
                         alt="Yummy Buy Mascot"
-                        class="w-48 h-48 transition-transform duration-300 ease-in-out hover:scale-150 animate-pulse-glow"
+                        class="w-48 h-auto transition-transform duration-300 ease-in-out hover:scale-125 animate-pulse-glow"
                     /> 
                 </a>
 
                 <!-- TITLE TEXT: 呀蜜佰 -->
                 <div class="flex flex-col gap-3">
-                    <h1 class="font-zenMaru text-xl sm:text-5xl pl-4 font-bold text-indigo-100">
-                        <a href="index.html" class="hover:text-secondary transition-colors duration-200">
+                    <h1 class="min-w-[120px] sm:min-w-0 pl-4">
+                        <a href="index.html" class="font-zenMaru text-2xl sm:text-5xl md:text-6xl font-bold text-indigo-100 hover:text-secondary transition-colors">
                             呀蜜佰 😋
                         </a>
                     </h1>
@@ -120,10 +137,11 @@
             
             <!-- CONTAINER: NAVIGATION LINKS -->
             <div class="self-center sm:col-start-6 sm:col-span-3">
- 
+
                 <!-- NAVIGATION LINKS -->
-                <nav class="flex justify-around justify-center gap-2 px-11 pl-13 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105">
-                    
+                <!-- <nav class="flex justify-around justify-center gap-2 px-9 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105"> -->
+                    <nav class="flex justify-around justify-center bg-[#292f3d] gap-2 px-9 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105">
+
                     <!-- NAVIGATION LINKS: Home -->
                     <span class="text-base text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">
                         <a href="index.html">Home</a>
@@ -137,33 +155,45 @@
                     <span class="text-base text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">
                         <a href="history.html">Your Orders</a>
                     </span>
-                    
                 </nav>
             </div>
             
             <!-- CONTAINER: HIDDEN ADMIN LINK, HIDDEN USER PHONE DISPLAY, LOGIN BUTTON -->
-            <div class="flex items-end gap-4 sm:col-start-13 sm:col-span-1">
-                
-                <!-- HIDDEN ADMIN LINK -->
-                <h3 id="adminLink" class="hidden">
-                    <a href="admin.html" class="block text-primary hover:text-white bg-transparent hover:bg-primary px-3 py-2 rounded-md font-semibold transition-all duration-200 border border-primary hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-secondary">
-                        Admin Dashboard
-                    </a>
-                </h3>
-                
-                <!-- HIDDEN USER PHONE DISPLAY -->
-                <span id="userPhoneDisplay" class="hidden mr-3 text-sm text-gray-600 dark:text-gray-400"></span>
-                
-                <!-- LOGIN BUTTON -->
-                <button id="loginBtn" class="bg-[#4a427f] hover:bg-secondary ml-auto text-white py-2.5 px-8 rounded-lg font-semibold transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-                Log In
-                </button>
+            <div class="items-end gap-4 sm:col-start-13 sm:col-span-1">
+
+                <div class="flex items-end gap-2">
+                                
+                    <!-- HIDDEN ADMIN LINK -->
+                    <h3 id="adminLink" class="hidden">
+                        <a href="admin.html" class="block hover:text-[#f13dc3] text-white bg-transparent hover:bg-primary px-8 pt-2 pb-3 pb-2.5 ml-1 rounded-md font-semibold transition-all duration-200 border border-[#f13dc3] hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-secondary">
+                            Admin
+                        </a>
+                    </h3>
+                    
+                    <!-- LOGIN BUTTON -->
+                    <button id="loginBtn" class="bg-[#4a427f] hover:text-[#f13dc3] hover:bg-primary ml-auto text-white py-3 px-10 rounded-lg font-semibold transition-all duration-200 border-invisible hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        Log In
+                    </button>
+    
+                </div>
+    
             </div>
-            </header>
+
+            <!-- ABSOLUTE POSITIONED HIDDEN -->
+            <div class="absolute flex items-end top-4 right-0">
+                <span id="userPhoneDisplay" class="text-sm font-bold text-indigo-100 border-b-2 border-[#f13dc3] ml-auto pr-0.5 pb-1">
+                    <!-- User's phone number will be displayed here -->
+                </span>
+            </div>
+
+        </header>
+
 
     <!-- @@@ MAIN BODY SECTION -->
-
+        
+        <!-- Version 5.0 - Product Catalogue Section, Shopping Cart Section, Order Section -->
         <div class="flex flex-col lg:flex-row gap-8">
+
             <!-- Product Catalogue Section -->
             <div class="lg:w-2/3">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
@@ -179,25 +209,55 @@
             </div>
 
             <!-- Order Section -->
-            <div class="lg:w-1/3">
-                <!-- Shopping Cart -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+            
+            <!-- STICKY ON SCROLL -->
+            <!-- <div class="lg:w-1/3 sticky top-0 z-10 h-screen flex flex-col items-center"> -->
+                <div class="lg:w-1/3 sticky top-0 z-10 h-screen flex flex-col items-center overflow-y-auto">
+
+                <!-- Shopping Cart Container -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 w-full">
+
+                    <!-- Shopping Cart Title -->
                     <h2 class="text-xl font-semibold mb-4">Shopping Cart</h2>
-                    <div id="cartItems" class="mb-4">
-                        <p id="emptyCartMessage" class="text-gray-500 dark:text-gray-400">Your cart is empty</p>
-                        <!-- Cart items will be inserted here by JavaScript -->
+                    
+                    <!-- Cart Items Container -->
+                    <div id="cartItemsContainer" class="mb-4 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 min-h-[33.33vh] flex flex-col items-center justify-center">
+
+                        <!-- Empty Cart Image -->   
+                        <img id="emptyCartImage" src="./images-v2/gif-shopping-cart-stencil-gray-orange-300x300.gif" alt="Empty Cart" class="w-1/2 h-auto mb-4 mr-10 hidden">
+
+                        <!-- Empty Cart Message -->
+                        <p id="emptyCartMessage" class="text-gray-500 dark:text-gray-400 hidden">Wow, so empty!</p>
+
+                        <!-- Cart Items -->
+                        <div id="cartItems" class="mt-2 px-2 flex flex-col w-full">
+                            <!-- Cart items will be inserted here by JavaScript -->
+                        </div>
+                        
                     </div>
+
+                    <!-- Cart Total -->
                     <div id="cartTotal" class="font-semibold text-lg mb-4">Total: $0.00</div>
-                    <button id="clearCartBtn" 
-                        class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+                    
+                    <!-- Redesigned Place Order Button -->
+                    <!-- <button id="toggleOrderFormBtn" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-2 rounded-md font-bold transition duration-200 ease-in-out"> -->
+                    <button id="toggleOrderFormBtn" class="w-full bg-[#6a60b3] hover:bg-[#a5a4ff] text-white py-3 px-2 my-3 rounded-md font-bold transition duration-200 ease-in-out">
+                        Checkout
+                    </button>
+                    
+                    <!-- Redesigned Clear Cart Button -->
+                    <!-- <button id="clearCartBtn" class="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-2 rounded-md font-medium transition duration-200 ease-in-out"> -->
+                    <button id="clearCartBtn" class="w-full bg-[#ff6f61] hover:bg-[#ffccbc] text-white py-3 px-2 my-3 rounded-md font-bold transition duration-200 ease-in-out">
                         Clear Cart
                     </button>
                 </div>
 
                 <!-- Customer Information -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+                <div id="orderFormContainer" class="bg-white dark:bg-gray-800 rounded-lg shadow-md mt-8 p-4 w-full hidden">
+
                     <h2 class="text-xl font-semibold mb-4">Finalize Order</h2>
-                    <form id="orderForm" class="space-y-4">
+
+                    <form id="orderForm" class="space-y-4 hidden">
 
                         <!-- Customer Name -->
                         <div>
@@ -238,11 +298,20 @@
                         </div>
 
                         <button type="submit" id="submitOrderBtn" disabled
-                            class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                            class="w-full bg-[#44b34e] hover:bg-white text-white hover:text-[#44b34e] py-3 px-2 my-3 rounded-md font-bold transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
                             Place Order
                         </button>
 
                     </form>
+                </div>
+
+                <!-- Centered Image -->
+                <!-- <div class="h-full flex items-center justify-center w-full mb-10"> -->
+                <div class="h-full flex items-center justify-center w-full p-10">
+                    <img src="./images-v2/BG_REMOVED_YummyBuy_Customized_Logo_B_001.png" 
+                         alt="Yummy Buy Mascot" 
+                         class="w-full h-auto aspect-square object-contain md:h-auto lg:h-auto">
+                         <!-- class="w-3/4 h-auto aspect-square object-contain md:w-1/3 lg:w-2/3"> -->
                 </div>
             </div>
         </div>
@@ -344,19 +413,20 @@
         let cart = [];
         
         // Initialize cart-related DOM elements
-        const emptyCartMessage = document.getElementById('emptyCartMessage');
         const cartItems = document.getElementById('cartItems');
         const cartTotal = document.getElementById('cartTotal');
         const clearCartBtn = document.getElementById('clearCartBtn');
-        const submitOrderBtn = document.getElementById('submitOrderBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const emptyCartImage = document.getElementById('emptyCartImage');
+        const emptyCartMessage = document.getElementById('emptyCartMessage');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const orderForm = document.getElementById('orderForm');
+        const orderReference = document.getElementById('orderReference');
         const productList = document.getElementById('productList');
         const searchInput = document.getElementById('searchInput');
-        const orderForm = document.getElementById('orderForm');
-        const confirmationModal = document.getElementById('confirmationModal');
-        const confirmationMessage = document.getElementById('confirmationMessage');
-        const orderReference = document.getElementById('orderReference');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const loadingOverlay = document.getElementById('loadingOverlay');
+        const submitOrderBtn = document.getElementById('submitOrderBtn');
 
         // Initialize delivery type DOM elements
         const deliveryTypeSelect = document.getElementById('deliveryType');
@@ -707,7 +777,8 @@
                 
                 // Update UI
                 loginBtn.textContent = 'Log Out';
-                userPhoneDisplay.textContent = user.phoneNumber || 'Authenticated User';
+                const formattedPhoneNumber = formatPhoneNumber(user.phoneNumber);
+                userPhoneDisplay.textContent = formattedPhoneNumber;
                 userPhoneDisplay.classList.remove('hidden');
                 document.getElementById('adminLink').classList.add('hidden');
                 
@@ -767,7 +838,7 @@
 
         // Display products
         async function displayProducts() {
-            productList.innerHTML = '<div class="col-span-full text-center py-8">Loading products...</div>';
+            productList.innerHTML = '<div class="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">Loading...</div>';
             
             try {
                 const snapshot = await db.collection('products').orderBy('name').get();
@@ -791,31 +862,217 @@
                     productCache.set(doc.id, product);
                     
                     const productCard = document.createElement('div');
-                    productCard.className = 'border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
-                    
+                    productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
+                    // productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
+
+
                     productCard.innerHTML = `
-                        <div class="bg-gray-100 dark:bg-gray-700 p-4 flex justify-center">
-                            ${product.imageUrl ? 
-                                `<img src="${product.imageUrl}" alt="${product.name}" class="h-32 object-contain">` : 
-                                '<div class="text-gray-400">No Image</div>'}
+                        <div class="bg-gray-100 dark:bg-gray-700 h-[250px] p-4 pb-0 overflow-hidden">
+                            ${product.imageUrl ? `
+                                <img 
+                                    src="${product.imageUrl}" 
+                                    alt="${product.name}" 
+                                    class="w-full h-full object-cover rounded-t-lg"
+                                >
+                            ` : `
+                                <div class="h-full flex items-center justify-center text-gray-400">No Image</div>
+                            `}
                         </div>
-                        <div class="p-4">
-                            <h3 class="font-semibold mb-1">${product.name}</h3>
-                            <p class="text-primary font-medium mb-2">$${product.price.toFixed(2)}</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description || 'No description available'}</p>
-                            <div class="flex justify-between items-center">
+
+                        <div class="p-4 flex flex-col flex-grow justify-between">
+                            <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
+                            <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+                            <div class="flex justify-between items-center mt-auto">
+                                <!-- Quantity Controls -->
                                 <div class="flex items-center">
                                     <button data-product-id="${doc.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
                                     <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${doc.id}">
                                     <button data-product-id="${doc.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
                                 </div>
+                                <!-- Cart Button -->
                                 <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
                                     Add to Cart
                                 </button>
                             </div>
                         </div>
                     `;
-                    
+
+                    // productCard.innerHTML = `
+                    //     <div class="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden"> <!-- Parent Card Container -->
+                    //         <!-- Image Container -->
+                    //         <div class="bg-gray-100 dark:bg-gray-700 p-4 h-[250px] flex justify-center items-center"> 
+                    //             ${product.imageUrl ? `
+                    //                 <div class="w-full h-full relative flex justify-center items-center">
+                    //                     <img 
+                    //                         src="${product.imageUrl}" 
+                    //                         alt="${product.name}" 
+                    //                         class="max-w-full max-h-full object-contain rounded-lg"
+                    //                         style="min-width: 80%; min-height: 80%"
+                    //                     >
+                    //                 </div>
+                    //             ` : `
+                    //                 <div class="text-gray-400">No Image</div>
+                    //             `}
+                    //         </div>
+
+                    //         <!-- Content Container -->
+                    //         <div class="p-4 flex flex-col flex-grow justify-between"> <!-- Added flex-grow here -->
+                    //             <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
+                    //             <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
+                    //             <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+                    //             <div class="flex justify-between items-center mt-auto"> <!-- mt-auto for bottom alignment -->
+                    //                 <div class="flex items-center">
+                    //                     <button data-product-id="${doc.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
+                    //                     <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${doc.id}">
+                    //                     <button data-product-id="${doc.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
+                    //                 </div>
+                    //                 <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
+                    //                     Add to Cart
+                    //                 </button>
+                    //             </div>
+                    //         </div>
+                    //     </div>
+                    // `;
+
+                    // productCard.innerHTML = `
+                    //     <div class="col-span-full text-center py-8">
+                    //         <div class="bg-gray-100 dark:bg-gray-700 p-4 h-[250px] flex justify-center items-center"> <!-- Fixed height container -->
+                    //             ${product.imageUrl ? `
+                    //                 <div class="w-full h-full relative flex justify-center items-center">
+                    //                     <img 
+                    //                         src="${product.imageUrl}" 
+                    //                         alt="${product.name}" 
+                    //                         class="w-full h-full object-cover rounded-lg" 
+                    //                         style="min-width: 80%; min-height: 80%;" /* Fallback */
+                    //                     >
+                    //                 </div>
+                    //             ` : `
+                    //                 <div class="text-gray-400">No Image</div>
+                    //             `}
+                    //         </div>
+
+                    //         <div class="p-4 flex flex-col justify-between">
+                    //             <h3 class="text-white text-lg font-semibold border-b border-[#f13dc3] pb-1.5">${product.name}</h3>
+                    //             <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
+                    //             <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+                    //             <div class="flex justify-between items-center">
+                    //                 <div class="flex items-center">
+                    //                     <button data-product-id="${doc.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
+                    //                     <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${doc.id}">
+                    //                     <button data-product-id="${doc.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
+                    //                 </div>
+                    //                 <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
+                    //                     Add to Cart
+                    //                 </button>
+                    //             </div>
+                    //         </div>
+                    //     </div>
+                    // `;
+
+                    //     productCard.innerHTML = `
+                    // <div class="col-span-full text-center py-8">
+                    //         <div class="bg-gray-100 dark:bg-gray-700 p-4 h-[250px] flex justify-center items-center"> <!-- Fixed height container -->
+                    //             ${product.imageUrl ? `
+                    //                 <div class="w-full h-full relative flex justify-center items-center">
+                    //                     <img 
+                    //                         src="${product.imageUrl}" 
+                    //                         alt="${product.name}" 
+                    //                         class="max-w-full max-h-full object-contain rounded-lg"
+                    //                         style="min-width: 80%; min-height: 80%" /* Fallback */
+                    //                     >
+                    //                 </div>
+                    //             ` : `
+                    //                 <div class="text-gray-400">No Image</div>
+                    //             `}
+                    //         </div>
+
+                    //         <div class="p-4 flex flex-col justify-between">
+                    //             <!-- <h3 class="text-xl font-bold mb-1">${product.name}</h3> -->
+                    //             <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
+                    //             <!-- <p class="text-secondary text-lg font-semibold my-2 mr-auto border border-[#f13dc3] rounded-sm px-2 pb-1">$${product.price.toFixed(2)}</p> -->
+                    //             <!-- <p class="text-secondary text-lg font-semibold my-2 mr-auto border-b-2 border-[#f13dc3] pr-1 pt-2 pb-1.5">$${product.price.toFixed(2)}</p> -->
+                    //             <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
+                    //             <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+                    //             <div class="flex justify-between items-center">
+                    //                 <div class="flex items-center">
+                    //                     <button data-product-id="${doc.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
+                    //                     <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${doc.id}">
+                    //                     <button data-product-id="${doc.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
+                    //                 </div>
+                    //                 <!-- <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm"> -->
+                    //                 <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
+                    //                     Add to Cart
+                    //                 </button>
+                    //             </div>
+                    //         </div>
+                    //     </div>
+                    //     `;
+                
+                    // productCard.innerHTML = `
+                    //     <div class="bg-gray-100 dark:bg-gray-700 p-4 h-[250px] flex justify-center items-center"> <!-- Fixed height container -->
+                    //         ${product.imageUrl ? `
+                    //             <div class="w-full h-full relative flex justify-center items-center">
+                    //                 <img 
+                    //                     src="${product.imageUrl}" 
+                    //                     alt="${product.name}" 
+                    //                     class="max-w-full max-h-full object-contain rounded-lg"
+                    //                     style="min-width: 80%; min-height: 80%" /* Fallback */
+                    //                 >
+                    //             </div>
+                    //         ` : `
+                    //             <div class="text-gray-400">No Image</div>
+                    //         `}
+                    //     </div>
+
+                    //     <div class="p-4 flex flex-col justify-between">
+                    //         <!-- <h3 class="text-xl font-bold mb-1">${product.name}</h3> -->
+                    //         <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
+                    //         <!-- <p class="text-secondary text-lg font-semibold my-2 mr-auto border border-[#f13dc3] rounded-sm px-2 pb-1">$${product.price.toFixed(2)}</p> -->
+                    //         <!-- <p class="text-secondary text-lg font-semibold my-2 mr-auto border-b-2 border-[#f13dc3] pr-1 pt-2 pb-1.5">$${product.price.toFixed(2)}</p> -->
+                    //         <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
+                    //         <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+                    //         <div class="flex justify-between items-center">
+                    //             <div class="flex items-center">
+                    //                 <button data-product-id="${doc.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
+                    //                 <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${doc.id}">
+                    //                 <button data-product-id="${doc.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
+                    //             </div>
+                    //             <!-- <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm"> -->
+                    //             <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
+                    //                 Add to Cart
+                    //             </button>
+                    //         </div>
+                    //     </div>
+                    // `;
+                
+                //     productCard.innerHTML = `
+                //     <div class="bg-gray-100 dark:bg-gray-700 p-4 flex justify-center">
+                //         ${product.imageUrl ? 
+                //             `<img src="${product.imageUrl}" alt="${product.name}" class="w-full h-auto object-contain rounded-lg">` : 
+                //             '<div class="text-gray-400">No Image</div>'}
+                //     </div>
+                //     <div class="p-4 flex flex-col justify-between">
+                //         <!-- <h3 class="text-xl font-bold mb-1">${product.name}</h3> -->
+                //         <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
+                //         <!-- <p class="text-secondary text-lg font-semibold my-2 mr-auto border border-[#f13dc3] rounded-sm px-2 pb-1">$${product.price.toFixed(2)}</p> -->
+                //         <!-- <p class="text-secondary text-lg font-semibold my-2 mr-auto border-b-2 border-[#f13dc3] pr-1 pt-2 pb-1.5">$${product.price.toFixed(2)}</p> -->
+                //         <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
+                //         <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+                //         <div class="flex justify-between items-center">
+                //             <div class="flex items-center">
+                //                 <button data-product-id="${doc.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
+                //                 <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${doc.id}">
+                //                 <button data-product-id="${doc.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
+                //             </div>
+                //             <!-- <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm"> -->
+                //             <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
+                //                 Add to Cart
+                //             </button>
+                //         </div>
+                //     </div>
+                // `;
+                                        
                     productList.appendChild(productCard);
                 });
 
@@ -903,12 +1160,14 @@
         // Update cart display
         function updateCartDisplay() {
             if (cart.length === 0) {
+                emptyCartImage.classList.remove('hidden');
                 emptyCartMessage.style.display = 'block';
                 cartItems.innerHTML = '';
                 cartTotal.textContent = 'Total: $0.00';
                 clearCartBtn.disabled = true;
                 submitOrderBtn.disabled = true;
             } else {
+                emptyCartImage.classList.add('hidden');
                 emptyCartMessage.style.display = 'none';
                 
                 let cartHTML = '';
@@ -917,27 +1176,30 @@
                 cart.forEach((item, index) => {
                     const itemTotal = item.product.price * item.quantity;
                     total += itemTotal;
-                    
+
                     cartHTML += `
-                        <div class="flex items-center gap-3 py-3 ${index !== 0 ? 'border-t border-gray-200 dark:border-gray-700' : ''}">
-                            <div class="flex-shrink-0 w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden">
-                                ${item.product.imageUrl ? 
+                        <div class="flex items-center justify-between p-2 mb-2 ${index !== 0 ? 'border-t border-gray-200 dark:border-gray-700' : ''} rounded-md bg-white dark:bg-gray-800 transition-transform transform hover:scale-105 hover:shadow-lg w-full">
+                            <div class="flex items-center gap-3 flex-grow">
+                                <div class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden">
+                                    ${item.product.imageUrl ? 
                                     `<img src="${item.product.imageUrl}" alt="${item.product.name}" class="h-8 object-contain">` : 
                                     '<div class="text-gray-400 text-xs">No Image</div>'}
-                            </div>
-                            <div class="flex-grow">
-                                <h4 class="font-medium text-sm">${item.product.name}</h4>
-                                <div class="flex justify-between items-center mt-1">
+                                </div>
+                                <div class="flex-grow">
+                                    <h4 class="font-medium text-sm">${item.product.name}</h4>
                                     <div class="text-sm text-gray-600 dark:text-gray-400">
                                         $${item.product.price.toFixed(2)} × ${item.quantity}
                                     </div>
-                                    <button data-index="${index}" class="remove-item text-red-500 hover:text-red-700 text-sm">
-                                        Remove
-                                    </button>
                                 </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <button data-index="${index}" class="remove-item text-red-500 hover:text-red-700 text-sm bg-transparent border border-red-500 rounded-md px-2 py-1 transition-colors hover:bg-red-500 hover:text-white">
+                                    Remove
+                                </button>
                             </div>
                         </div>
                     `;
+                    
                 });
                 
                 cartItems.innerHTML = cartHTML;
@@ -1058,24 +1320,33 @@
                 productList.innerHTML = '';
                 filteredProducts.forEach(product => {
                     const productCard = document.createElement('div');
-                    productCard.className = 'border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
-                    
+                    productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
+
                     productCard.innerHTML = `
-                        <div class="bg-gray-100 dark:bg-gray-700 p-4 flex justify-center">
-                            ${product.imageUrl ? 
-                                `<img src="${product.imageUrl}" alt="${product.name}" class="h-32 object-contain">` : 
-                                '<div class="text-gray-400">No Image</div>'}
+                        <div class="bg-gray-100 dark:bg-gray-700 h-[250px] p-2 pb-0 overflow-hidden">
+                            ${product.imageUrl ? `
+                                <img 
+                                    src="${product.imageUrl}" 
+                                    alt="${product.name}" 
+                                    class="w-full h-full object-cover rounded-t-lg"
+                                >
+                            ` : `
+                                <div class="h-full flex items-center justify-center text-gray-400">No Image</div>
+                            `}
                         </div>
-                        <div class="p-4">
-                            <h3 class="font-semibold mb-1">${product.name}</h3>
-                            <p class="text-primary font-medium mb-2">$${product.price.toFixed(2)}</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description || 'No description available'}</p>
-                            <div class="flex justify-between items-center">
+
+                        <div class="p-4 flex flex-col flex-grow justify-between">
+                            <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
+                            <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+                            <div class="flex justify-between items-center mt-auto">
+                                <!-- Quantity Controls -->
                                 <div class="flex items-center">
                                     <button data-product-id="${product.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
                                     <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${product.id}">
                                     <button data-product-id="${product.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
                                 </div>
+                                <!-- Cart Button -->
                                 <button data-product-id="${product.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
                                     Add to Cart
                                 </button>
@@ -1144,6 +1415,190 @@
             deliveryTypeSelect.value = 'Pickup';
         } 
 
+        function toggleOrderForm() {
+            const orderFormContainer = document.getElementById('orderFormContainer');
+            const orderForm = document.getElementById('orderForm');
+
+            // Toggle the visibility of the order form container
+            if (orderFormContainer.classList.contains('hidden')) {
+                orderFormContainer.classList.remove('hidden'); // Show the order form
+                orderForm.classList.remove('hidden'); // Show the form inside the container
+
+                // Focus the viewport on the orderFormContainer
+                orderFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                orderFormContainer.classList.add('hidden'); // Hide the order form
+                orderForm.classList.add('hidden'); // Hide the form inside the container
+            }
+        }
+
+        // Function to toggle the visibility of the order form
+        // function toggleOrderForm() {
+        //     const orderFormContainer = document.getElementById('orderFormContainer');
+        //     const orderForm = document.getElementById('orderForm');
+
+        //     // Toggle the visibility of the order form container
+        //     if (orderFormContainer.classList.contains('hidden')) {
+        //         orderFormContainer.classList.remove('hidden'); // Show the order form
+        //         orderForm.classList.remove('hidden'); // Show the form inside the container
+        //     } else {
+        //         orderFormContainer.classList.add('hidden'); // Hide the order form
+        //         orderForm.classList.add('hidden'); // Hide the form inside the container
+        //     }
+        // }
+
+
+        // Add event listener to the toggle button
+        document.getElementById('toggleOrderFormBtn').addEventListener('click', toggleOrderForm);
+
+        // Updated submitOrderBtn click event
+        submitOrderBtn.addEventListener('click', (e) => {
+            // Prevent default form submission
+            e.preventDefault();
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Check if the user is logged in
+            if (!isLoggedIn) {
+
+                // Show custom alert modal
+                document.getElementById('customAlert').classList.remove('hidden');
+
+                return;
+            }
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            // Check if required fields are filled
+            const requiredFields = [document.getElementById('name'), document.getElementById('wechat'), document.getElementById('deliveryType')];
+            const allFilled = requiredFields.every(field => field.value.trim() !== '');
+            
+            if (!allFilled) {
+                alert("&excl; Please fill out all required fields.");
+                return;
+            }
+
+            // If all checks pass, proceed with form submission
+            orderForm.submit();
+        });
+
+        function formatPhoneNumber(phoneNumber) {
+            // Remove the leading '+' and country code
+            const cleaned = phoneNumber.replace(/^\+1/, ''); // Assuming the country code is always +1
+            // Extract area code and the rest of the number
+            const areaCode = cleaned.slice(0, 3);
+            const firstPart = cleaned.slice(3, 6);
+            const secondPart = cleaned.slice(6, 10);
+            
+            // Format the phone number
+            return `(${areaCode}) ${firstPart}-${secondPart}`;
+        }
+
+
     </script>
-</body>
+
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+        <!-- Custom Alert Modal -->
+        <div id="customAlert" class="fixed inset-0 z-50 flex hidden items-center justify-center">
+            <!-- Overlay -->
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+            
+            <!-- Modal Content -->
+            <div class="relative w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl animate-modal-enter mx-4" 
+                role="dialog" 
+                aria-modal="true" 
+                aria-labelledby="modalTitle">
+                
+                <!-- Header -->
+                <div class="mb-6 flex items-start">
+                    <!-- Icon -->
+                    <div class="mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-amber-50">
+                        <svg class="h-6 w-6 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                    </div>
+
+                    <!-- Title & Close -->
+                    <div class="flex-1">
+                        <h2 id="modalTitle" class="text-lg font-semibold text-gray-900">Access Required</h2>
+                    </div>
+                    
+                    <button 
+                        id="closeModal" 
+                        class="absolute right-6 top-6 text-2xl text-gray-400 hover:text-gray-900"
+                        aria-label="Close dialog">
+                        &times;
+                    </button>
+                </div>
+
+                <!-- Body -->
+                <div class="mb-8">
+                    <p class="text-gray-600 leading-relaxed">
+                        You must be logged in to view your order history.
+                    </p>
+                </div>
+
+                <!-- Footer -->
+                <div>
+                    <button 
+                        id="okButton"
+                        class="w-full rounded-lg bg-[#4a427f] px-6 py-3 text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/30 font-medium tracking-wide">
+                        Log In
+                    </button>
+                    <!-- <button id="loginBtn" class="bg-[#4a427f] hover:text-[#f13dc3] hover:bg-primary ml-auto text-white py-2.5 px-8 rounded-lg font-semibold transition-all duration-200 border-invisible hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        Log In
+                    </button> -->
+                </div>
+            </div>
+        </div>
+
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+    <style>
+        /* Custom animation for modal entrance */
+        @keyframes modal-enter {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .animate-modal-enter {
+            animation: modal-enter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+    <script> 
+
+                // Close modal and redirect to index.html
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////
+                document.getElementById('okButton').addEventListener('click', function() {
+                    document.getElementById('customAlert').classList.add('hidden');
+                    showAuthModal();
+                });
+
+                document.getElementById('closeModal').addEventListener('click', function() {
+                    document.getElementById('customAlert').classList.add('hidden');
+                });
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    </script>
+
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+    </body>
 </html>
