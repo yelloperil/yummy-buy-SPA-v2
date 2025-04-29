@@ -838,10 +838,9 @@
             let cleanedValue = '';
 
             // Get raw input value and remove all non-digit characters
-            if (e.target.value.split('').includes('+1')) {
-            console.log('1st cleanedValue inside cleaner IF: ', cleanedValue)
-
+            if (e.target.value.split('').includes('+')) {
                 cleanedValue = rawValue.replace(/\D/g, '').slice(1);
+            console.log('1st cleanedValue inside cleaner IF: ', cleanedValue)
             } else {
                 cleanedValue = rawValue.replace(/\D/g, '');
             console.log('1st cleanedValue inside cleaner IF: ', cleanedValue)
