@@ -766,8 +766,8 @@
         // @@@@@@@ Phone number validation and formatting
         phoneNumberInput.addEventListener('input', function(e) {
             // Get raw input value and remove all non-digit characters
-            // const constValue = e.target.value.replace(/\D/g, '');
-            const constValue = e.target.value;
+            const constValue = e.target.value.replace(/\D/g, '');
+            // const constValue = e.target.value;
             console.log('Current Value:', e.target.value)
             
             // Limit to 10 digits
