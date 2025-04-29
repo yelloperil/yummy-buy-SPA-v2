@@ -772,47 +772,99 @@
             phoneNumberInput.placeholder = "+1 (604) 969-3855";
         });
 
+        // // @@@@@@@ Phone number validation and formatting
+        // phoneNumberInput.addEventListener('input', function(e) {
+        //     // Get raw input value and remove all non-digit characters
+        //     const constValue = e.target.value.replace(/\D/g, '');
+        //     // const constValue = e.target.value;
+        //     console.log('Current Value:', e.target.value)
+            
+        //     // Limit to 10 digits
+        //     let rawValue = constValue.slice(1);
+        //     console.log('Raw Value:', rawValue)
+        //     // rawValue = rawValue.substring(0, 10);
+            
+        //     // Format the phone number
+        //     let formattedValue = '';
+        //     console.log('Formatted Value:', formattedValue)
+            
+        //     if (constValue.length > 0) {
+        //         formattedValue = '+1 ';
+        //         console.log('Formatted Value after IF #1:', formattedValue)
+
+        //         // Area code
+        //         if (constValue.length > 0) {
+        //             formattedValue += '(' + rawValue.substring(0, Math.min(3, rawValue.length));
+        //             console.log('Formatted Value after IF #2:', formattedValue)
+        //         }
+                
+        //         // Middle digits
+        //         if (constValue.length > 3) {
+        //             formattedValue += ') ' + rawValue.substring(3, Math.min(6, rawValue.length));
+        //             console.log('Formatted Value after IF #3:', formattedValue)
+        //         }
+                
+        //         // Last digits
+        //         if (constValue.length > 6) {
+        //             formattedValue += '-' + rawValue.substring(6, Math.min(10, rawValue.length));
+        //             console.log('Formatted Value after IF #4:', formattedValue)
+        //             }
+        //     } else { 
+        //         formattedValue = '';
+        //     }
+        //     console.log('Formatted Value after ELSE:', formattedValue)
+        //     // Update the input value with the formatted version
+        //     e.target.value = formattedValue;
+        //     console.log('Formatted Value after Update (e.target.value = formattedValue): ', formattedValue)
+
+        //     // Auto-focus to send code button after complete entry (10 digits)
+        //     if (constValue.length === 10) {
+        //         console.log('Auto-focus to send code button after complete entry (10 digits)')
+        //         setTimeout(() => {
+        //             console.log('Auto-focus to send code button after complete entry (10 digits) - setTimeout Activates')
+        //             sendCodeBtn.focus();
+        //             console.log('Auto-focus to send code button after complete entry (10 digits) - sendCodeBtn.focus() Activates')
+        //         }, 300);
+        //     }
+        // });
+
         // @@@@@@@ Phone number validation and formatting
         phoneNumberInput.addEventListener('input', function(e) {
             // Get raw input value and remove all non-digit characters
-            const constValue = e.target.value.replace(/\D/g, '');
+            const constValue = '+1 ' + e.target.value.replace(/\D/g, '');
             // const constValue = e.target.value;
-            console.log('Current Value:', e.target.value)
+            console.log('1st constValue: ', e.target.value)
             
             // Limit to 10 digits
-            let rawValue = constValue.slice(1);
-            console.log('Raw Value:', rawValue)
+            let rawValue = constValue.slice(2);
+            console.log('Raw Value after Slice:', rawValue)
             // rawValue = rawValue.substring(0, 10);
             
             // Format the phone number
             let formattedValue = '';
             console.log('Formatted Value:', formattedValue)
-            
-            if (constValue.length > 0) {
-                formattedValue = '+1 ';
-                console.log('Formatted Value after IF #1:', formattedValue)
 
-                // Area code
-                if (constValue.length > 0) {
-                    formattedValue += '(' + rawValue.substring(0, Math.min(3, rawValue.length));
-                    console.log('Formatted Value after IF #2:', formattedValue)
-                }
-                
-                // Middle digits
-                if (constValue.length > 3) {
-                    formattedValue += ') ' + rawValue.substring(3, Math.min(6, rawValue.length));
-                    console.log('Formatted Value after IF #3:', formattedValue)
-                }
-                
-                // Last digits
-                if (constValue.length > 6) {
-                    formattedValue += '-' + rawValue.substring(6, Math.min(10, rawValue.length));
-                    console.log('Formatted Value after IF #4:', formattedValue)
-                    }
-            } else { 
-                formattedValue = '';
+            formattedValue = rawValue;
+            console.log('Formatted Value after =Raw Value:', formattedValue)
+
+            // Area code
+            if (constValue.length > 0) {
+                formattedValue += '(' + rawValue.substring(0, Math.min(3, rawValue.length));
+                console.log('Formatted Value after IF #2:', formattedValue)
             }
-            console.log('Formatted Value after ELSE:', formattedValue)
+            
+            // Middle digits
+            if (constValue.length > 3) {
+                formattedValue += ') ' + rawValue.substring(3, Math.min(6, rawValue.length));
+                console.log('Formatted Value after IF #3:', formattedValue)
+            }
+            
+            // Last digits
+            if (constValue.length > 6) {
+                formattedValue += '-' + rawValue.substring(6, Math.min(10, rawValue.length));
+                console.log('Formatted Value after IF #4:', formattedValue)
+                }
+
             // Update the input value with the formatted version
             e.target.value = formattedValue;
             console.log('Formatted Value after Update (e.target.value = formattedValue): ', formattedValue)
@@ -827,88 +879,6 @@
                 }, 300);
             }
         });
-
-        // // @@@@@ Phone number validation and formatting
-        // phoneNumberInput.addEventListener('input', function(e) {
-        //     // Get raw input value and remove all non-digit characters
-        //     let rawValue = e.target.value.replace(/\D/g, '');
-            
-        //     // Limit to 10 digits
-        //     rawValue = rawValue.substring(0, 10);
-            
-        //     // Format the phone number
-        //     let formattedValue = '';
-            
-        //     if (rawValue.length > 0) {
-        //         formattedValue = '+1 ';
-                
-        //         // Area code
-        //         if (rawValue.length > 0) {
-        //             formattedValue += '(' + rawValue.substring(0, Math.min(3, rawValue.length));
-        //         }
-                
-        //         // Middle digits
-        //         if (rawValue.length > 3) {
-        //             formattedValue += ') ' + rawValue.substring(3, Math.min(6, rawValue.length));
-        //         }
-                
-        //         // Last digits
-        //         if (rawValue.length > 6) {
-        //             formattedValue += '-' + rawValue.substring(6, Math.min(10, rawValue.length));
-        //         }
-        //     }
-            
-        //     // Update the input value with the formatted version
-        //     e.target.value = formattedValue;
-            
-        //     // Auto-focus to send code button after complete entry (10 digits)
-        //     if (rawValue.length === 10) {
-        //         setTimeout(() => {
-        //             sendCodeBtn.focus();
-        //         }, 300);
-        //     }
-        // });
-
-        // // @@@@@ Phone number validation and formatting
-        // phoneNumberInput.addEventListener('input', function(e) {
-        //     // Get raw input value and remove all non-digit characters
-        //     let rawValue = e.target.value.replace(/\D/g, '');
-            
-        //     // Limit to 10 digits
-        //     rawValue = rawValue.substring(0, 10);
-            
-        //     // Format the phone number
-        //     let formattedValue = '';
-            
-        //     if (rawValue.length > 0) {
-        //         formattedValue = '+1 ';
-                
-        //         // Area code
-        //         if (rawValue.length > 0) {
-        //             formattedValue += '(' + rawValue.substring(0, Math.min(3, rawValue.length));
-        //         }
-                
-        //         // Middle digits
-        //         if (rawValue.length > 3) {
-        //             formattedValue += ') ' + rawValue.substring(3, Math.min(6, rawValue.length));
-        //         }
-                
-        //         // Last digits
-        //         if (rawValue.length > 6) {
-        //             formattedValue += '-' + rawValue.substring(6, Math.min(10, rawValue.length));
-        //         }
-        //     }
-            
-        //     // Update the input value with the formatted version
-        //     e.target.value = formattedValue;
-            
-        //     // Auto-focus to send code button after complete entry (10 digits)
-        //     if (rawValue.length === 10) {
-        //         setTimeout(() => {
-        //             sendCodeBtn.focus();
-        //         }, 300);
-        //     }
-        // });
         
         // Send verification code
         sendCodeBtn.addEventListener('click', async () => {
