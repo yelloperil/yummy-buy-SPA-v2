@@ -684,7 +684,11 @@
         const phoneNumberInput = document.getElementById('phoneNumber');
 
         phoneNumberInput.addEventListener('focus', () => {
-            phoneNumberInput.placeholder = "+1 (";
+            phoneNumberInput.placeholder = "+1 ";
+        });
+
+        phoneNumberInput.addEventListener('blur', () => {
+            phoneNumberInput.placeholder = "+1 (604) 969-3855";
         });
 
         phoneNumberInput.addEventListener('input', (e) => {

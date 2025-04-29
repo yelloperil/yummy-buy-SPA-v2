@@ -508,7 +508,7 @@
                     <div class="relative">
                         <div id="recaptcha-container" class="mb-4"></div>
                         <label for="phoneNumber" class="block mb-1">Phone Number</label>
-                        <input type="tel" id="phoneNumber" placeholder="+1 123-456-7890" 
+                        <input type="tel" id="phoneNumber" placeholder="+1 (604) 969-3855" 
                             class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
                         <p id="phoneError" class="text-red-500 text-sm mt-1 hidden"></p>
                     </div>
@@ -762,6 +762,15 @@
                 input.classList.remove('border-red-500');
             });
         }
+
+        // Phone Number Input Blur/Focus Logic
+        phoneNumberInput.addEventListener('focus', () => {
+            phoneNumberInput.placeholder = "+1 ";
+        });
+
+        phoneNumberInput.addEventListener('blur', () => {
+            phoneNumberInput.placeholder = "+1 (604) 969-3855";
+        });
 
         // @@@@@@@ Phone number validation and formatting
         phoneNumberInput.addEventListener('input', function(e) {
