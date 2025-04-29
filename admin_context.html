@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+</head>
+
+<body>
+    <script>
+
+        // Product Management Functions
+        async function loadProducts() {
+            const productsList = document.getElementById('productsList');
+            productsList.innerHTML = '<div class="col-span-full text-center py-8">Loading products...</div>';
+            
+            try {
+                let products = [];
+                
+                try {
+                    const snapshot = await db.collection('products').orderBy('name').get();
+                    
+                    if (snapshot.empty) {
+                        productsList.innerHTML = '<div class="col-span-full text-center py-8">No products found</div>';
+                        return;
+                    }
+                    
+                    snapshot.forEach((doc) => {
+                        products.push({ id: doc.id, ...doc.data() });
+                    });
+                } catch (error) {
+                    console.warn("Error fetching products from Firestore, using sample data:", error);
+                    
+                    // Use sample data for local testing
+                    products = [
+                        {
+                            id: "sample-product-1",
+                            name: "Fresh Vegetables",
+                            price: 12.99,
+                            description: "A selection of fresh seasonal vegetables",
+                            status: "released",
+                            images: [
+                                {
+                                    url: "images-v2/A_meticulously_organized_arran(1).jpeg",
+                                    name: "vegetables.jpg"
+                                }
+                            ]
+                        },
+                        {
+                            id: "sample-product-2",
+                            name: "Premium Meat",
+                            price: 19.99,
+                            description: "High-quality premium meat selection",
+                            status: "released",
+                            images: [
+                                {
+                                    url: "images-v2/A_meticulously_organized_arran(2).jpeg",
+                                    name: "meat.jpg"
+                                }
+                            ]
+                        },
+                        {
+                            id: "sample-product-3",
+                            name: "Fresh Fruit Basket",
+                            price: 32.50,
+                            description: "Assorted fresh fruits",
+                            status: "unreleased",
+                            imageUrl: "images-v2/A_meticulously_organized_arran(3).jpeg"
+                        }
+                    ];
+                }
+                
+                productsList.innerHTML = '';
+                products.forEach((product) => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden';
+                    
+                    // Get the main image (first in the images array) or use the legacy imageUrl field
+                    const mainImageUrl = (product.images && product.images.length > 0) 
+                        ? product.images[0].url 
+                        : (product.imageUrl || '');
+                    
+                    productCard.innerHTML = `
+                        <div class="h-48 bg-gray-100 flex items-center justify-center">
+                            ${mainImageUrl ? 
+                                `<img src="${mainImageUrl}" alt="${product.name}" class="h-full object-contain">` : 
+                                '<div class="text-gray-400">No Image</div>'}
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">${product.name}</h3>
+                            <p class="text-primary font-bold mb-2">$${product.price.toFixed(2)}</p>
+                            <p class="text-sm text-gray-600 line-clamp-2 mb-4">${product.description || 'No description'}</p>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm ${product.status === 'released' ? 'text-green-600' : 'text-gray-600'}">
+                                    ${product.status || 'unreleased'}
+                                </span>
+                                <span class="text-sm text-gray-500">
+                                    ${(product.images && product.images.length > 0) ? 
+                                        `${product.images.length} image${product.images.length > 1 ? 's' : ''}` : 
+                                        'No images'}
+                                </span>
+                            </div>
+                            <div class="flex justify-between">
+                                <button data-product-id="${product.id}" class="edit-product-btn text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded">
+                                    Edit
+                                </button>
+                                <button data-product-id="${product.id}" class="delete-product-btn text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    productsList.appendChild(productCard);
+                });
+                
+                // Add event listeners
+                // for Add Product button
+                document.getElementById('addProductBtn').addEventListener('click', () => {
+                    openProductModal(); // Call with no parameters for a new product
+                });
+
+                // for Edit button
+                document.querySelectorAll('.edit-product-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const productId = e.target.getAttribute('data-product-id');
+                        openProductModal(productId);
+                    });
+                });
+                
+                // for Delete button
+                document.querySelectorAll('.delete-product-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const productId = e.target.getAttribute('data-product-id');
+                        confirmDeleteProduct(productId);
+                    });
+                });
+                
+            } catch (error) {
+                console.error("Error loading products:", error);
+                productsList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading products: ${error.message}</div>`;
+            }
+        }
+
+        // Variable to store images for the current product
+        let currentProductImages = [];
+
+        function openProductModal(productId = null) {
+            const modal = document.getElementById('productModal');
+            const form = document.getElementById('productForm');
+            
+            // Reset form and images array
+            form.reset();
+            currentProductImages = [];
+            refreshImageGallery();
+            
+            document.getElementById('productId').value = '';
+            
+            // Set title
+            document.getElementById('productModalTitle').textContent = 
+                productId ? 'Edit Product' : 'Add New Product';
+            
+            // If editing, load product data
+            if (productId) {
+                db.collection('products').doc(productId).get().then(doc => {
+                    if (doc.exists) {
+                        const product = doc.data();
+                        document.getElementById('productId').value = doc.id;
+                        document.getElementById('productName').value = product.name || '';
+                        document.getElementById('productPrice').value = product.price || '';
+                        document.getElementById('productDescription').value = product.description || '';
+                        
+                        // Add status field handling
+                        const statusSelect = document.getElementById('productStatus');
+                        if (statusSelect) {
+                            statusSelect.value = product.status || 'unreleased';
+                        }
+                        
+                        // Handle images
+                        if (product.images && Array.isArray(product.images)) {
+                            // Use the new images array structure
+                            currentProductImages = [...product.images];
+                        } else if (product.imageUrl) {
+                            // Convert legacy single imageUrl to the new format
+                            currentProductImages = [{
+                                url: product.imageUrl,
+                                name: 'Legacy Image',
+                                path: product.imagePath || ''
+                            }];
+                        }
+                        
+                        refreshImageGallery();
+                        
+                        // Ensure the save button is visible
+                        document.getElementById('saveProductBtn').style.display = 'block';
+                    }
+                }).catch(error => {
+                    console.error("Error getting product:", error);
+                    alert('Error loading product data. Please try again.');
+                });
+            } else {
+                // Ensure the save button is visible for new products
+                document.getElementById('saveProductBtn').style.display = 'block';
+            }
+            
+            // Show modal
+            modal.classList.remove('hidden');
+        }
+
+        // Function to refresh the image gallery based on currentProductImages
+        function refreshImageGallery() {
+            const gallery = document.getElementById('imageGallery');
+            
+            // Clear all items except the add button
+            while (gallery.firstChild) {
+                gallery.removeChild(gallery.firstChild);
+            }
+            
+            // Add each image to the gallery
+            currentProductImages.forEach((image, index) => {
+                const imageItem = document.createElement('div');
+                imageItem.className = 'image-item';
+                imageItem.setAttribute('data-index', index);
+                
+                imageItem.innerHTML = `
+                    ${index === 0 ? '<span class="main-image-badge">Main</span>' : ''}
+                    <img src="${image.url}" alt="${image.name}">
+                    <div class="delete-image" data-index="${index}">×</div>
+                `;
+                
+                gallery.appendChild(imageItem);
+                
+                // Add delete event listener
+                imageItem.querySelector('.delete-image').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const idx = parseInt(e.target.getAttribute('data-index'));
+                    currentProductImages.splice(idx, 1);
+                    refreshImageGallery();
+                });
+            });
+            
+            // Add the add button
+            const addBtn = document.createElement('div');
+            addBtn.id = 'addImageBtn';
+            addBtn.className = 'add-image-btn';
+            addBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+            `;
+            gallery.appendChild(addBtn);
+            
+            // Setup drag-and-drop functionality
+            const sortable = new Sortable(gallery, {
+                animation: 150,
+                filter: '#addImageBtn', // Don't allow dragging the add button
+                onEnd: function(evt) {
+                    // Skip if we moved the add button (shouldn't happen due to filter, but just in case)
+                    if (evt.item.id === 'addImageBtn') return;
+                    
+                    // Get old and new indices
+                    const oldIndex = evt.oldIndex;
+                    const newIndex = evt.newIndex;
+                    
+                    // Move the image in the array
+                    const movedImage = currentProductImages.splice(oldIndex, 1)[0];
+                    currentProductImages.splice(newIndex, 0, movedImage);
+                    
+                    // Refresh to update the "Main" badge
+                    refreshImageGallery();
+                }
+            });
+            
+            // Add image button click handler
+            document.getElementById('addImageBtn').addEventListener('click', () => {
+                document.getElementById('productImageInput').click();
+            });
+        }
+
+
+    // <!-- Firebase Configuration -->
+    // const firebaseConfig = {
+    //   apiKey: "AIzaSyCTUZbw1qSdFEBG2SGo7smQgqXEKZZWCaw",
+    //   authDomain: "mei-wen-ti.firebaseapp.com",
+    //   projectId: "mei-wen-ti",
+    //   storageBucket: "mei-wen-ti.appspot.com", // Fixed storage bucket URL
+    //   messagingSenderId: "103509830524",
+    //   appId: "1:103509830524:web:5ddef022db357ce99152f9",
+    // };
+
+    // // Initialize Firebase
+    // firebase.initializeApp(firebaseConfig);
+    // const db = firebase.firestore();
+    // const auth = firebase.auth();
+    // const storage = firebase.storage();
+
+    // // Add error handling for Firebase
+    // firebase.firestore().enablePersistence()
+    //   .catch(err => {
+    //     if (err.code === 'failed-precondition') {
+    //       console.warn('Firestore persistence could not be enabled');
+    //     } else if (err.code === 'unimplemented') {
+    //       console.warn('Firestore persistence is not available in this browser');
+    //     }
+    //   });
+    // // Variable to store images for the current product
+    // let currentProductImages = [];
+
+    // function openProductModal(productId = null) {
+    //     const modal = document.getElementById('productModal');
+    //     const form = document.getElementById('productForm');
+        
+    //     // Reset form and images array
+    //     form.reset();
+    //     currentProductImages = [];
+    //     refreshImageGallery();
+        
+    //     document.getElementById('productId').value = '';
+        
+    //     // Set title
+    //     document.getElementById('productModalTitle').textContent = 
+    //         productId ? 'Edit Product' : 'Add New Product';
+        
+    //     // If editing, load product data
+    //     if (productId) {
+    //         db.collection('products').doc(productId).get().then(doc => {
+    //             if (doc.exists) {
+    //                 const product = doc.data();
+    //                 document.getElementById('productId').value = doc.id;
+    //                 document.getElementById('productName').value = product.name || '';
+    //                 document.getElementById('productPrice').value = product.price || '';
+    //                 document.getElementById('productDescription').value = product.description || '';
+                    
+    //                 // Add status field handling
+    //                 const statusSelect = document.getElementById('productStatus');
+    //                 if (statusSelect) {
+    //                     statusSelect.value = product.status || 'unreleased';
+    //                 }
+                    
+    //                 // Handle images
+    //                 if (product.images && Array.isArray(product.images)) {
+    //                     // Use the new images array structure
+    //                     currentProductImages = [...product.images];
+    //                 } else if (product.imageUrl) {
+    //                     // Convert legacy single imageUrl to the new format
+    //                     currentProductImages = [{
+    //                         url: product.imageUrl,
+    //                         name: 'Legacy Image',
+    //                         path: product.imagePath || ''
+    //                     }];
+    //                 }
+                    
+    //                 refreshImageGallery();
+                    
+    //                 // Ensure the save button is visible
+    //                 document.getElementById('saveProductBtn').style.display = 'block';
+    //             }
+    //         }).catch(error => {
+    //             console.error("Error getting product:", error);
+    //             alert('Error loading product data. Please try again.');
+    //         });
+    //     } else {
+    //         // Ensure the save button is visible for new products
+    //         document.getElementById('saveProductBtn').style.display = 'block';
+    //     }
+        
+    //     // Show modal
+    //     modal.classList.remove('hidden');
+    // }
+
+    // // Function to refresh the image gallery based on currentProductImages
+    // function refreshImageGallery() {
+    //     const gallery = document.getElementById('imageGallery');
+        
+    //     // Clear all items except the add button
+    //     while (gallery.firstChild) {
+    //         gallery.removeChild(gallery.firstChild);
+    //     }
+        
+    //     // Add each image to the gallery
+    //     currentProductImages.forEach((image, index) => {
+    //         const imageItem = document.createElement('div');
+    //         imageItem.className = 'image-item';
+    //         imageItem.setAttribute('data-index', index);
+            
+    //         imageItem.innerHTML = `
+    //             ${index === 0 ? '<span class="main-image-badge">Main</span>' : ''}
+    //             <img src="${image.url}" alt="${image.name}">
+    //             <div class="delete-image" data-index="${index}">×</div>
+    //         `;
+            
+    //         gallery.appendChild(imageItem);
+            
+    //         // Add delete event listener
+    //         imageItem.querySelector('.delete-image').addEventListener('click', (e) => {
+    //             e.stopPropagation();
+    //             const idx = parseInt(e.target.getAttribute('data-index'));
+    //             currentProductImages.splice(idx, 1);
+    //             refreshImageGallery();
+    //         });
+    //     });
+        
+    //     // Add the add button
+    //     const addBtn = document.createElement('div');
+    //     addBtn.id = 'addImageBtn';
+    //     addBtn.className = 'add-image-btn';
+    //     addBtn.innerHTML = `
+    //         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    //             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    //         </svg>
+    //     `;
+    //     gallery.appendChild(addBtn);
+        
+    //     // Setup drag-and-drop functionality
+    //     const sortable = new Sortable(gallery, {
+    //         animation: 150,
+    //         filter: '#addImageBtn', // Don't allow dragging the add button
+    //         onEnd: function(evt) {
+    //             // Skip if we moved the add button (shouldn't happen due to filter, but just in case)
+    //             if (evt.item.id === 'addImageBtn') return;
+                
+    //             // Get old and new indices
+    //             const oldIndex = evt.oldIndex;
+    //             const newIndex = evt.newIndex;
+                
+    //             // Move the image in the array
+    //             const movedImage = currentProductImages.splice(oldIndex, 1)[0];
+    //             currentProductImages.splice(newIndex, 0, movedImage);
+                
+    //             // Refresh to update the "Main" badge
+    //             refreshImageGallery();
+    //         }
+    //     });
+        
+    //     // Add image button click handler
+    //     document.getElementById('addImageBtn').addEventListener('click', () => {
+    //         document.getElementById('productImageInput').click();
+    //     });
+    // }
+
+    // // Handle image file selection
+    // document.addEventListener('DOMContentLoaded', () => {
+    //     const fileInput = document.getElementById('productImageInput');
+        
+    //     fileInput.addEventListener('change', function(e) {
+    //         const files = e.target.files;
+    //         if (!files.length) return;
+            
+    //         const file = files[0];
+    //         if (!file.type.match('image.*')) {
+    //             alert('Please select an image file');
+    //             return;
+    //         }
+            
+    //         const reader = new FileReader();
+    //         reader.onload = function(event) {
+    //             // Add the new image to the current images array
+    //             // Note: We're not uploading to Firebase Storage yet, just previewing
+    //             currentProductImages.push({
+    //                 url: event.target.result,
+    //                 name: file.name,
+    //                 file: file, // Keep the file object for later upload
+    //                 isNew: true // Flag to indicate this is a new upload
+    //             });
+                
+    //             refreshImageGallery();
+    //             fileInput.value = ''; // Reset the input for the next selection
+    //         };
+            
+    //         reader.readAsDataURL(file);
+    //     });
+    // });
+
+    // // Save product with multiple images
+    // document.getElementById('productForm').addEventListener('submit', async function(e) {
+    //     e.preventDefault();
+    //     const saveBtn = document.getElementById('saveProductBtn');
+    //     const cancelBtn = document.getElementById('cancelProductBtn');
+    //     const productId = document.getElementById('productId').value;
+        
+    //     saveBtn.disabled = true;
+    //     cancelBtn.disabled = true;
+    //     saveBtn.textContent = 'Saving...';
+        
+    //     try {
+    //         const productData = {
+    //             name: document.getElementById('productName').value,
+    //             price: parseFloat(document.getElementById('productPrice').value),
+    //             description: document.getElementById('productDescription').value,
+    //             status: document.getElementById('productStatus').value,
+    //             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+    //         };
+            
+    //         // Process images
+    //         const updatedImages = [];
+            
+    //         // First, upload any new images to Firebase Storage
+    //         for (let i = 0; i < currentProductImages.length; i++) {
+    //             const image = currentProductImages[i];
+                
+    //             if (image.isNew && image.file) {
+    //                 // This is a new image that needs to be uploaded
+    //                 const storageRef = firebase.storage().ref();
+    //                 const fileRef = storageRef.child(`products/${Date.now()}_${image.name}`);
+                    
+    //                 await fileRef.put(image.file);
+    //                 const url = await fileRef.getDownloadURL();
+                    
+    //                 updatedImages.push({
+    //                     url: url,
+    //                     name: image.name,
+    //                     path: fileRef.fullPath
+    //                 });
+    //             } else {
+    //                 // This is an existing image, keep it as is
+    //                 updatedImages.push({
+    //                     url: image.url,
+    //                     name: image.name,
+    //                     path: image.path || ''
+    //                 });
+    //             }
+    //         }
+            
+    //         // Update the images array in the product data
+    //         productData.images = updatedImages;
+            
+    //         // Set the first image as the main image for backward compatibility
+    //         if (updatedImages.length > 0) {
+    //             productData.imageUrl = updatedImages[0].url;
+    //             productData.imagePath = updatedImages[0].path;
+    //         } else {
+    //             // No images, clear the fields
+    //             productData.imageUrl = '';
+    //             productData.imagePath = '';
+    //         }
+            
+    //         // Save to Firestore
+    //         if (productId) {
+    //             // Update existing product
+    //             await db.collection('products').doc(productId).update(productData);
+    //             showToast('Product updated successfully!');
+    //         } else {
+    //             // Add new product
+    //             productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+    //             await db.collection('products').add(productData);
+    //             showToast('Product added successfully!');
+    //         }
+            
+    //         // Update UI
+    //         saveBtn.textContent = 'Saved!';
+    //         setTimeout(() => {
+    //             document.getElementById('closeProductModal').click();
+    //             loadProducts(); // Reload products to show changes
+    //         }, 1000);
+            
+    //     } catch (error) {
+    //         console.error("Error saving product:", error);
+    //         showToast('Error saving product: ' + error.message, 'error');
+    //         saveBtn.textContent = 'Save Product';
+    //         saveBtn.disabled = false;
+    //         cancelBtn.disabled = false;
+    //     }
+    // });
+
+</script>
+</body>
+</html>

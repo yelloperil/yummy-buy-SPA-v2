@@ -323,6 +323,14 @@
                             </svg>
                         </div>
                     </div>
+
+                    <!-- alternate image upload method -->
+                    <!-- <div class="form-group">
+                        <label>Images</label>
+                        <div id="imageGallery" class="image-gallery"></div>
+                        <input type="file" id="productImageInput" accept="image/*" style="display: none;">
+                    </div> -->
+
                 </div>
                 <div class="flex justify-end space-x-2">
                     <button type="button" id="cancelProductBtn" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md">
@@ -353,15 +361,30 @@
         const auth = firebase.auth();
         const storage = firebase.storage();
 
-        // Add error handling for Firebase
-        firebase.firestore().enablePersistence()
-          .catch(err => {
-            if (err.code === 'failed-precondition') {
-              console.warn('Firestore persistence could not be enabled');
-            } else if (err.code === 'unimplemented') {
-              console.warn('Firestore persistence is not available in this browser');
-            }
-          });
+        // // Add error handling for Firebase
+        // firebase.firestore().enablePersistence()
+        //   .catch(err => {
+        //     if (err.code === 'failed-precondition') {
+        //       console.warn('Firestore persistence could not be enabled');
+        //     } else if (err.code === 'unimplemented') {
+        //       console.warn('Firestore persistence is not available in this browser');
+        //     }
+        //   });
+
+        // Updated persistence code with proper error handling
+        try {
+            firebase.firestore().enablePersistence({
+                synchronizeTabs: true
+            }).catch(err => {
+                if (err.code === 'failed-precondition') {
+                console.warn('Firestore persistence could not be enabled: Multiple tabs open');
+                } else if (err.code === 'unimplemented') {
+                console.warn('Firestore persistence is not available in this browser');
+                }
+            });
+            } catch (e) {
+            console.warn('Error enabling persistence:', e);
+        }
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -1075,33 +1098,254 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@@@
         // ### Product Management Functions ### <nav>@@@</nav>
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 
-        // Toast notification function
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+        // Variable to store images for the current product
+        let currentProductImages = [];
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+        // ### Product Management - OLD VERSION - Toast Notification ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+
+        // // Toast notification function
+        // function showToast(message, type = 'success') {
+        //     const toastContainer = document.getElementById('toastContainer');
+        //     const toast = document.createElement('div');
+        //     toast.className = `mb-3 p-3 rounded-md ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white max-w-md`;
+        //     toast.textContent = message;
+            
+        //     toastContainer.appendChild(toast);
+            
+        //     // Auto remove after 3 seconds
+        //     setTimeout(() => {
+        //         toast.classList.add('opacity-0', 'transition-opacity');
+        //         setTimeout(() => {
+        //             toast.remove();
+        //         }, 300);
+        //     }, 3000);
+        // }
+
+
+
+        
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Show Toast ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+
+        // Updated Show toast notification
         function showToast(message, type = 'success') {
-            const toastContainer = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `mb-3 p-3 rounded-md ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white max-w-md`;
+            // Create toast element if it doesn't exist
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                document.body.appendChild(toast);
+            }
+            
+            // Set message and styling
             toast.textContent = message;
+            toast.className = 'toast ' + type;
             
-            toastContainer.appendChild(toast);
-            
-            // Auto remove after 3 seconds
+            // Show and hide after delay
+            toast.classList.add('show');
             setTimeout(() => {
-                toast.classList.add('opacity-0', 'transition-opacity');
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
+                toast.classList.remove('show');
             }, 3000);
         }
 
+
+    
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - OLD VERSION - Load Products ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+
+        // // Product Management Functions
+        // async function loadProducts() {
+        //     const productsList = document.getElementById('productsList');
+        //     productsList.innerHTML = '<div class="col-span-full text-center py-8">Loading products...</div>';
+            
+        //     try {
+        //         let products = [];
+                
+        //         try {
+        //             const snapshot = await db.collection('products').orderBy('name').get();
+                    
+        //             if (snapshot.empty) {
+        //                 productsList.innerHTML = '<div class="col-span-full text-center py-8">No products found</div>';
+        //                 return;
+        //             }
+                    
+        //             snapshot.forEach((doc) => {
+        //                 products.push({ id: doc.id, ...doc.data() });
+        //             });
+        //         } catch (error) {
+        //             console.warn("Error fetching products from Firestore, using sample data:", error);
+                    
+        //             // Use sample data for local testing
+        //             products = [
+        //                 {
+        //                     id: "sample-product-1",
+        //                     name: "Fresh Vegetables",
+        //                     price: 12.99,
+        //                     description: "A selection of fresh seasonal vegetables",
+        //                     status: "released",
+        //                     images: [
+        //                         {
+        //                             url: "images-v2/A_meticulously_organized_arran(1).jpeg",
+        //                             name: "vegetables.jpg"
+        //                         }
+        //                     ]
+        //                 },
+        //                 {
+        //                     id: "sample-product-2",
+        //                     name: "Premium Meat",
+        //                     price: 19.99,
+        //                     description: "High-quality premium meat selection",
+        //                     status: "released",
+        //                     images: [
+        //                         {
+        //                             url: "images-v2/A_meticulously_organized_arran(2).jpeg",
+        //                             name: "meat.jpg"
+        //                         }
+        //                     ]
+        //                 },
+        //                 {
+        //                     id: "sample-product-3",
+        //                     name: "Fresh Fruit Basket",
+        //                     price: 32.50,
+        //                     description: "Assorted fresh fruits",
+        //                     status: "unreleased",
+        //                     imageUrl: "images-v2/A_meticulously_organized_arran(3).jpeg"
+        //                 }
+        //             ];
+        //         }
+                
+        //         productsList.innerHTML = '';
+        //         products.forEach((product) => {
+        //             const productCard = document.createElement('div');
+        //             productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden';
+                    
+        //             // Get the main image (first in the images array) or use the legacy imageUrl field
+        //             const mainImageUrl = (product.images && product.images.length > 0) 
+        //                 ? product.images[0].url 
+        //                 : (product.imageUrl || '');
+                    
+        //             productCard.innerHTML = `
+        //                 <div class="h-48 bg-gray-100 flex items-center justify-center">
+        //                     ${mainImageUrl ? 
+        //                         `<img src="${mainImageUrl}" alt="${product.name}" class="h-full object-contain">` : 
+        //                         '<div class="text-gray-400">No Image</div>'}
+        //                 </div>
+        //                 <div class="p-4">
+        //                     <h3 class="font-bold text-lg mb-1">${product.name}</h3>
+        //                     <p class="text-primary font-bold mb-2">$${product.price.toFixed(2)}</p>
+        //                     <p class="text-sm text-gray-600 line-clamp-2 mb-4">${product.description || 'No description'}</p>
+        //                     <div class="flex justify-between items-center mb-2">
+        //                         <span class="text-sm ${product.status === 'released' ? 'text-green-600' : 'text-gray-600'}">
+        //                             ${product.status || 'unreleased'}
+        //                         </span>
+        //                         <span class="text-sm text-gray-500">
+        //                             ${(product.images && product.images.length > 0) ? 
+        //                                 `${product.images.length} image${product.images.length > 1 ? 's' : ''}` : 
+        //                                 'No images'}
+        //                         </span>
+        //                     </div>
+        //                     <div class="flex justify-between">
+        //                         <button data-product-id="${product.id}" class="edit-product-btn text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded">
+        //                             Edit
+        //                         </button>
+        //                         <button data-product-id="${product.id}" class="delete-product-btn text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded">
+        //                             Delete
+        //                         </button>
+        //                     </div>
+        //                 </div>
+        //             `;
+        //             productsList.appendChild(productCard);
+        //         });
+                
+        //         // Add event listeners
+        //         // for Add Product button
+        //         document.getElementById('addProductBtn').addEventListener('click', () => {
+        //             openProductModal(); // Call with no parameters for a new product
+        //         });
+
+        //         // for Edit button
+        //         document.querySelectorAll('.edit-product-btn').forEach(btn => {
+        //             btn.addEventListener('click', (e) => {
+        //                 const productId = e.target.getAttribute('data-product-id');
+        //                 openProductModal(productId);
+        //             });
+        //         });
+                
+        //         // for Delete button
+        //         document.querySelectorAll('.delete-product-btn').forEach(btn => {
+        //             btn.addEventListener('click', (e) => {
+        //                 const productId = e.target.getAttribute('data-product-id');
+        //                 confirmDeleteProduct(productId);
+        //             });
+        //         });
+                
+        //     } catch (error) {
+        //         console.error("Error loading products:", error);
+        //         productsList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading products: ${error.message}</div>`;
+        //     }
+        // }
+
+
+
+
+    
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - CURRENT VERSION - Load Products ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
         // Product Management Functions
         async function loadProducts() {
             const productsList = document.getElementById('productsList');
+            if (!productsList) {
+                console.error("Products list element not found");
+                return;
+            }
+            
             productsList.innerHTML = '<div class="col-span-full text-center py-8">Loading products...</div>';
             
             try {
@@ -1178,7 +1422,7 @@
                         </div>
                         <div class="p-4">
                             <h3 class="font-bold text-lg mb-1">${product.name}</h3>
-                            <p class="text-primary font-bold mb-2">$${product.price.toFixed(2)}</p>
+                            <p class="text-primary font-bold mb-2">$${product.price ? product.price.toFixed(2) : '0.00'}</p>
                             <p class="text-sm text-gray-600 line-clamp-2 mb-4">${product.description || 'No description'}</p>
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-sm ${product.status === 'released' ? 'text-green-600' : 'text-gray-600'}">
@@ -1203,36 +1447,135 @@
                     productsList.appendChild(productCard);
                 });
                 
-                // Add event listeners
-                // for Add Product button
-                document.getElementById('addProductBtn').addEventListener('click', () => {
-                    openProductModal(); // Call with no parameters for a new product
-                });
-
-                // for Edit button
-                document.querySelectorAll('.edit-product-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const productId = e.target.getAttribute('data-product-id');
-                        openProductModal(productId);
+                // Clean up any existing event listeners to prevent duplicates
+                const addProductBtn = document.getElementById('addProductBtn');
+                if (addProductBtn) {
+                    // Clone the button to remove all event listeners
+                    const newAddBtn = addProductBtn.cloneNode(true);
+                    addProductBtn.parentNode.replaceChild(newAddBtn, addProductBtn);
+                    
+                    // Add fresh event listener
+                    newAddBtn.addEventListener('click', () => {
+                        openProductModal(); // Call with no parameters for a new product
                     });
-                });
+                }
                 
-                // for Delete button
-                document.querySelectorAll('.delete-product-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
+                // Event delegation for edit and delete buttons to avoid attaching multiple listeners
+                document.addEventListener('click', (e) => {
+                    // Handle edit button clicks
+                    if (e.target.classList.contains('edit-product-btn')) {
                         const productId = e.target.getAttribute('data-product-id');
-                        confirmDeleteProduct(productId);
-                    });
-                });
+                        if (productId) {
+                            openProductModal(productId);
+                        }
+                    }
+                    
+                    // Handle delete button clicks
+                    if (e.target.classList.contains('delete-product-btn')) {
+                        const productId = e.target.getAttribute('data-product-id');
+                        if (productId && typeof confirmDeleteProduct === 'function') {
+                            confirmDeleteProduct(productId);
+                        }
+                    }
+                }, { capture: false });
                 
             } catch (error) {
                 console.error("Error loading products:", error);
-                productsList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading products: ${error.message}</div>`;
+                if (productsList) {
+                    productsList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading products: ${error.message}</div>`;
+                }
             }
         }
 
-        // Variable to store images for the current product
-        let currentProductImages = [];
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - OLD VERSION - Open Product Modal ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+
+        // // Variable to store images for the current product
+        // MOVED UP
+        // let currentProductImages = [];
+
+        // function openProductModal(productId = null) {
+        //     const modal = document.getElementById('productModal');
+        //     const form = document.getElementById('productForm');
+            
+        //     // Reset form and images array
+        //     form.reset();
+        //     currentProductImages = [];
+        //     refreshImageGallery();
+            
+        //     document.getElementById('productId').value = '';
+            
+        //     // Set title
+        //     document.getElementById('productModalTitle').textContent = 
+        //         productId ? 'Edit Product' : 'Add New Product';
+            
+        //     // If editing, load product data
+        //     if (productId) {
+        //         db.collection('products').doc(productId).get().then(doc => {
+        //             if (doc.exists) {
+        //                 const product = doc.data();
+        //                 document.getElementById('productId').value = doc.id;
+        //                 document.getElementById('productName').value = product.name || '';
+        //                 document.getElementById('productPrice').value = product.price || '';
+        //                 document.getElementById('productDescription').value = product.description || '';
+                        
+        //                 // Add status field handling
+        //                 const statusSelect = document.getElementById('productStatus');
+        //                 if (statusSelect) {
+        //                     statusSelect.value = product.status || 'unreleased';
+        //                 }
+                        
+        //                 // Handle images
+        //                 if (product.images && Array.isArray(product.images)) {
+        //                     // Use the new images array structure
+        //                     currentProductImages = [...product.images];
+        //                 } else if (product.imageUrl) {
+        //                     // Convert legacy single imageUrl to the new format
+        //                     currentProductImages = [{
+        //                         url: product.imageUrl,
+        //                         name: 'Legacy Image',
+        //                         path: product.imagePath || ''
+        //                     }];
+        //                 }
+                        
+        //                 refreshImageGallery();
+                        
+        //                 // Ensure the save button is visible
+        //                 document.getElementById('saveProductBtn').style.display = 'block';
+        //             }
+        //         }).catch(error => {
+        //             console.error("Error getting product:", error);
+        //             alert('Error loading product data. Please try again.');
+        //         });
+        //     } else {
+        //         // Ensure the save button is visible for new products
+        //         document.getElementById('saveProductBtn').style.display = 'block';
+        //     }
+            
+        //     // Show modal
+        //     modal.classList.remove('hidden');
+        // }
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Open Product Modal ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
 
         function openProductModal(productId = null) {
             const modal = document.getElementById('productModal');
@@ -1285,7 +1628,7 @@
                     }
                 }).catch(error => {
                     console.error("Error getting product:", error);
-                    alert('Error loading product data. Please try again.');
+                    showToast('Error loading product data. Please try again.', 'error');
                 });
             } else {
                 // Ensure the save button is visible for new products
@@ -1296,14 +1639,109 @@
             modal.classList.remove('hidden');
         }
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - OLD VERSION - Refresh Image Gallery ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+
+        // // Function to refresh the image gallery based on currentProductImages
+        // function refreshImageGallery() {
+        //     const gallery = document.getElementById('imageGallery');
+            
+        //     // Clear all items except the add button
+        //     while (gallery.firstChild) {
+        //         gallery.removeChild(gallery.firstChild);
+        //     }
+            
+        //     // Add each image to the gallery
+        //     currentProductImages.forEach((image, index) => {
+        //         const imageItem = document.createElement('div');
+        //         imageItem.className = 'image-item';
+        //         imageItem.setAttribute('data-index', index);
+                
+        //         imageItem.innerHTML = `
+        //             ${index === 0 ? '<span class="main-image-badge">Main</span>' : ''}
+        //             <img src="${image.url}" alt="${image.name}">
+        //             <div class="delete-image" data-index="${index}">×</div>
+        //         `;
+                
+        //         gallery.appendChild(imageItem);
+                
+        //         // Add delete event listener
+        //         imageItem.querySelector('.delete-image').addEventListener('click', (e) => {
+        //             e.stopPropagation();
+        //             const idx = parseInt(e.target.getAttribute('data-index'));
+        //             currentProductImages.splice(idx, 1);
+        //             refreshImageGallery();
+        //         });
+        //     });
+            
+        //     // Add the add button
+        //     const addBtn = document.createElement('div');
+        //     addBtn.id = 'addImageBtn';
+        //     addBtn.className = 'add-image-btn';
+        //     addBtn.innerHTML = `
+        //         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        //             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        //         </svg>
+        //     `;
+        //     gallery.appendChild(addBtn);
+            
+        //     // Setup drag-and-drop functionality
+        //     const sortable = new Sortable(gallery, {
+        //         animation: 150,
+        //         filter: '#addImageBtn', // Don't allow dragging the add button
+        //         onEnd: function(evt) {
+        //             // Skip if we moved the add button (shouldn't happen due to filter, but just in case)
+        //             if (evt.item.id === 'addImageBtn') return;
+                    
+        //             // Get old and new indices
+        //             const oldIndex = evt.oldIndex;
+        //             const newIndex = evt.newIndex;
+                    
+        //             // Move the image in the array
+        //             const movedImage = currentProductImages.splice(oldIndex, 1)[0];
+        //             currentProductImages.splice(newIndex, 0, movedImage);
+                    
+        //             // Refresh to update the "Main" badge
+        //             refreshImageGallery();
+        //         }
+        //     });
+            
+        //     // Add image button click handler
+        //     document.getElementById('addImageBtn').addEventListener('click', () => {
+        //         document.getElementById('productImageInput').click();
+        //     });
+        // }
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Current Version - Refresh Image Gallery ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+
         // Function to refresh the image gallery based on currentProductImages
         function refreshImageGallery() {
             const gallery = document.getElementById('imageGallery');
+            if (!gallery) return;
             
-            // Clear all items except the add button
-            while (gallery.firstChild) {
-                gallery.removeChild(gallery.firstChild);
-            }
+            // Clear all items
+            gallery.innerHTML = '';
             
             // Add each image to the gallery
             currentProductImages.forEach((image, index) => {
@@ -1313,7 +1751,7 @@
                 
                 imageItem.innerHTML = `
                     ${index === 0 ? '<span class="main-image-badge">Main</span>' : ''}
-                    <img src="${image.url}" alt="${image.name}">
+                    <img src="${image.url}" alt="${image.name || 'Product image'}">
                     <div class="delete-image" data-index="${index}">×</div>
                 `;
                 
@@ -1339,51 +1777,116 @@
             `;
             gallery.appendChild(addBtn);
             
-            // Setup drag-and-drop functionality
-            const sortable = new Sortable(gallery, {
-                animation: 150,
-                filter: '#addImageBtn', // Don't allow dragging the add button
-                onEnd: function(evt) {
-                    // Skip if we moved the add button (shouldn't happen due to filter, but just in case)
-                    if (evt.item.id === 'addImageBtn') return;
-                    
-                    // Get old and new indices
-                    const oldIndex = evt.oldIndex;
-                    const newIndex = evt.newIndex;
-                    
-                    // Move the image in the array
-                    const movedImage = currentProductImages.splice(oldIndex, 1)[0];
-                    currentProductImages.splice(newIndex, 0, movedImage);
-                    
-                    // Refresh to update the "Main" badge
-                    refreshImageGallery();
-                }
-            });
+            // Setup sortable functionality
+            if (typeof Sortable !== 'undefined') {
+                new Sortable(gallery, {
+                    animation: 150,
+                    filter: '#addImageBtn', // Don't allow dragging the add button
+                    onEnd: function(evt) {
+                        // Skip if we moved the add button (shouldn't happen due to filter, but just in case)
+                        if (evt.item.id === 'addImageBtn') return;
+                        
+                        // Get old and new indices
+                        const oldIndex = evt.oldIndex;
+                        const newIndex = evt.newIndex;
+                        
+                        // Move the image in the array
+                        const movedImage = currentProductImages.splice(oldIndex, 1)[0];
+                        currentProductImages.splice(newIndex, 0, movedImage);
+                        
+                        // Refresh to update the "Main" badge
+                        refreshImageGallery();
+                    }
+                });
+            }
             
             // Add image button click handler
-            document.getElementById('addImageBtn').addEventListener('click', () => {
-                document.getElementById('productImageInput').click();
-            });
+            const addImageBtn = document.getElementById('addImageBtn');
+            if (addImageBtn) {
+                addImageBtn.addEventListener('click', () => {
+                    document.getElementById('productImageInput').click();
+                });
+            }
         }
 
-        // Handle image file selection
-        document.addEventListener('DOMContentLoaded', () => {
-            const fileInput = document.getElementById('productImageInput');
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Image Upload ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+
+
+
+        // // Handle image file selection
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     const fileInput = document.getElementById('productImageInput');
             
+        //     fileInput.addEventListener('change', function(e) {
+        //         const files = e.target.files;
+        //         if (!files.length) return;
+                
+        //         const file = files[0];
+        //         if (!file.type.match('image.*')) {
+        //             alert('Please select an image file');
+        //             return;
+        //         }
+                
+        //         const reader = new FileReader();
+        //         reader.onload = function(event) {
+        //             // Add the new image to the current images array
+        //             // Note: We're not uploading to Firebase Storage yet, just previewing
+        //             currentProductImages.push({
+        //                 url: event.target.result,
+        //                 name: file.name,
+        //                 file: file, // Keep the file object for later upload
+        //                 isNew: true // Flag to indicate this is a new upload
+        //             });
+                    
+        //             refreshImageGallery();
+        //             fileInput.value = ''; // Reset the input for the next selection
+        //         };
+                
+        //         reader.readAsDataURL(file);
+        //     });
+        // });
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Image Upload ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+    // Set up event listeners once DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        // Handle image file selection
+        const fileInput = document.getElementById('productImageInput');
+        if (fileInput) {
             fileInput.addEventListener('change', function(e) {
                 const files = e.target.files;
                 if (!files.length) return;
                 
                 const file = files[0];
                 if (!file.type.match('image.*')) {
-                    alert('Please select an image file');
+                    showToast('Please select an image file', 'error');
                     return;
                 }
                 
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     // Add the new image to the current images array
-                    // Note: We're not uploading to Firebase Storage yet, just previewing
                     currentProductImages.push({
                         url: event.target.result,
                         name: file.name,
@@ -1397,149 +1900,393 @@
                 
                 reader.readAsDataURL(file);
             });
-        });
+        }
 
-        // Save product with multiple images
-        document.getElementById('productForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const saveBtn = document.getElementById('saveProductBtn');
-            const cancelBtn = document.getElementById('cancelProductBtn');
-            const productId = document.getElementById('productId').value;
+        // Set up cancel button
+        const cancelBtn = document.getElementById('cancelProductBtn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                document.getElementById('productModal').classList.add('hidden');
+            });
+        }
+
+        // Set up close button
+        const closeBtn = document.getElementById('closeProductModal');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                document.getElementById('productModal').classList.add('hidden');
+            });
+        }
+    });
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Save / Submit Product ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+        // // Save product with multiple images
+        // document.getElementById('productForm').addEventListener('submit', async function(e) {
+        //     e.preventDefault();
+        //     const saveBtn = document.getElementById('saveProductBtn');
+        //     const cancelBtn = document.getElementById('cancelProductBtn');
+        //     const productId = document.getElementById('productId').value;
             
-            saveBtn.disabled = true;
-            cancelBtn.disabled = true;
-            saveBtn.textContent = 'Saving...';
+        //     saveBtn.disabled = true;
+        //     cancelBtn.disabled = true;
+        //     saveBtn.textContent = 'Saving...';
             
-            try {
-                const productData = {
-                    name: document.getElementById('productName').value,
-                    price: parseFloat(document.getElementById('productPrice').value),
-                    description: document.getElementById('productDescription').value,
-                    status: document.getElementById('productStatus').value,
-                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                };
+        //     try {
+        //         const productData = {
+        //             name: document.getElementById('productName').value,
+        //             price: parseFloat(document.getElementById('productPrice').value),
+        //             description: document.getElementById('productDescription').value,
+        //             status: document.getElementById('productStatus').value,
+        //             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+        //         };
                 
-                // Process images
-                const updatedImages = [];
+        //         // Process images
+        //         const updatedImages = [];
                 
-                // First, upload any new images to Firebase Storage
-                for (let i = 0; i < currentProductImages.length; i++) {
-                    const image = currentProductImages[i];
+        //         // First, upload any new images to Firebase Storage
+        //         for (let i = 0; i < currentProductImages.length; i++) {
+        //             const image = currentProductImages[i];
                     
-                    if (image.isNew && image.file) {
-                        // This is a new image that needs to be uploaded
-                        const storageRef = firebase.storage().ref();
-                        const fileRef = storageRef.child(`products/${Date.now()}_${image.name}`);
+        //             if (image.isNew && image.file) {
+        //                 // This is a new image that needs to be uploaded
+        //                 const storageRef = firebase.storage().ref();
+        //                 const fileRef = storageRef.child(`products/${Date.now()}_${image.name}`);
                         
-                        await fileRef.put(image.file);
-                        const url = await fileRef.getDownloadURL();
+        //                 await fileRef.put(image.file);
+        //                 const url = await fileRef.getDownloadURL();
                         
-                        updatedImages.push({
-                            url: url,
-                            name: image.name,
-                            path: fileRef.fullPath
-                        });
-                    } else {
-                        // This is an existing image, keep it as is
-                        updatedImages.push({
-                            url: image.url,
-                            name: image.name,
-                            path: image.path || ''
-                        });
+        //                 updatedImages.push({
+        //                     url: url,
+        //                     name: image.name,
+        //                     path: fileRef.fullPath
+        //                 });
+        //             } else {
+        //                 // This is an existing image, keep it as is
+        //                 updatedImages.push({
+        //                     url: image.url,
+        //                     name: image.name,
+        //                     path: image.path || ''
+        //                 });
+        //             }
+        //         }
+                
+        //         // Update the images array in the product data
+        //         productData.images = updatedImages;
+                
+        //         // Set the first image as the main image for backward compatibility
+        //         if (updatedImages.length > 0) {
+        //             productData.imageUrl = updatedImages[0].url;
+        //             productData.imagePath = updatedImages[0].path;
+        //         } else {
+        //             // No images, clear the fields
+        //             productData.imageUrl = '';
+        //             productData.imagePath = '';
+        //         }
+                
+        //         // Save to Firestore
+        //         if (productId) {
+        //             // Update existing product
+        //             await db.collection('products').doc(productId).update(productData);
+        //             showToast('Product updated successfully!');
+        //         } else {
+        //             // Add new product
+        //             productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        //             await db.collection('products').add(productData);
+        //             showToast('Product added successfully!');
+        //         }
+                
+        //         // Update UI
+        //         saveBtn.textContent = 'Saved!';
+        //         setTimeout(() => {
+        //             document.getElementById('closeProductModal').click();
+        //             loadProducts(); // Reload products to show changes
+        //         }, 1000);
+                
+        //     } catch (error) {
+        //         console.error("Error saving product:", error);
+        //         showToast('Error saving product: ' + error.message, 'error');
+        //         saveBtn.textContent = 'Save Product';
+        //         saveBtn.disabled = false;
+        //         cancelBtn.disabled = false;
+        //     }
+        // });
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Save / Submit Product ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+    
+        // Save product with multiple images
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('productForm');
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const saveBtn = document.getElementById('saveProductBtn');
+                    const cancelBtn = document.getElementById('cancelProductBtn');
+                    const productId = document.getElementById('productId').value;
+                    
+                    if (!saveBtn || !cancelBtn) return;
+                    
+                    saveBtn.disabled = true;
+                    cancelBtn.disabled = true;
+                    saveBtn.textContent = 'Saving...';
+                    
+                    try {
+                        const productData = {
+                            name: document.getElementById('productName').value,
+                            price: parseFloat(document.getElementById('productPrice').value),
+                            description: document.getElementById('productDescription').value,
+                            status: document.getElementById('productStatus').value,
+                            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+                        
+                        // Process images
+                        const updatedImages = [];
+                        
+                        // First, upload any new images to Firebase Storage
+                        for (let i = 0; i < currentProductImages.length; i++) {
+                            const image = currentProductImages[i];
+                            
+                            if (image.isNew && image.file) {
+                                try {
+                                    // This is a new image that needs to be uploaded
+                                    const storageRef = storage.ref();
+                                    
+                                    // Fix: Generate a more unique file path with safer URL encoding
+                                    const timestamp = Date.now();
+                                    const safeFileName = encodeURIComponent(image.name).replace(/%20/g, '_');
+                                    const filePath = `products/${timestamp}_${safeFileName}`;
+                                    const fileRef = storageRef.child(filePath);
+                                    
+                                    // Convert data URL to blob if needed
+                                    let fileToUpload = image.file;
+                                    if (typeof image.url === 'string' && image.url.startsWith('data:')) {
+                                        // It's a data URL, convert to blob
+                                        const response = await fetch(image.url);
+                                        fileToUpload = await response.blob();
+                                    }
+                                    
+                                    await fileRef.put(fileToUpload, {contentType: image.file.type});
+                                    const url = await fileRef.getDownloadURL();
+                                    
+                                    updatedImages.push({
+                                        url: url,
+                                        name: image.name,
+                                        path: fileRef.fullPath
+                                    });
+                                } catch (error) {
+                                    console.error("Error uploading image:", error);
+                                    // Continue with the next image instead of stopping the entire process
+                                    showToast(`Error uploading image ${image.name}: ${error.message}`, 'warning');
+                                }
+                            } else {
+                                // This is an existing image, keep it as is
+                                updatedImages.push({
+                                    url: image.url,
+                                    name: image.name || '',
+                                    path: image.path || ''
+                                });
+                            }
+                        }
+                        
+                        // Update the images array in the product data
+                        productData.images = updatedImages;
+                        
+                        // Set the first image as the main image for backward compatibility
+                        if (updatedImages.length > 0) {
+                            productData.imageUrl = updatedImages[0].url;
+                            productData.imagePath = updatedImages[0].path;
+                        } else {
+                            // No images, clear the fields
+                            productData.imageUrl = '';
+                            productData.imagePath = '';
+                        }
+                        
+                        // Save to Firestore
+                        if (productId) {
+                            // Update existing product
+                            await db.collection('products').doc(productId).update(productData);
+                            showToast('Product updated successfully!');
+                        } else {
+                            // Add new product
+                            productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                            await db.collection('products').add(productData);
+                            showToast('Product added successfully!');
+                        }
+                        
+                        // Update UI
+                        saveBtn.textContent = 'Saved!';
+                        setTimeout(() => {
+                            document.getElementById('productModal').classList.add('hidden');
+                            loadProducts(); // Reload products to show changes
+                        }, 1000);
+                        
+                    } catch (error) {
+                        console.error("Error saving product:", error);
+                        showToast('Error saving product: ' + error.message, 'error');
+                        saveBtn.textContent = 'Save Product';
+                    } finally {
+                        saveBtn.disabled = false;
+                        cancelBtn.disabled = false;
                     }
-                }
-                
-                // Update the images array in the product data
-                productData.images = updatedImages;
-                
-                // Set the first image as the main image for backward compatibility
-                if (updatedImages.length > 0) {
-                    productData.imageUrl = updatedImages[0].url;
-                    productData.imagePath = updatedImages[0].path;
-                } else {
-                    // No images, clear the fields
-                    productData.imageUrl = '';
-                    productData.imagePath = '';
-                }
-                
-                // Save to Firestore
-                if (productId) {
-                    // Update existing product
-                    await db.collection('products').doc(productId).update(productData);
-                    showToast('Product updated successfully!');
-                } else {
-                    // Add new product
-                    productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                    await db.collection('products').add(productData);
-                    showToast('Product added successfully!');
-                }
-                
-                // Update UI
-                saveBtn.textContent = 'Saved!';
-                setTimeout(() => {
-                    document.getElementById('closeProductModal').click();
-                    loadProducts(); // Reload products to show changes
-                }, 1000);
-                
-            } catch (error) {
-                console.error("Error saving product:", error);
-                showToast('Error saving product: ' + error.message, 'error');
-                saveBtn.textContent = 'Save Product';
-                saveBtn.disabled = false;
-                cancelBtn.disabled = false;
+                });
             }
         });
 
-        // Delete product
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - OLD VERSION - Delete Product ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+        // // Delete product
+        // function confirmDeleteProduct(productId) {
+        //     if (confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+        //         // First get the product to find any images that need to be deleted
+        //         db.collection('products').doc(productId).get()
+        //             .then(doc => {
+        //                 if (doc.exists) {
+        //                     const product = doc.data();
+        //                     const deletePromises = [];
+                            
+        //                     // Delete images from storage if they exist
+        //                     if (product.images && Array.isArray(product.images)) {
+        //                         product.images.forEach(image => {
+        //                             if (image.path) {
+        //                                 const imageRef = firebase.storage().ref().child(image.path);
+        //                                 deletePromises.push(imageRef.delete().catch(err => {
+        //                                     console.warn("Error deleting image:", err);
+        //                                     // Continue even if image delete fails
+        //                                 }));
+        //                             }
+        //                         });
+        //                     } else if (product.imagePath) {
+        //                         // Handle legacy single image
+        //                         const imageRef = firebase.storage().ref().child(product.imagePath);
+        //                         deletePromises.push(imageRef.delete().catch(err => {
+        //                             console.warn("Error deleting image:", err);
+        //                         }));
+        //                     }
+                            
+        //                     // Wait for all image deletions, then delete the product
+        //                     Promise.all(deletePromises)
+        //                         .then(() => {
+        //                             return db.collection('products').doc(productId).delete();
+        //                         })
+        //                         .then(() => {
+        //                             showToast('Product deleted successfully!');
+        //                             loadProducts();
+        //                         })
+        //                         .catch(error => {
+        //                             console.error("Error deleting product:", error);
+        //                             showToast('Error deleting product: ' + error.message, 'error');
+        //                         });
+        //                 }
+        //             })
+        //             .catch(error => {
+        //                 console.error("Error getting product for deletion:", error);
+        //                 showToast('Error deleting product: ' + error.message, 'error');
+        //             });
+        //     }
+        // }
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Current Version - Delete Product ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+        // Helper function for product deletion confirmation
         function confirmDeleteProduct(productId) {
-            if (confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
-                // First get the product to find any images that need to be deleted
-                db.collection('products').doc(productId).get()
-                    .then(doc => {
-                        if (doc.exists) {
-                            const product = doc.data();
-                            const deletePromises = [];
-                            
-                            // Delete images from storage if they exist
-                            if (product.images && Array.isArray(product.images)) {
-                                product.images.forEach(image => {
-                                    if (image.path) {
-                                        const imageRef = firebase.storage().ref().child(image.path);
-                                        deletePromises.push(imageRef.delete().catch(err => {
-                                            console.warn("Error deleting image:", err);
-                                            // Continue even if image delete fails
-                                        }));
-                                    }
-                                });
-                            } else if (product.imagePath) {
-                                // Handle legacy single image
-                                const imageRef = firebase.storage().ref().child(product.imagePath);
-                                deletePromises.push(imageRef.delete().catch(err => {
-                                    console.warn("Error deleting image:", err);
-                                }));
-                            }
-                            
-                            // Wait for all image deletions, then delete the product
-                            Promise.all(deletePromises)
-                                .then(() => {
-                                    return db.collection('products').doc(productId).delete();
-                                })
-                                .then(() => {
-                                    showToast('Product deleted successfully!');
-                                    loadProducts();
-                                })
-                                .catch(error => {
-                                    console.error("Error deleting product:", error);
-                                    showToast('Error deleting product: ' + error.message, 'error');
-                                });
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error getting product for deletion:", error);
-                        showToast('Error deleting product: ' + error.message, 'error');
-                    });
+            if (!productId) return;
+            
+            if (confirm('Are you sure you want to delete this product?')) {
+                deleteProduct(productId);
             }
         }
+
+        // Helper function to actually delete a product
+        async function deleteProduct(productId) {
+            try {
+                // Get the product to find any images to delete
+                const productDoc = await db.collection('products').doc(productId).get();
+                
+                if (productDoc.exists) {
+                    const product = productDoc.data();
+                    
+                    // First delete any associated images from storage
+                    if (product.images && Array.isArray(product.images)) {
+                        for (const image of product.images) {
+                            if (image.path) {
+                                try {
+                                    await storage.ref(image.path).delete();
+                                } catch (imageError) {
+                                    console.warn(`Could not delete image at path ${image.path}:`, imageError);
+                                }
+                            }
+                        }
+                    } else if (product.imagePath) {
+                        // Handle legacy single image
+                        try {
+                            await storage.ref(product.imagePath).delete();
+                        } catch (imageError) {
+                            console.warn(`Could not delete image at path ${product.imagePath}:`, imageError);
+                        }
+                    }
+                    
+                    // Then delete the product document
+                    await db.collection('products').doc(productId).delete();
+                    showToast('Product deleted successfully');
+                    
+                    // Reload products list
+                    loadProducts();
+                }
+            } catch (error) {
+                console.error("Error deleting product:", error);
+                showToast('Error deleting product: ' + error.message, 'error');
+            }
+        }
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Initialize Page & Modal Close Handlers ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
 
         // Modal close handlers
         document.getElementById('closeProductModal').addEventListener('click', () => {
@@ -1560,8 +2307,15 @@
             document.getElementById('ordersTab').classList.remove('tab-active');
             document.getElementById('productsTab').classList.add('tab-active');
 
+            // Add button to open modal on the page -- WILL GET REMOVED BY CLONING NODE LOGIC IN LOAD PRODUCTS
+            const addProductBtn = document.getElementById('addProductBtn');
+            if (addProductBtn) {
+                addProductBtn.addEventListener('click', () => openProductModal());
+            }
+
             // Load products as before
             loadProducts();
+
         });
 
 
