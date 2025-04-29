@@ -830,6 +830,7 @@
 
         // @@@@@@@ Phone number validation and formatting
         phoneNumberInput.addEventListener('input', function(e) {
+            console.log('//////// Start of Input Event Listener ////////')
             // Get raw input value and remove all non-digit characters
             const constValue = '+1 ' + e.target.value.replace(/\D/g, '');
             // const constValue = e.target.value;
@@ -853,22 +854,24 @@
                 formattedValue += '(' + rawValue.slice(0, Math.min(3, rawValue.length));
                 console.log('Formatted Value after IF #2:', formattedValue)
             }
-            
+            console.log('Hit 1st IF')
             // Middle digits
             if (rawValue.length > 3) {
                 formattedValue += ') ' + rawValue.slice(3, Math.min(6, rawValue.length));
                 console.log('Formatted Value after IF #3:', formattedValue)
             }
-            
+            console.log('Hit 2nd IF')
             // Last digits
             if (rawValue.length > 6) {
                 formattedValue += '-' + rawValue.slice(6, Math.min(10, rawValue.length));
                 console.log('Formatted Value after IF #4:', formattedValue)
                 }
+            console.log('Hit 3rd IF')
 
             // Update the input value with the formatted version
             e.target.value = '+1 ' + formattedValue;
-            console.log('Formatted Value after Update (e.target.value = formattedValue): ', formattedValue)
+            console.log('Value after Update (e.target.value = formattedValue): ', e.target.value)
+            console.log('Hit Update')
 
             // Auto-focus to send code button after complete entry (10 digits)
             if (constValue.length === 10) {
@@ -878,7 +881,9 @@
                     sendCodeBtn.focus();
                     console.log('Auto-focus to send code button after complete entry (10 digits) - sendCodeBtn.focus() Activates')
                 }, 300);
+                console.log('Hit SetTimeout')
             }
+            console.log('//////// End of Input Event Listener ////////')
         });
         
         // Send verification code
