@@ -912,7 +912,7 @@
             // console.log('Hit 3rd IF')
 
             // Update the input value with the formatted version
-            e.target.value = countryCode + '+1 (' + areaCode + ') ' + middleDigits + '-' + lastDigits;
+            e.target.value = countryCode + areaCode + middleDigits + lastDigits;
             // e.target.value = '+1 ' + formattedValue;
             console.log('Value after Update (e.target.value = formattedValue): ', e.target.value)
             console.log('Hit Update')
