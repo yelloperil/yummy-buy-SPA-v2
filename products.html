@@ -838,13 +838,17 @@
             let cleanedValue = '';
 
             // Get raw input value and remove all non-digit characters
-            if (e.target.value.includes('+1')) {
+            if (e.target.value.split('').includes('+1')) {
+            console.log('1st cleanedValue inside cleaner IF: ', cleanedValue)
+
                 cleanedValue = rawValue.replace(/\D/g, '').slice(1);
             } else {
                 cleanedValue = rawValue.replace(/\D/g, '');
+            console.log('1st cleanedValue inside cleaner IF: ', cleanedValue)
+
             }
             // const cleanedValue = e.target.value;
-            console.log('1st cleanedValue: ', cleanedValue)
+            console.log('After clean, cleanedValue: ', cleanedValue)
             
             // Format the phone number
             let formattedValue = '';
@@ -891,6 +895,25 @@
             } else {
                 countryCode = ''
             }
+
+            // Update the input value with the formatted version
+            e.target.value = countryCode + areaCode + middleDigits + lastDigits;
+            // e.target.value = '+1 ' + formattedValue;
+            console.log('Value after Update (e.target.value = formattedValue): ', e.target.value)
+            console.log('Hit Update')
+
+            // Auto-focus to send code button after complete entry (10 digits)
+            if (cleanedValue.length === 10) {
+                console.log('Auto-focus to send code button after complete entry (10 digits)')
+                setTimeout(() => {
+                    console.log('Auto-focus to send code button after complete entry (10 digits) - setTimeout Activates')
+                    sendCodeBtn.focus();
+                    console.log('Auto-focus to send code button after complete entry (10 digits) - sendCodeBtn.focus() Activates')
+                }, 300);
+                console.log('Hit SetTimeout')
+            }
+            console.log('//////// End of Input Event Listener ////////')
+
          
             // // Area code
             // if (rawValue.length > 0) {
@@ -910,24 +933,6 @@
             //     console.log('Formatted Value after IF #4:', formattedValue)
             //     }
             // console.log('Hit 3rd IF')
-
-            // Update the input value with the formatted version
-            e.target.value = countryCode + areaCode + middleDigits + lastDigits;
-            // e.target.value = '+1 ' + formattedValue;
-            console.log('Value after Update (e.target.value = formattedValue): ', e.target.value)
-            console.log('Hit Update')
-
-            // Auto-focus to send code button after complete entry (10 digits)
-            if (cleanedValue.length === 10) {
-                console.log('Auto-focus to send code button after complete entry (10 digits)')
-                setTimeout(() => {
-                    console.log('Auto-focus to send code button after complete entry (10 digits) - setTimeout Activates')
-                    sendCodeBtn.focus();
-                    console.log('Auto-focus to send code button after complete entry (10 digits) - sendCodeBtn.focus() Activates')
-                }, 300);
-                console.log('Hit SetTimeout')
-            }
-            console.log('//////// End of Input Event Listener ////////')
         });
         
         // Send verification code
