@@ -771,7 +771,7 @@
             console.log('Current Value:', e.target.value)
             
             // Limit to 10 digits
-            let rawValue = constValue;
+            let rawValue = constValue.slice(1);
             console.log('Raw Value:', rawValue)
             // rawValue = rawValue.substring(0, 10);
             
