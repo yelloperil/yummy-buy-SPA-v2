@@ -835,11 +835,13 @@
             const rawValue = e.target.value;
             console.log('Current Value: ', e.target.value)
 
+            let cleanedValue = '';
+
             // Get raw input value and remove all non-digit characters
             if (e.target.value.includes('+1')) {
-                let cleanedValue = rawValue.replace(/\D/g, '').slice(1);
+                cleanedValue = rawValue.replace(/\D/g, '').slice(1);
             } else {
-                let cleanedValue = rawValue.replace(/\D/g, '');
+                cleanedValue = rawValue.replace(/\D/g, '');
             }
             // const cleanedValue = e.target.value;
             console.log('1st cleanedValue: ', cleanedValue)
