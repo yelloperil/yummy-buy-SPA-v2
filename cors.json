@@ -1,0 +1,8 @@
+[
+    {
+      "origin": ["https://www.yummybuy.ca"],
+      "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      "responseHeader": ["Content-Type", "Access-Control-Allow-Origin", "X-Goog-Upload-Status", "Content-Range", "X-Firebase-Storage-XSRF"],
+      "maxAgeSeconds": 3600
+    }
+  ]
