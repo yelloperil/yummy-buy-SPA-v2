@@ -502,13 +502,13 @@
             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
                 <h3 class="text-xl font-bold mb-4 text-primary">Authentication</h3>
                 
-                <!-- @@@@@ Phone Number Input -->
+                <!-- @@@@@@@ Phone Number Input -->
                 <div id="phoneInputContainer" class="space-y-4">
                     <p class="mb-4">Please enter your phone number to authenticate. We'll send you a verification code via SMS.</p>
                     <div class="relative">
                         <div id="recaptcha-container" class="mb-4"></div>
                         <label for="phoneNumber" class="block mb-1">Phone Number</label>
-                        <input type="tel" id="phoneNumber" placeholder="+1 123-456-7890" 
+                        <input type="text" id="phoneNumber" placeholder="+1 123-456-7890" 
                             class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
                         <p id="phoneError" class="text-red-500 text-sm mt-1 hidden"></p>
                     </div>
@@ -763,7 +763,7 @@
             });
         }
 
-        // @@@@@ Phone number validation and formatting
+        // @@@@@@@ Phone number validation and formatting
         phoneNumberInput.addEventListener('input', function(e) {
             // Get raw input value and remove all non-digit characters
             const constValue = e.target.value.replace(/\D/g, '');
