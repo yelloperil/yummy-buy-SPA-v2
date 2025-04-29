@@ -762,47 +762,6 @@
                 input.classList.remove('border-red-500');
             });
         }
-
-        // Phone number validation and formatting
-        phoneNumberInput.addEventListener('input', function(e) {
-            // Get raw input value and remove all non-digit characters
-            let rawValue = e.target.value.replace(/\D/g, '');
-            
-            // Limit to 10 digits
-            rawValue = rawValue.substring(0, 10);
-            
-            // Format the phone number
-            let formattedValue = '';
-            
-            if (rawValue.length > 0) {
-                formattedValue = '+1 ';
-                
-                // Area code
-                if (rawValue.length > 0) {
-                    formattedValue += '(' + rawValue.substring(0, Math.min(3, rawValue.length));
-                }
-                
-                // Middle digits
-                if (rawValue.length > 3) {
-                    formattedValue += ') ' + rawValue.substring(3, Math.min(6, rawValue.length));
-                }
-                
-                // Last digits
-                if (rawValue.length > 6) {
-                    formattedValue += '-' + rawValue.substring(6, Math.min(10, rawValue.length));
-                }
-            }
-            
-            // Update the input value with the formatted version
-            e.target.value = formattedValue;
-            
-            // Auto-focus to send code button after complete entry (10 digits)
-            if (rawValue.length === 10) {
-                setTimeout(() => {
-                    sendCodeBtn.focus();
-                }, 300);
-            }
-        });
         
         // Send verification code
         sendCodeBtn.addEventListener('click', async () => {
@@ -1145,7 +1104,7 @@
             });
         }
 
-        // // Display products - VERSION 1.0
+        // // Display products
         // async function displayProducts() {
         //     productList.innerHTML = '<div class="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">Loading...</div>';
             
@@ -1240,273 +1199,131 @@
         // }
 
 
-        // Display products - VERION 2.0
-        // async function displayProducts() {
-        //     productList.innerHTML = '<div class="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">Loading...</div>';
+        // Display products
+        async function displayProducts() {
+            productList.innerHTML = '<div class="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">Loading...</div>';
             
-        //     try {
-        //         const snapshot = await db.collection('products').orderBy('name').get();
+            try {
+                const snapshot = await db.collection('products').orderBy('name').get();
                 
-        //         if (snapshot.empty) {
-        //             productList.innerHTML = '<div class="col-span-full text-center py-8">No products available</div>';
-        //             return;
-        //         }
-                
-        //         // Clear existing cache
-        //         productCache.clear();
-        //         productSwipers = {};
-                
-        //         productList.innerHTML = '';
-        //         snapshot.forEach((doc) => {
-        //             const product = {
-        //                 id: doc.id,
-        //                 ...doc.data()
-        //             };
-                    
-        //             // Cache the product
-        //             productCache.set(doc.id, product);
-                    
-        //             const productCard = document.createElement('div');
-        //             productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
-                    
-        //             // Determine what images to display
-        //             let carouselHTML = '';
-                    
-        //             if (product.images && product.images.length > 0) {
-        //                 // Create swiper carousel with images
-        //                 carouselHTML = `
-        //                     <div class="product-carousel h-[calc(100vh/3)] sm:h-[calc(100vh/5)] bg-gray-100 dark:bg-gray-700 p-1.5 pb-0 overflow-hidden">
-        //                         <div class="swiper swiper-${doc.id}">
-        //                             <div class="swiper-wrapper">
-        //                                 ${product.images.map(image => `
-        //                                     <div class="swiper-slide">
-        //                                         <img src="${image.url}" alt="${product.name}" class="w-full h-full rounded-t-lg">
-        //                                     </div>
-        //                                 `).join('')}
-        //                             </div>
-        //                             <div class="swiper-pagination swiper-pagination-${doc.id}"></div>
-        //                             <div class="swiper-button-prev swiper-button-prev-${doc.id}"></div>
-        //                             <div class="swiper-button-next swiper-button-next-${doc.id}"></div>
-        //                             ${product.images.length > 1 ? `<div class="image-count absolute top-1.5 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">${product.images.length} images</div>` : ''}
-        //                         </div>
-        //                     </div>
-        //                 `;
-        //             } else if (product.imageUrl) {
-        //                 // Fallback to legacy imageUrl
-        //                 carouselHTML = `
-        //                     <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden">
-        //                         <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover rounded-t-lg">
-        //                     </div>
-        //                 `;
-        //             } else {
-        //                 // No image
-        //                 carouselHTML = `
-        //                     <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden flex items-center justify-center">
-        //                         <div class="text-gray-400">No Image</div>
-        //                     </div>
-        //                 `;
-        //             }
-
-        //             productCard.innerHTML = `
-        //                 ${carouselHTML}
-
-        //                 <div class="p-4 flex flex-col flex-grow justify-between">
-        //                     <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
-        //                     <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
-        //                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
-        //                     <div class="flex justify-between items-center mt-auto">
-        //                         <!-- Quantity Controls -->
-        //                         <div class="flex items-center">
-        //                             <button data-product-id="${doc.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
-        //                             <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${doc.id}">
-        //                             <button data-product-id="${doc.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
-        //                         </div>
-        //                         <!-- Cart Button -->
-        //                         <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
-        //                             Add to Cart
-        //                         </button>
-        //                     </div>
-        //                 </div>
-        //             `;
-        
-        //             productList.appendChild(productCard);
-                    
-        //             // Initialize swiper for this product if it has multiple images
-        //             if (product.images && product.images.length > 0) {
-        //                 setTimeout(() => initProductCarousel(doc.id), 0);
-        //             }
-        //         });
-
-        //         // Add event listeners for product cards
-        //         document.querySelectorAll('.add-to-cart').forEach(button => {
-        //             button.addEventListener('click', addToCart);
-        //         });
-
-        //         document.querySelectorAll('.increase-qty').forEach(button => {
-        //             button.addEventListener('click', (e) => {
-        //                 const id = e.target.dataset.productId;
-        //                 const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
-        //                 input.value = parseInt(input.value) + 1;
-        //             });
-        //         });
-
-        //         document.querySelectorAll('.decrease-qty').forEach(button => {
-        //             button.addEventListener('click', (e) => {
-        //                 const id = e.target.dataset.productId;
-        //                 const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
-        //                 if (parseInt(input.value) > 1) {
-        //                     input.value = parseInt(input.value) - 1;
-        //                 }
-        //             });
-        //         });
-                
-        //     } catch (error) {
-        //         console.error("Error loading products:", error);
-        //         productList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading products: ${error.message}</div>`;
-        //     }
-        // }
-
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-
-// VERSION 3.0 -- April 29, 2025
-
-// Modified displayProducts function to filter out "unreleased" products
-async function displayProducts() {
-    productList.innerHTML = '<div class="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">Loading...</div>';
-    
-    try {
-        const snapshot = await db.collection('products').orderBy('name').get();
-        
-        if (snapshot.empty) {
-            productList.innerHTML = '<div class="col-span-full text-center py-8">No products available</div>';
-            return;
-        }
-        
-        // Clear existing cache
-        productCache.clear();
-        productSwipers = {};
-        
-        productList.innerHTML = '';
-        
-        // Filter and display only released products
-        snapshot.forEach((doc) => {
-            const product = {
-                id: doc.id,
-                ...doc.data()
-            };
-            
-            // Skip unreleased products
-            if (product.label === 'unreleased') {
-                return;
-            }
-            
-            // Cache the product
-            productCache.set(doc.id, product);
-            
-            const productCard = document.createElement('div');
-            productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
-            
-            // Determine what images to display
-            let carouselHTML = '';
-            
-            if (product.images && product.images.length > 0) {
-                // Create swiper carousel with images
-                carouselHTML = `
-                    <div class="product-carousel h-[calc(100vh/3)] sm:h-[calc(100vh/5)] bg-gray-100 dark:bg-gray-700 p-1.5 pb-0 overflow-hidden">
-                        <div class="swiper swiper-${doc.id}">
-                            <div class="swiper-wrapper">
-                                ${product.images.map(image => `
-                                    <div class="swiper-slide">
-                                        <img src="${image.url}" alt="${product.name}" class="w-full h-full rounded-t-lg">
-                                    </div>
-                                `).join('')}
-                            </div>
-                            <div class="swiper-pagination swiper-pagination-${doc.id}"></div>
-                            <div class="swiper-button-prev swiper-button-prev-${doc.id}"></div>
-                            <div class="swiper-button-next swiper-button-next-${doc.id}"></div>
-                            ${product.images.length > 1 ? `<div class="image-count absolute top-1.5 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">${product.images.length} images</div>` : ''}
-                        </div>
-                    </div>
-                `;
-            } else if (product.imageUrl) {
-                // Fallback to legacy imageUrl
-                carouselHTML = `
-                    <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden">
-                        <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover rounded-t-lg">
-                    </div>
-                `;
-            } else {
-                // No image
-                carouselHTML = `
-                    <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden flex items-center justify-center">
-                        <div class="text-gray-400">No Image</div>
-                    </div>
-                `;
-            }
-
-            productCard.innerHTML = `
-                ${carouselHTML}
-
-                <div class="p-4 flex flex-col flex-grow justify-between">
-                    <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
-                    <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
-                    <div class="flex justify-between items-center mt-auto">
-                        <!-- Quantity Controls -->
-                        <div class="flex items-center">
-                            <button data-product-id="${doc.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
-                            <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${doc.id}">
-                            <button data-product-id="${doc.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
-                        </div>
-                        <!-- Cart Button -->
-                        <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
-                            Add to Cart
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            productList.appendChild(productCard);
-            
-            // Initialize swiper for this product if it has multiple images
-            if (product.images && product.images.length > 0) {
-                setTimeout(() => initProductCarousel(doc.id), 0);
-            }
-        });
-
-        // Add event listeners for product cards
-        document.querySelectorAll('.add-to-cart').forEach(button => {
-            button.addEventListener('click', addToCart);
-        });
-
-        document.querySelectorAll('.increase-qty').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const id = e.target.dataset.productId;
-                const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
-                input.value = parseInt(input.value) + 1;
-            });
-        });
-
-        document.querySelectorAll('.decrease-qty').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const id = e.target.dataset.productId;
-                const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
-                if (parseInt(input.value) > 1) {
-                    input.value = parseInt(input.value) - 1;
+                if (snapshot.empty) {
+                    productList.innerHTML = '<div class="col-span-full text-center py-8">No products available</div>';
+                    return;
                 }
-            });
-        });
+                
+                // Clear existing cache
+                productCache.clear();
+                productSwipers = {};
+                
+                productList.innerHTML = '';
+                snapshot.forEach((doc) => {
+                    const product = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    
+                    // Cache the product
+                    productCache.set(doc.id, product);
+                    
+                    const productCard = document.createElement('div');
+                    productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
+                    
+                    // Determine what images to display
+                    let carouselHTML = '';
+                    
+                    if (product.images && product.images.length > 0) {
+                        // Create swiper carousel with images
+                        carouselHTML = `
+                            <div class="product-carousel h-[calc(100vh/3)] sm:h-[calc(100vh/5)] bg-gray-100 dark:bg-gray-700 p-1.5 pb-0 overflow-hidden">
+                                <div class="swiper swiper-${doc.id}">
+                                    <div class="swiper-wrapper">
+                                        ${product.images.map(image => `
+                                            <div class="swiper-slide">
+                                                <img src="${image.url}" alt="${product.name}" class="w-full h-full rounded-t-lg">
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    <div class="swiper-pagination swiper-pagination-${doc.id}"></div>
+                                    <div class="swiper-button-prev swiper-button-prev-${doc.id}"></div>
+                                    <div class="swiper-button-next swiper-button-next-${doc.id}"></div>
+                                    ${product.images.length > 1 ? `<div class="image-count absolute top-1.5 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">${product.images.length} images</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    } else if (product.imageUrl) {
+                        // Fallback to legacy imageUrl
+                        carouselHTML = `
+                            <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden">
+                                <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover rounded-t-lg">
+                            </div>
+                        `;
+                    } else {
+                        // No image
+                        carouselHTML = `
+                            <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden flex items-center justify-center">
+                                <div class="text-gray-400">No Image</div>
+                            </div>
+                        `;
+                    }
+
+                    productCard.innerHTML = `
+                        ${carouselHTML}
+
+                        <div class="p-4 flex flex-col flex-grow justify-between">
+                            <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
+                            <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+                            <div class="flex justify-between items-center mt-auto">
+                                <!-- Quantity Controls -->
+                                <div class="flex items-center">
+                                    <button data-product-id="${doc.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
+                                    <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${doc.id}">
+                                    <button data-product-id="${doc.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
+                                </div>
+                                <!-- Cart Button -->
+                                <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    `;
         
-    } catch (error) {
-        console.error("Error loading products:", error);
-        productList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading products: ${error.message}</div>`;
-    }
-}
+                    productList.appendChild(productCard);
+                    
+                    // Initialize swiper for this product if it has multiple images
+                    if (product.images && product.images.length > 0) {
+                        setTimeout(() => initProductCarousel(doc.id), 0);
+                    }
+                });
 
+                // Add event listeners for product cards
+                document.querySelectorAll('.add-to-cart').forEach(button => {
+                    button.addEventListener('click', addToCart);
+                });
 
-//////////////////////////////////////////////////////////////////////////// 
-//////////////////////////////////////////////////////////////////////////// 
+                document.querySelectorAll('.increase-qty').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.target.dataset.productId;
+                        const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+                        input.value = parseInt(input.value) + 1;
+                    });
+                });
+
+                document.querySelectorAll('.decrease-qty').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.target.dataset.productId;
+                        const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+                        if (parseInt(input.value) > 1) {
+                            input.value = parseInt(input.value) - 1;
+                        }
+                    });
+                });
+                
+            } catch (error) {
+                console.error("Error loading products:", error);
+                productList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading products: ${error.message}</div>`;
+            }
+        }
 
 
         // Add product to cart

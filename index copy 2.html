@@ -513,19 +513,6 @@
                     <div class="relative">
                         <div id="recaptcha-container" class="mb-4"></div>
                         <label for="phoneNumber" class="block mb-1">Phone Number</label>
-                        <input type="tel" id="phoneNumber" placeholder="+1 (604) 969-3855" 
-                            class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
-                        <p id="phoneError" class="text-red-500 text-sm mt-1 hidden"></p>
-                    </div>
-                    <button id="sendCodeBtn" class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium">
-                        Send Verification Code
-                    </button>
-                </div>
-                <!-- <div id="phoneInputContainer" class="space-y-4">
-                    <p class="mb-4">Please enter your phone number to authenticate. We'll send you a verification code via SMS.</p>
-                    <div class="relative">
-                        <div id="recaptcha-container" class="mb-4"></div>
-                        <label for="phoneNumber" class="block mb-1">Phone Number</label>
                     <input type="text" id="phoneNumber" placeholder="+1" 
                         class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base"
                         pattern="[0-9\s\(\)-]{10,14}"
@@ -539,7 +526,7 @@
                     <button id="sendCodeBtn" class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium">
                         Send Verification Code
                     </button>
-                </div> -->
+                </div>
                 
                 <!-- Verification Code Input -->
                 <div id="codeInputContainer" class="space-y-4 hidden">
@@ -603,7 +590,7 @@
         const phoneInputContainer = document.getElementById('phoneInputContainer');
         const codeInputContainer = document.getElementById('codeInputContainer');
         const authSuccessContainer = document.getElementById('authSuccessContainer');
-        // const phoneNumberInput = document.getElementById('phoneNumber');
+        const phoneNumberInput = document.getElementById('phoneNumber');
         const sendCodeBtn = document.getElementById('sendCodeBtn');
         const verifyCodeBtn = document.getElementById('verifyCodeBtn');
         const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');
@@ -676,118 +663,32 @@
             });
         }
         
-        // Phone number formatting and validation
-        // // already declared above
-        // const phoneNumberInput = document.getElementById('phoneNumber');
-
-        // Phone Number Input Logic
-        const phoneNumberInput = document.getElementById('phoneNumber');
-
-        phoneNumberInput.addEventListener('focus', () => {
-            phoneNumberInput.placeholder = "+1 (";
-        });
-
-        phoneNumberInput.addEventListener('input', (e) => {
-            // Get raw digits only
-            let rawValue = e.target.value.replace(/\D/g, '');
-            
-            // Limit to 10 digits (excluding country code)
-            if (rawValue.length > 10) {
-                rawValue = rawValue.slice(0, 10);
-            }
-
-            // Formatting logic
-            let formattedValue = '';
-            if (rawValue.length > 0) {
-                formattedValue = '+1 '; // Country code
-                
-                // Area code
-                if (rawValue.length >= 1) {
-                    formattedValue += '(' + rawValue.slice(0, 3);
-                }
-                
-                // Middle digits
-                if (rawValue.length >= 4) {
-                    formattedValue += ') ' + rawValue.slice(3, 6);
-                }
-                
-                // Last digits
-                if (rawValue.length >= 7) {
-                    formattedValue += '-' + rawValue.slice(6, 10);
-                }
-            }
-
-            // Update input value
-            e.target.value = formattedValue;
-
-            // Focus logic
-            if (rawValue.length === 10) {
-                setTimeout(() => {
-                    document.getElementById('sendCodeBtn').focus();
-                }, 300);
-            }
-        });
-
-
-
-
-        // phoneNumberInput.addEventListener('input', (e) => {
-        //     let value = e.target.value.replace(/[^0-9]/g, ''); // Remove non-digit characters
-        //     if (value.length > 10) {
-        //         value = value.slice(0, 10); // Limit to 10 digits
-        //     }
-
-        //     // Format the phone number
-        //     if (value.length > 0) {
-        //         value = '+1 (' + value;
-        //     }
-        //     if (value.length > 8) {
-        //         value = value.slice(0, 3) + ') ' + value.slice(9);
-        //     }
-        //     if (value.length > 13) {
-        //         value = value.slice(0, 13) + '-' + value.slice(13);
-        //     }
-        //     if (value.length > 16) {
-        //         value = value.slice(0, 16) + '-' + value.slice(16);
-        //     }
-
-        //     e.target.value = value;
-
-        //     // Trigger send code button focus after 10 digits
-        //     if (value.replace(/\D/g, '').length === 10) {
-        //         setTimeout(() => {
-        //             document.getElementById('sendCodeBtn').focus();
-        //         }, 300);
-        //     }
-        // });
-        
         // Send verification code
         sendCodeBtn.addEventListener('click', async () => {
-            const trimmedPhoneNumber = phoneNumberInput.value.replace(/[^0-9]/g, '').trim(); // Get only digits
-            if (trimmedPhoneNumber.length !== 10) {
+            const phoneNumber = phoneNumberInput.value.trim();
+            
+            if (!phoneNumber) {
                 phoneError.textContent = 'Please enter a valid phone number';
                 phoneError.classList.remove('hidden');
                 return;
             }
-
-            const phoneNumber = '+1' + trimmedPhoneNumber; // Append +1 for authentication
-
+            
             try {
                 sendCodeBtn.disabled = true;
                 sendCodeBtn.textContent = 'Sending...';
-
+                
                 // Send verification code
                 const appVerifier = window.recaptchaVerifier;
                 const confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier);
                 verificationId = confirmationResult.verificationId;
-
+                
                 // Show verification code input
                 phoneInputContainer.classList.add('hidden');
                 codeInputContainer.classList.remove('hidden');
-
+                
                 // Focus on the first verification code input
                 verificationInputs[0].focus();
-
+                
                 // Handle verification code inputs
                 setupVerificationInputs();
             } catch (error) {
@@ -796,60 +697,13 @@
                 phoneError.classList.remove('hidden');
                 sendCodeBtn.disabled = false;
                 sendCodeBtn.textContent = 'Send Verification Code';
-
+                
                 // Reset reCAPTCHA
                 window.recaptchaVerifier.reset(window.recaptchaWidgetId);
                 initRecaptcha();
             }
         });
         
-
-    
-
-        // // Send verification code
-        // sendCodeBtn.addEventListener('click', async () => {
-        //     const phoneNumber = phoneNumberInput.value.replace(/[^0-9]/g, '').trim(); // Get only digits
-        //     if (phoneNumber.length !== 10) {
-        //         phoneError.textContent = 'Please enter a valid phone number';
-        //         phoneError.classList.remove('hidden');
-        //         return;
-        //     }
-
-        //     const fullPhoneNumber = '+1' + phoneNumber; // Append +1 for authentication
-
-        //     try {
-        //         sendCodeBtn.disabled = true;
-        //         sendCodeBtn.textContent = 'Sending...';
-
-        //         // Send verification code
-        //         const appVerifier = window.recaptchaVerifier;
-        //         const confirmationResult = await firebase.auth().signInWithPhoneNumber(fullPhoneNumber, appVerifier);
-        //         verificationId = confirmationResult.verificationId;
-
-        //         // Show verification code input
-        //         phoneInputContainer.classList.add('hidden');
-        //         codeInputContainer.classList.remove('hidden');
-
-        //         // Focus on the first verification code input
-        //         verificationInputs[0].focus();
-
-        //         // Handle verification code inputs
-        //         setupVerificationInputs();
-        //     } catch (error) {
-        //         console.error('Error sending verification code:', error);
-        //         phoneError.textContent = error.message || 'Error sending verification code. Please try again.';
-        //         phoneError.classList.remove('hidden');
-        //         sendCodeBtn.disabled = false;
-        //         sendCodeBtn.textContent = 'Send Verification Code';
-
-        //         // Reset reCAPTCHA
-        //         window.recaptchaVerifier.reset(window.recaptchaWidgetId);
-        //         initRecaptcha();
-        //     }
-        // });
-
-
-
         // Set up verification code inputs
         function setupVerificationInputs() {
             verificationInputs.forEach((input, index) => {

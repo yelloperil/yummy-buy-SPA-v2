@@ -170,35 +170,49 @@
     <div class="container mx-auto px-4 py-8">
 
         <!-- Admin Header -->
-            <!-- *** GRID vs FLEX *** -->
-            <!-- <header class="grid-cols-12 mb-2 py-4 sm:flex sm:justify-between sm:items-center sm:mb-8 sm:py-8"> -->
-        <header class="flex justify-between items-center mb-2 py-4 sm:mb-8 sm:py-8">
+        <header class="mb-8 py-8 flex justify-between items-center">
 
             <!-- BACK TO HOME -->
-                <!-- *** GRID vs FLEX *** -->
-                <!-- <span class="grid-start-1 grid-span-2 sm:flex sm:gap-2 sm:items-center text-primary text-base sm:text-lg sm:font-bold hover:text-secondary"> -->
-            <span class="flex gap-2 items-center text-primary text-base sm:text-lg sm:font-bold hover:text-secondary">
+            <span class="text-primary text-lg font-bold hover:text-secondary flex gap-2 items-center">
+                <!-- <img src="assets/icons/left-arrow.gif" alt="link back to home" class="w-8 h-8"> -->
                 <img src="assets/icons/left_arrow_001.png" alt="link back to home" class="w-8 h-8">
-                <a href="index.html" class="text-primary text-base font-semibold hover:text-secondary pb-1 pl-2">home</a>
+                <!-- <img src="assets/icons/left-arrow_002.png" alt="link back to home" class="w-8 h-8"> -->
+                <!-- <img src="assets/icons/backward.gif" alt="link back to home" class="w-8 h-8"> -->
+                <!-- <img src="assets/icons/backward(1).gif" alt="link back to home" class="w-8 h-8"> -->
+                <a href="index.html" class="text-primary hover:text-secondary pb-1 pl-2">back to home</a>
             </span>
 
             <!-- TITLE CONTAINER -->
-                <!-- *** GRID vs FLEX *** -->
-                <!-- <div class="grid-start-4 grid-span-4 sm:flex sm:justify-center sm:gap-2 sm:pr-24"> -->
-            <div class="flex justify-center items-start pr-8 sm:gap-2 sm:pr-24">
+            <div class="flex items-center gap-2 pr-24">
                 
                 <!-- TITLE IMAGE -->
-                <img src="assets/icons/radar-0_no_bg.gif" alt="link back to home" class="w-auto h-10 sm:h-24 sm:m-0">
+                <img src="assets/icons/radar-0_no_bg.gif" alt="link back to home" class="w-24 h-24">
+                <!-- <img src="assets/icons/dashboard_no_bg.gif" alt="link back to home" class="w-24 h-24"> -->
                 
                 <!-- TITLE TEXT -->
-                <h1 class="self-end font-zenMaru text-3xl sm:text-6xl font-bold text-primary pb-6">瞭望塔</h1>
+                <h1 class="self-end font-zenMaru text-6xl font-bold text-primary pb-6">瞭望塔</h1>
+                <!-- <h1 class="font-lora text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-dmMono text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-zenMincho text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-ibm-plex-sans-jp text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-iansui text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-klee-one text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-dela-gothic-one text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-yusei-magic text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-noto-sans-sc text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-zen-kaku-gothic-antique text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-noto-sans-jp text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-dotgothic16 text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="font-noto-sans-tc text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="text-3xl font-bold text-primary">瞭望塔</h1> -->
+                <!-- <h1 class="text-3xl font-bold text-primary">指挥中心</h1> -->
+                <!-- <h1 class="text-3xl font-bold text-primary">大本营 - 控制面板</h1> -->
+                <!-- <h1 class="text-3xl font-bold text-primary">Admin Dashboard</h1> -->
 
             </div>
 
             <!-- logout -->
-                <!-- *** GRID vs FLEX *** -->
-                <!-- <button id="logoutBtn" class="grid-start-9 grid-span-2 sm:col-start-auto sm:col-span-auto hover:bg-red-300 bg-red-500 sm:bg-red-500 text-white py-2 px-4 rounded-md"> -->
-            <button id="logoutBtn" class="hover:bg-red-300 bg-red-500 text-sm sm:text-base text-white pt-1 pb-1.5 sm:py-2 px-2 sm:px-4 mb-1 sm:mb-0 rounded-md">
+            <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md">
                 Log Out
             </button>
 
@@ -242,9 +256,9 @@
         <div id="productsSection" class="hidden">
             <!-- Product management UI will go here -->
             <div class="mb-6 flex justify-between">
-                <h2 class="text-lg sm:text-2xl font-semibold">Product Management</h2>
-                <button id="addProductBtn" class="bg-primary hover:bg-secondary text-white text-sm sm:text-base px-3 sm:px-4 py-2 sm:py-2 rounded-md">
-                    Add New
+                <h2 class="text-2xl font-semibold">Product Management</h2>
+                <button id="addProductBtn" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md">
+                    Add New Product
                 </button>
             </div>
             
@@ -950,10 +964,10 @@
                                         <th class="text-right text-lg pb-2">Price</th>
                                         <th class="text-right text-lg pb-2">Subtotal</th>
                                     </tr>
-    </thead>
-    <tbody>
-        ${itemsTable}
-        <tr class="border-t border-gray-300 font-bold">
+                                </thead>
+                                <tbody">
+                                    ${itemsTable}
+                                    <tr class="border-t border-gray-300 font-bold">
                                         <td colspan="3" class="text-right pt-3">Total:</td>
                                         <td class="text-right pt-3">$${order.total}</td>
                                     </tr>
@@ -1191,10 +1205,10 @@
                                 </span>
                             </div>
                             <div class="flex justify-between">
-                                <button data-product-id="${product.id}" class="edit-product-btn text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded">
+                                <button data-product-id="${doc.id}" class="edit-product-btn text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded">
                                     Edit
                                 </button>
-                                <button data-product-id="${product.id}" class="delete-product-btn text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded">
+                                <button data-product-id="${doc.id}" class="delete-product-btn text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded">
                                     Delete
                                 </button>
                             </div>
@@ -1552,15 +1566,8 @@
 
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize default tab state
-            document.getElementById('ordersSection').classList.add('hidden');
+            // Show the products section by default for testing
             document.getElementById('productsSection').classList.remove('hidden');
-            
-            // Set active tab styling
-            document.getElementById('ordersTab').classList.remove('tab-active');
-            document.getElementById('productsTab').classList.add('tab-active');
-
-            // Load products as before
             loadProducts();
         });
 

@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yummy Buy 😋</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Swiper.js for carousel -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/9.3.2/swiper-bundle.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/9.3.2/swiper-bundle.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link
+    href="https://fonts.googleapis.com/css2?family=Roboto&family=Lora&family=DM+Mono&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Zen+Old+Mincho&family=IBM+Plex+Sans+JP&family=Iansui&family=Klee+One&family=Dela+Gothic+One&family=Yusei+Magic&family=Noto+Sans+SC&family=Zen+Kaku+Gothic+Antique&family=Noto+Sans+JP&family=DotGothic16&family=Noto+Sans+TC&display=swap"
+    rel="stylesheet"
+    >
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+                theme: {
+                    extend: {
+                        display: ['responsive'],
+                        flexDirection: ['responsive']                                                
+                    },
+                },
+                variants: {
+                    extend: {
+                        display: ['responsive'],
+                        flexDirection: ['responsive']
+                    }
+                }
+        };
+    </script>
+
+    <style>
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .tab-active {
+            border-bottom: 3px solid #5D5CDE;
+            font-weight: 600;
+        }
+        /* Add toast styles here */
+        .toast {
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+ 
+        /* VERSION 2.0 -- Perfect VERTICAL and SWIPER alignment BUT Centered Between Slides*/
+        /* Image carousel container styles */
+        .product-carousel {
+            width: 100%;
+            /* height: calc(100vh/3); */
+            /* height: 250px; */
+            overflow: hidden;
+            position: relative;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-carousel .swiper,
+        .product-carousel .swiper-wrapper,
+        .product-carousel .swiper-slide {
+            width: 100%;
+            height: 100%;
+            /* display: flex;
+            align-items: center;
+            justify-content: center; */
+        }
+
+        .product-carousel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        /* Gallery modal */
+        .gallery-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 50;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-modal.active {
+            display: flex;
+        }
+
+        /* Swiper customization */
+        .swiper-pagination-bullet {
+            background: #5D5CDE;
+            opacity: 0.7;
+        }
+
+        .swiper-pagination-bullet-active {
+            background: #A5A4FF;
+            opacity: 1;
+        }
+
+        /* Product card swipers */
+        .product-carousel .swiper-button-next,
+        .product-carousel .swiper-button-prev {
+            color: white;
+            background: rgba(0, 0, 0, 0.3);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            --swiper-navigation-size: 18px;
+        }
+
+        .product-carousel .swiper-button-next:hover,
+        .product-carousel .swiper-button-prev:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Make sure pagination is visible on product cards */
+        .product-carousel .swiper-pagination {
+            bottom: 5px;
+        }
+
+        /* Image count badge */
+        .image-count {
+            z-index: 10;
+        }
+
+        /* Zoom effect for modal */
+        .modal-img-container {
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .modal-img-container img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+    </style>
+
+</head>
+
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
+    
+    <!-- Gallery Modal for enlarged images -->
+    <div id="galleryModal" class="gallery-modal">
+        <div class="modal-content relative w-full h-full">
+            <!-- Close button -->
+            <button id="closeModal" class="absolute top-4 right-4 text-white text-2xl z-20 bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center">
+                ✕
+            </button>
+            
+            <!-- Modal swiper -->
+            <div class="swiper modalSwiper h-full">
+                <div class="swiper-wrapper" id="modalSwiperWrapper">
+                    <!-- Modal slides will be inserted here by JS -->
+                </div>
+                <!-- Modal navigation -->
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-next text-white"></div>
+                <div class="swiper-button-prev text-white"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- @@@ OUTER WRAPPER Outer Wrapper -->
+    <div class="container mx-auto px-4 py-2 sm:py-8">
+        
+    
+    <!-- <HEADER /> -->
+
+        <!-- Version 7.0 - HYBRID - structure of old, responsiveness of new -->
+        <header class="relative flex flex-col justify-between sm:grid sm:grid-cols-12 items-center gap-y-6 my-2 pb-6 sm:pb-12">
+
+            
+            <!-- CONTAINER: HIDDEN ADMIN LINK, HIDDEN USER PHONE DISPLAY, LOGIN BUTTON -->
+            <div class="items-end gap-4 sm:col-start-12 sm:col-span-1">
+
+                <div class="flex items-end gap-2">
+                                
+                    <!-- HIDDEN ADMIN LINK -->
+                    <h3 id="adminLink" class="hidden">
+                        <a href="admin.html" class="block hover:text-[#f13dc3] text-white bg-transparent hover:bg-primary px-8 pt-2 pb-3 pb-2.5 ml-1 rounded-md font-semibold transition-all duration-200 border border-[#f13dc3] hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-secondary">
+                            Admin
+                        </a>
+                    </h3>
+                    
+                    <!-- LOGIN BUTTON -->
+                    <button id="loginBtn" class="hidden sm:block flex items-center justify-center bg-[#4a427f] hover:text-[#f13dc3] hover:bg-primary ml-auto text-white pt-2 pb-3 px-8 rounded-lg font-semibold transition-all duration-200 border-invisible hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        <p>Log In</p>
+                    </button>
+    
+                </div>
+    
+            </div>
+
+            <!-- ABSOLUTE POSITIONED HIDDEN -->
+            <div class="absolute flex items-end top-4 right-0">
+                <span id="userPhoneDisplay" class="text-sm font-bold text-indigo-100 border-b-2 border-[#f13dc3] ml-auto pr-0.5 pb-1">
+                    <!-- User's phone number will be displayed here -->
+                </span>
+            </div>
+
+        </header>
+
+
+    <!-- @@@ MAIN BODY SECTION -->
+        
+        <!-- Version 5.0 - Product Catalogue Section, Shopping Cart Section, Order Section -->
+        <div class="flex flex-col lg:flex-row gap-8">
+
+            <!-- Product Catalogue Section -->
+            <div class="lg:w-2/3">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+                    <h2 class="hidden sm:block text-xl font-semibold mb-4">Product Catalogue</h2>
+                    <div class="mb-4">
+                        <input type="text" id="searchInput" placeholder="Search products..." 
+                            class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                    </div>
+                    <div id="productList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Products will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+        
+        <!-- Authentication Modal -->
+        <div id="authModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
+                <h3 class="text-xl font-bold mb-4 text-primary">Authentication</h3>
+                
+                <!-- Phone Number Input -->
+                <div id="phoneInputContainer" class="space-y-4">
+                    <p class="mb-4">Please enter your phone number to authenticate. We'll send you a verification code via SMS.</p>
+                    <div class="relative">
+                        <div id="recaptcha-container" class="mb-4"></div>
+                        <label for="phoneNumber" class="block mb-1">Phone Number</label>
+                        <input type="tel" id="phoneNumber" placeholder="+1 123-456-7890" 
+                            class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
+                        <p id="phoneError" class="text-red-500 text-sm mt-1 hidden"></p>
+                    </div>
+                    <button id="sendCodeBtn" class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium">
+                        Send Verification Code
+                    </button>
+                </div>
+                
+                <!-- Verification Code Input -->
+                <div id="codeInputContainer" class="space-y-4 hidden">
+
+                    <button id="verifyCodeBtn" class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium">
+                        Verify Code
+                    </button>
+                </div>
+  
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyCTUZbw1qSdFEBG2SGo7smQgqXEKZZWCaw",
+          authDomain: "mei-wen-ti.firebaseapp.com",
+          projectId: "mei-wen-ti",
+          storageBucket: "mei-wen-ti.firebasestorage.app",
+          messagingSenderId: "103509830524",
+          appId: "1:103509830524:web:5ddef022db357ce99152f9",
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(); // Add Firestore reference
+        const auth = firebase.auth();
+        
+        // Initialize cart
+        let cart = [];
+        
+        // Initialize cart-related DOM elements
+        const cartItems = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        const clearCartBtn = document.getElementById('clearCartBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const emptyCartImage = document.getElementById('emptyCartImage');
+        const emptyCartMessage = document.getElementById('emptyCartMessage');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const orderForm = document.getElementById('orderForm');
+        const orderReference = document.getElementById('orderReference');
+        const productList = document.getElementById('productList');
+        const searchInput = document.getElementById('searchInput');
+        const submitOrderBtn = document.getElementById('submitOrderBtn');
+        const galleryModal = document.getElementById('galleryModal');
+        const modalSwiperWrapper = document.getElementById('modalSwiperWrapper');
+
+        // Global variables for swipers
+        let productSwipers = {};
+        let modalSwiper;
+        
+        // Initialize modal swiper
+        function initModalSwiper() {
+            modalSwiper = new Swiper('.modalSwiper', {
+                slidesPerView: 1,
+                spaceBetween: 30,
+                loop: true,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            });
+        }
+        
+        // Initialize after DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initModalSwiper();
+            
+            // Close modal when clicking close button
+            document.getElementById('closeModal').addEventListener('click', function() {
+                galleryModal.classList.remove('active');
+            });
+            
+            // Close modal when clicking outside the image
+            galleryModal.addEventListener('click', function(e) {
+                if (e.target === galleryModal) {
+                    galleryModal.classList.remove('active');
+                }
+            });
+        });
+
+        // Initialize delivery type DOM elements
+        const deliveryTypeSelect = document.getElementById('deliveryType');
+        const addressContainer = document.getElementById('addressContainer');
+        const addressInput = document.getElementById('address');
+
+        // Add event listener for delivery type change
+        deliveryTypeSelect.addEventListener('change', handleDeliveryTypeChange);
+        
+        // Trigger change event on page load
+        handleDefaultDeliveryType();
+        handleDeliveryTypeChange();
+        
+
+        
+        // Authentication State
+        let isLoggedIn = false;
+        let currentUser = null;
+        let verificationId = null;
+        
+        // Authentication Elements
+        const loginBtn = document.getElementById('loginBtn');
+        const loginBtnMobile = document.getElementById('loginBtnMobile');
+        const authModal = document.getElementById('authModal');
+        const phoneInputContainer = document.getElementById('phoneInputContainer');
+        const codeInputContainer = document.getElementById('codeInputContainer');
+        const authSuccessContainer = document.getElementById('authSuccessContainer');
+        const phoneNumberInput = document.getElementById('phoneNumber');
+        const sendCodeBtn = document.getElementById('sendCodeBtn');
+        const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+        const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');
+        const verificationInputs = document.querySelectorAll('.verification-code-input');
+        const phoneError = document.getElementById('phoneError');
+        const codeError = document.getElementById('codeError');
+        const userPhoneDisplay = document.getElementById('userPhoneDisplay');
+        
+        // Open auth modal when login button is clicked
+        loginBtn.addEventListener('click', () => {
+            if (isLoggedIn) {
+                // Show logout confirmation or account management options
+                if (confirm('Do you want to log out?')) {
+                    logoutUser();
+                }
+            } else {
+                showAuthModal();
+            }
+        });
+
+        loginBtnMobile.addEventListener('click', () => {
+            if (isLoggedIn) {
+                // Show logout confirmation or account management options
+                if (confirm('Do you want to log out?')) {
+                    logoutUser();
+                }
+            } else {
+                showAuthModal();
+            }
+        });
+        
+        // Close auth modal
+        closeAuthModalBtn.addEventListener('click', () => {
+            authModal.classList.add('hidden');
+            resetAuthModal();
+        });
+        
+        // Initialize reCAPTCHA
+        function initRecaptcha() {
+            // Reset the container first
+            document.getElementById('recaptcha-container').innerHTML = '';
+            
+            // Create a new reCAPTCHA widget
+            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                'size': 'normal',
+                'callback': (response) => {
+                    // reCAPTCHA solved, enable the button
+                    sendCodeBtn.disabled = false;
+                },
+                'expired-callback': () => {
+                    // Response expired. Ask user to solve reCAPTCHA again.
+                    sendCodeBtn.disabled = true;
+                }
+            });
+            
+            window.recaptchaVerifier.render().then((widgetId) => {
+                window.recaptchaWidgetId = widgetId;
+            });
+        }
+        
+        // Show auth modal
+        function showAuthModal() {
+            authModal.classList.remove('hidden');
+            resetAuthModal();
+            initRecaptcha();
+        }
+        
+        // Reset auth modal
+        function resetAuthModal() {
+            phoneInputContainer.classList.remove('hidden');
+            codeInputContainer.classList.add('hidden');
+            authSuccessContainer.classList.add('hidden');
+            phoneNumberInput.value = '';
+            phoneError.classList.add('hidden');
+            codeError.classList.add('hidden');
+            
+            // Reset verification code inputs
+            verificationInputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('border-red-500');
+            });
+        }
+        
+        // Send verification code
+        sendCodeBtn.addEventListener('click', async () => {
+            const phoneNumber = phoneNumberInput.value.trim();
+            
+            if (!phoneNumber) {
+                phoneError.textContent = 'Please enter a valid phone number';
+                phoneError.classList.remove('hidden');
+                return;
+            }
+            
+            try {
+                sendCodeBtn.disabled = true;
+                sendCodeBtn.textContent = 'Sending...';
+                
+                // Send verification code
+                const appVerifier = window.recaptchaVerifier;
+                const confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier);
+                verificationId = confirmationResult.verificationId;
+                
+                // Show verification code input
+                phoneInputContainer.classList.add('hidden');
+                codeInputContainer.classList.remove('hidden');
+                
+                // Focus on the first verification code input
+                verificationInputs[0].focus();
+                
+                // Handle verification code inputs
+                setupVerificationInputs();
+            } catch (error) {
+                console.error('Error sending verification code:', error);
+                phoneError.textContent = error.message || 'Error sending verification code. Please try again.';
+                phoneError.classList.remove('hidden');
+                sendCodeBtn.disabled = false;
+                sendCodeBtn.textContent = 'Send Verification Code';
+                
+                // Reset reCAPTCHA
+                window.recaptchaVerifier.reset(window.recaptchaWidgetId);
+                initRecaptcha();
+            }
+        });
+        
+
+
+        // Product cache
+        let productCache = new Map();
+
+        // Open gallery modal with selected image
+        function openGalleryModal(productId, initialSlide = 0) {
+            const product = productCache.get(productId);
+            if (!product || !product.images || product.images.length === 0) return;
+            
+            // Clear previous slides
+            modalSwiperWrapper.innerHTML = '';
+            
+            // Create slide for each image
+            product.images.forEach(image => {
+                const slide = document.createElement('div');
+                slide.className = 'swiper-slide flex items-center justify-center';
+                slide.innerHTML = `
+                    <div class="modal-img-container">
+                        <img src="${image.url}" alt="${product.name}" class="w-full">
+                    </div>
+                `;
+                modalSwiperWrapper.appendChild(slide);
+            });
+            
+            // Update and show modal swiper
+            galleryModal.classList.add('active');
+            modalSwiper.update();
+            modalSwiper.slideTo(initialSlide, 0);
+        }
+        
+        // Initialize product carousel
+        function initProductCarousel(productId) {
+            productSwipers[productId] = new Swiper(`.swiper-${productId}`, {
+                slidesPerView: 1,
+                spaceBetween: 0,
+                loop: true,
+                pagination: {
+                    el: `.swiper-pagination-${productId}`,
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: `.swiper-button-next-${productId}`,
+                    prevEl: `.swiper-button-prev-${productId}`,
+                },
+                on: {
+                    click: function(swiper, event) {
+                        // Only open gallery if not clicking on navigation
+                        if (!event.target.classList.contains('swiper-button-next') && 
+                            !event.target.classList.contains('swiper-button-prev')) {
+                            openGalleryModal(productId, swiper.realIndex);
+                        }
+                    }
+                }
+            });
+        }
+
+
+        // Display products
+        async function displayProducts() {
+            productList.innerHTML = '<div class="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">Loading...</div>';
+            
+            try {
+                const snapshot = await db.collection('products').orderBy('name').get();
+                
+                if (snapshot.empty) {
+                    productList.innerHTML = '<div class="col-span-full text-center py-8">No products available</div>';
+                    return;
+                }
+                
+                // Clear existing cache
+                productCache.clear();
+                productSwipers = {};
+                
+                productList.innerHTML = '';
+                snapshot.forEach((doc) => {
+                    const product = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    
+                    // Cache the product
+                    productCache.set(doc.id, product);
+                    
+                    const productCard = document.createElement('div');
+                    productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
+                    
+                    // Determine what images to display
+                    let carouselHTML = '';
+                    
+                    if (product.images && product.images.length > 0) {
+                        // Create swiper carousel with images
+                        carouselHTML = `
+                            <div class="product-carousel h-[calc(100vh/3)] sm:h-[calc(100vh/5)] bg-gray-100 dark:bg-gray-700 p-1.5 pb-0 overflow-hidden">
+                                <div class="swiper swiper-${doc.id}">
+                                    <div class="swiper-wrapper">
+                                        ${product.images.map(image => `
+                                            <div class="swiper-slide">
+                                                <img src="${image.url}" alt="${product.name}" class="w-full h-full rounded-t-lg">
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    <div class="swiper-pagination swiper-pagination-${doc.id}"></div>
+                                    <div class="swiper-button-prev swiper-button-prev-${doc.id}"></div>
+                                    <div class="swiper-button-next swiper-button-next-${doc.id}"></div>
+                                    ${product.images.length > 1 ? `<div class="image-count absolute top-1.5 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">${product.images.length} images</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    } else if (product.imageUrl) {
+                        // Fallback to legacy imageUrl
+                        carouselHTML = `
+                            <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden">
+                                <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover rounded-t-lg">
+                            </div>
+                        `;
+                    } else {
+                        // No image
+                        carouselHTML = `
+                            <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden flex items-center justify-center">
+                                <div class="text-gray-400">No Image</div>
+                            </div>
+                        `;
+                    }
+
+                    productCard.innerHTML = `
+                        ${carouselHTML}
+
+                        <div class="p-4 flex flex-col flex-grow justify-between">
+                            <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
+                            <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+                            <div class="flex justify-between items-center mt-auto">
+                                <!-- Quantity Controls -->
+                                <div class="flex items-center">
+                                    <button data-product-id="${doc.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
+                                    <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${doc.id}">
+                                    <button data-product-id="${doc.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
+                                </div>
+                                <!-- Cart Button -->
+                                <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    `;
+        
+                    productList.appendChild(productCard);
+                    
+                    // Initialize swiper for this product if it has multiple images
+                    if (product.images && product.images.length > 0) {
+                        setTimeout(() => initProductCarousel(doc.id), 0);
+                    }
+                });
+
+                // Add event listeners for product cards
+                document.querySelectorAll('.add-to-cart').forEach(button => {
+                    button.addEventListener('click', addToCart);
+                });
+
+                document.querySelectorAll('.increase-qty').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.target.dataset.productId;
+                        const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+                        input.value = parseInt(input.value) + 1;
+                    });
+                });
+
+                document.querySelectorAll('.decrease-qty').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.target.dataset.productId;
+                        const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+                        if (parseInt(input.value) > 1) {
+                            input.value = parseInt(input.value) - 1;
+                        }
+                    });
+                });
+                
+            } catch (error) {
+                console.error("Error loading products:", error);
+                productList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading products: ${error.message}</div>`;
+            }
+        }
+
+        // Handle image loading errors and fallbacks
+        function handleImageError(img, productId) {
+            // Set fallback image or default placeholder
+            img.src = '/assets/placeholder.jpg';
+            img.onerror = null; // Prevent infinite loops if fallback also fails
+        }
+
+        // Event listeners
+        if (clearCartBtn) clearCartBtn.addEventListener('click', clearCart);
+        if (orderForm) orderForm.addEventListener('submit', submitOrder);
+        if (closeModalBtn) closeModalBtn.addEventListener('click', () => {
+            confirmationModal.classList.add('hidden');
+        });
+        searchInput.addEventListener('input', searchProducts);
+
+        // Handle browser back button for modal
+        window.addEventListener('popstate', function(e) {
+            if (galleryModal.classList.contains('active')) {
+                galleryModal.classList.remove('active');
+            }
+        });
+
+        // Allow swiping on touch devices for modal
+        document.addEventListener('touchstart', handleTouchStart, false);
+        document.addEventListener('touchmove', handleTouchMove, false);
+
+        let xDown = null;
+        let yDown = null;
+
+        function handleTouchStart(evt) {
+            xDown = evt.touches[0].clientX;
+            yDown = evt.touches[0].clientY;
+        }
+
+        function handleTouchMove(evt) {
+            if (!xDown || !yDown) {
+                return;
+            }
+
+            const xUp = evt.touches[0].clientX;
+            const yUp = evt.touches[0].clientY;
+            const xDiff = xDown - xUp;
+            const yDiff = yDown - yUp;
+
+            // Detect if it's a swipe on modal
+            if (galleryModal.classList.contains('active')) {
+                if (Math.abs(xDiff) > Math.abs(yDiff)) {
+                    if (xDiff > 0) {
+                        // Swipe left - next slide
+                        modalSwiper.slideNext();
+                    } else {
+                        // Swipe right - previous slide
+                        modalSwiper.slidePrev();
+                    }
+                } else {
+                    if (yDiff > 50) {
+                        // Swipe up - close modal
+                        galleryModal.classList.remove('active');
+                    }
+                }
+            }
+
+            xDown = null;
+            yDown = null;
+        }
+
+
+//////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////// 
+
+
+        // Initialize
+        displayProducts();
+        if (cartItems) updateCartDisplay();
+
+        // Updated submitOrderBtn click event if element exists
+        if (submitOrderBtn) {
+            submitOrderBtn.addEventListener('click', (e) => {
+                // Prevent default form submission
+                e.preventDefault();
+
+                // Check if the user is logged in
+                if (typeof isLoggedIn !== 'undefined' && !isLoggedIn) {
+                    // Show custom alert modal
+                    const customAlert = document.getElementById('customAlert');
+                    if (customAlert) customAlert.classList.remove('hidden');
+                    return;
+                }
+
+                // Check if required fields are filled
+                const requiredFields = [
+                    document.getElementById('name'), 
+                    document.getElementById('wechat'), 
+                    document.getElementById('deliveryType')
+                ].filter(el => el !== null);
+                
+                const allFilled = requiredFields.every(field => field.value.trim() !== '');
+                
+                if (!allFilled) {
+                    showToast("Please fill out all required fields.", 'error');
+                    return;
+                }
+
+                // If all checks pass, proceed with form submission
+                if (orderForm) orderForm.submit();
+            });
+        }
+
+        // Handle device orientation changes to update swipers
+        window.addEventListener('orientationchange', function() {
+            setTimeout(() => {
+                // Update all swipers on orientation change
+                Object.values(productSwipers).forEach(swiper => {
+                    if (swiper && typeof swiper.update === 'function') {
+                        swiper.update();
+                    }
+                });
+                if (modalSwiper) modalSwiper.update();
+            }, 300);
+        });
+
+        // Ensure proper image dimensions
+        function processProductImages() {
+            // For new products or when image dimensions might be inconsistent
+            productCache.forEach(product => {
+                if (product.images && product.images.length > 0) {
+                    product.images.forEach(image => {
+                        // If we're displaying images, we can preload them
+                        if (image.url) {
+                            const img = new Image();
+                            img.src = image.url;
+                            img.onload = function() {
+                                // We could do additional processing here if needed
+                            };
+                            img.onerror = function() {
+                                // Handle image errors
+                                console.warn(`Error loading image: ${image.url}`);
+                            };
+                        }
+                    });
+                }
+            });
+        }
+
+
+//////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////// 
+
+
+
+//////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////// 
+
+
+        // Event listeners
+        clearCartBtn.addEventListener('click', clearCart);
+        orderForm.addEventListener('submit', submitOrder);
+        closeModalBtn.addEventListener('click', () => {
+            confirmationModal.classList.add('hidden');
+        });
+        searchInput.addEventListener('input', searchProducts);
+
+        // Initialize
+        displayProducts();
+        updateCartDisplay();
+
+
+//////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////// 
+
+
+        function formatPhoneNumber(phoneNumber) {
+            // Remove the leading '+' and country code
+            const cleaned = phoneNumber.replace(/^\+1/, ''); // Assuming the country code is always +1
+            // Extract area code and the rest of the number
+            const areaCode = cleaned.slice(0, 3);
+            const firstPart = cleaned.slice(3, 6);
+            const secondPart = cleaned.slice(6, 10);
+            
+            // Format the phone number
+            return `(${areaCode}) ${firstPart}-${secondPart}`;
+        }
+
+
+    </script>
+
+    </body>
+    
+</html>
+
+
+<!-- FIRST OFF - DO NOT give me any STYLING or CSS. Focus on these - I would like you to fix a feature and add a feature in the attached "products.html" HTML/TailwindCSS/Javascript webpage file.  --- # Request A.: The first is the phone number validation workflow, which needs these fixes:   1. The id='phoneNumberinput' form field should accept exactly 10 number digits - and exactly 10 number characters, 0-9, are allowed.;   2. Auto-format the input.value display as +1 (###) ###-####, where the hash '#' symbols are the 10 digits entered by the user, and the other characters, '+1 ', ' (', ')', ' ', '-' , are formatting punctuations that appear automatically. The logic might look something like: "            if (rawValue.length > 0) {                 formattedValue = '+1 '; *// Country code*                                 *// Area code*                 if (rawValue.length >= 1) {                     formattedValue += '(' + rawValue.slice(0, 3);                 }                                 *// Middle digits*                 if (rawValue.length >= 4) {                     formattedValue += ') ' + rawValue.slice(3, 6);                 }                                 *// Last digits*                 if (rawValue.length >= 7) {                     formattedValue += '-' + rawValue.slice(6, 10);                 }             }";  But don't use this exact version because I tried it and it caused an extra "1" being added to the input='phoneNumber' form-field on each keydown.;   3. The focus will jump from the phoneNumberInput DOM form field to the sendCodeBtn button 300ms after the 10th digit is entered.;   4. Ensure the formatting works on both desktop and mobile.;  --- # Request B.: The second is to make the current displayProduct() function filter out products with the "unreleased" label, so only products with the 'released' label are shown. The collection that contains the products in Firestore is called 'products'. -->
