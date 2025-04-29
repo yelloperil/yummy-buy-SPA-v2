@@ -868,14 +868,26 @@
 
                 spacer = ' '.repeat(Math.max(0, 3 - cleanedValue.length))
 
-                areaCode = '(' + cleanedValue.slice(0, Math.min(3, cleanedValue.length)) + spacer + ')'
-                console.log('Area Code:', areaCode)
+                if (cleanedValue.length > 0 && cleanedValue.Length <= 3) {
+                    areaCode = '(' + cleanedValue.slice(0, Math.min(3, cleanedValue.length)) + spacer + ')'
+                    console.log('Area Code:', areaCode)
+                } else {
+                    areaCode = ''
+                }
 
-                middleDigits = ' ' + cleanedValue.slice(3, Math.min(6, cleanedValue.length))
-                console.log('Middle Digits:', middleDigits)
+                if (cleanedValue.length > 3 && cleanedValue.Length <= 6) {
+                    middleDigits = ' ' + cleanedValue.slice(3, Math.min(6, cleanedValue.length))
+                    console.log('Middle Digits:', middleDigits)
+                } else {
+                    middleDigits = ''
+                }
 
-                lastDigits = ' - ' + cleanedValue.slice(6, Math.min(10, cleanedValue.length))
-                console.log('Last Digits:', lastDigits)
+                if (cleanedValue.length > 6 && cleanedValue.Length <= 10) {
+                    lastDigits = ' - ' + cleanedValue.slice(6, Math.min(10, cleanedValue.length))
+                    console.log('Last Digits:', lastDigits)
+                } else {
+                    lastDigits = ''
+                }
             } else {
                 countryCode = ''
             }
