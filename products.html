@@ -853,23 +853,31 @@
             formattedValue = cleanedValue;
             console.log('Formatted Value after = cleanedValue: ', formattedValue)
 
+            let countryCode = ''
             let areaCode = ''
             let middleDigits = ''
             let lastDigits = ''
+            let spacer = ''
 
             // Area code
             if (cleanedValue.length > 0) {
                 console.log('Hit 0th IF')
                 console.log('cleanedValue at IF Beginning:', cleanedValue)
 
-                areaCode = cleanedValue.slice(0, Math.min(3, cleanedValue.length));
+                countryCode = '+1'
+
+                spacer = ' '.repeat(Math.max(0, 3 - cleanedValue.length))
+
+                areaCode = '(' + cleanedValue.slice(0, Math.min(3, cleanedValue.length)) + spacer + ')'
                 console.log('Area Code:', areaCode)
 
-                middleDigits = cleanedValue.slice(3, Math.min(6, cleanedValue.length));
+                middleDigits = ' ' + cleanedValue.slice(3, Math.min(6, cleanedValue.length))
                 console.log('Middle Digits:', middleDigits)
 
-                lastDigits = cleanedValue.slice(6, Math.min(10, cleanedValue.length));
+                lastDigits = ' - ' + cleanedValue.slice(6, Math.min(10, cleanedValue.length))
                 console.log('Last Digits:', lastDigits)
+            } else {
+                countryCode = ''
             }
          
             // // Area code
@@ -892,7 +900,7 @@
             // console.log('Hit 3rd IF')
 
             // Update the input value with the formatted version
-            e.target.value = '+1 (' + areaCode + ') ' + middleDigits + '-' + lastDigits;
+            e.target.value = countryCode + '+1 (' + areaCode + ') ' + middleDigits + '-' + lastDigits;
             // e.target.value = '+1 ' + formattedValue;
             console.log('Value after Update (e.target.value = formattedValue): ', e.target.value)
             console.log('Hit Update')
