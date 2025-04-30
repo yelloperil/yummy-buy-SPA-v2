@@ -113,60 +113,38 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
+    <div class="container flex-col mx-auto px-4 py-8">
 
         <!-- Header -->
-        <header class="mb-16 py-6 flex justify-between items-center">
+         <!-- SNIPPET ONE -->
+        <header class="relative flex-1 flex justify-between items-center mb-2 py-4 sm:mb-8 sm:py-8">
 
             <!-- BACK TO HOME -->
-            <span class="flex gap-2 self-end pb-3">
-            <!-- <span class="text-primary text-lg font-bold hover:text-secondary flex gap-2 self-end pb-3"> -->
-                <!-- <img src="/assets/icons/left-arrow.gif" alt="link back to home" class="w-8 h-8"> -->
-                <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-8 h-auto -mb-1 pt-1">
-                <!-- <img src="/assets/icons/left-arrow_002.png" alt="link back to home" class="w-8 h-8"> -->
-                <!-- <img src="/assets/icons/backward.gif" alt="link back to home" class="w-8 h-8"> -->
-                <!-- <img src="/assets/icons/backward(1).gif" alt="link back to home" class="w-8 h-8"> -->
-                <a href="index.html" class="self-end text-primary text-lg font-bold text-indigo-100 border-b-2 border-[#f13dc3] hover:text-secondary pl-0.5 ml-2">home</a>
+            <span class="flex-1 flex gap-2 items-center text-primary text-base sm:text-lg sm:font-bold hover:text-secondary">
+                <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-8 h-8">
+                <a href="index.html" class="text-primary text-base font-semibold hover:text-secondary pb-1 pl-2">home</a>
             </span>
 
             <!-- TITLE CONTAINER -->
-            <div class="flex items-center gap-4">
+            <div class="flex-3 flex justify-center items-center gap-1 xl:gap-2">
                 
                 <!-- TITLE IMAGE -->
-                <img src="/assets/icons/radar-0_no_bg.gif" alt="link back to home" class="w-20 h-auto pt-2">
-                <!-- <img src="/assets/icons/dashboard_no_bg.gif" alt="link back to home" class="w-24 h-24"> -->
+                <img src="/assets/icons/radar-0_no_bg.gif" alt="link back to home" class="w-auto h-10 sm:h-16 xl:h-24 mt-2 sm:mt-3 lg:mt-4 xl:mt-5 2xl:mt-6">
                 
                 <!-- TITLE TEXT -->
-                <h1 class="text-5xl font-bold text-primary border-b-4 border-[#f13dc3] pb-1">My Orders</h1>
-                <!-- <h1 class="self-end font-zenMaru text-6xl font-black text-primary pb-6">Your Orders</h1> -->
-                <!-- <h1 class="font-lora text-6xl font-bold text-primary">Your Orders</h1> -->
-                <!-- <h1 class="font-dmMono text-6xl font-bold text-primary">Your Orders</h1> -->
-                <!-- <h1 class="font-zenMincho text-6xl font-bold text-primary">Your Orders</h1> -->
-                <!-- <h1 class="font-ibm-plex-sans-jp text-6xl font-bold text-primary">Your Orders</h1> -->
-                <!-- <h1 class="font-iansui text-6xl font-bold text-primary">Your Orders</h1> -->
-                <!-- <h1 class="font-klee-one text-6xl font-bold text-primary">Your Orders</h1> -->
-                <!-- <h1 class="font-dela-gothic-one text-6xl font-bold text-primary">Your Orders</h1> -->
-                <!-- <h1 class="font-yusei-magic text-6xl font-bold text-primary">Your Orders</h1> -->
-                <!-- <h1 class="font-noto-sans-sc text-6xl font-bold text-primary">Your Orders</h1> -->
-                <!-- <h1 class="font-zen-kaku-gothic-antique text-6xl font-bold text-primary">Your Orders</h1> -->
-                <!-- <h1 class="font-noto-sans-jp text-6xl font-bold text-primary">Your Orders</h1> -->
-                <!-- <h1 class="font-dotgothic16 text-6xl font-bold text-primary">Your Orders</h1> -->
-                <!-- <h1 class="font-noto-sans-tc text-6xl font-bold text-primary">Your Orders</h1> -->
-                <!-- <h1 class="text-3xl font-bold text-primary">指挥中心</h1> -->
-                <!-- <h1 class="text-3xl font-bold text-primary">大本营 - 控制面板</h1> -->
-                <!-- <h1 class="text-3xl font-bold text-primary">Admin Dashboard</h1> -->
+                <h1 class="font-zenMaru text-3xl sm:text-3xl lg:text-5xl xl:text-6xl font-bold text-primary">My Orders</h1>
 
             </div>
 
-            <div class="flex items-end gap-4 sm:col-start-13 sm:col-span-1 mt-5">
+            <div class="relative flex-1 flex justify-end items-center gap-4">
 
                 <!-- HIDDEN USER PHONE DISPLAY -->
-                <span id="userPhoneDisplay" class="hidden text-primary font-bold text-indigo-100 border-b-2 border-[#f13dc3] ml-auto pr-0.5 pb-0.5">
+                <span id="userPhoneDisplay" class="absolute top-full translate-y-1/2 lg:static lg:translate-y-0 hidden text-primary text-bold lg:font-semibold text-xs sm:text-sm lg:text-base text-indigo-100 border-b-2 border-[#f13dc3] ml-auto pr-0.5 pb-0.5">
                     <!-- User's phone number will be displayed here -->
                 </span>
 
                 <!-- logout -->
-                <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 ml-2 rounded-md">
+                <button id="logoutBtn" class="hover:bg-red-300 bg-red-500 text-sm sm:text-base text-white pt-1 pb-1.5 sm:py-2 px-2 sm:px-4 mb-1 sm:mb-0 rounded-md">
                     Log Out
                 </button>
                 
@@ -177,8 +155,6 @@
         <!-- Navigation Tabs -->
         <div class="hidden flex border-b mb-6">
             <h3 id="ordersTab" class="tab-active px-4 py-2 mr-2">Orders</h3>
-            <!-- <button id="ordersTab" class="tab-active px-4 py-2 mr-2">Orders</button> -->
-            <!-- <button id="productsTab" class="px-4 py-2 mr-2">Products</button> -->
         </div>
 
         <!-- Orders Section -->
@@ -186,7 +162,6 @@
             <!-- View Selector -->
             <div class="flex mb-4 space-x-2">
                 <button id="chronologicalView" class="bg-primary text-white px-4 py-2 rounded-md">By Order Time</button>
-                <!-- <button id="userView" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md">By User</button> -->
                 <button id="productView" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md">By Product</button>
             </div>
 
@@ -368,6 +343,8 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////// -->
+
+
 
 
 
