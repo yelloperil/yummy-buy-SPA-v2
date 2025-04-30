@@ -1582,7 +1582,7 @@ async function displayProducts() {
             };
             
             // Skip unreleased products
-            if (product.label === 'unreleased') {
+            if (product.status === 'unreleased') {
                 return;
             }
             
