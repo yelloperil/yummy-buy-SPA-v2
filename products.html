@@ -269,7 +269,7 @@
                 <!-- LOGO -- Pulsating Glow Effect + Expand on Hover -->
                 <a href="index.html" class="flex-1">
                     <img
-                        src="./images-v2/YummyBuy_Customized_Logo_A_BG-Removed.png"
+                        src="assets/images/YummyBuy_Customized_Logo_A_BG-Removed.png"
                         alt="Yummy Buy Mascot"
                         class="w-36 sm:w-32 md:w-48 lg:w-56 h-auto transition-transform duration-300 ease-in-out hover:scale-125 animate-pulse-glow"
                     /> 
@@ -315,13 +315,6 @@
                     </span>
                     
                 </nav>
-
-                <!-- LOGIN BUTTON -->
-                <!-- <div class="col-start-10 col-span-3 mr-2">
-                    <button id="loginBtnMobile" class="block sm:hidden flex items-center justify-center h-full px-4 py-2 text-xs text-indigo-100 font-black bg-[#4a427f] hover:text-[#f13dc3] hover:bg-primary ml-auto rounded-lg transition-all duration-200 border-invisible hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-                        <p>Log In</p>
-                    </button>
-                </div> -->
 
             </div>
             
@@ -391,7 +384,7 @@
                     <div id="cartItemsContainer" class="mb-4 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 min-h-[33.33vh] flex flex-col items-center justify-center">
 
                         <!-- Empty Cart Image -->   
-                        <img id="emptyCartImage" src="./images-v2/gif-shopping-cart-stencil-gray-orange-300x300.gif" alt="Empty Cart" class="w-1/2 h-auto mb-4 mr-10 hidden">
+                        <img id="emptyCartImage" src="assets/gifs/gif-shopping-cart-stencil-gray-orange-300x300.gif" alt="Empty Cart" class="w-1/2 h-auto mb-4 mr-10 hidden">
 
                         <!-- Empty Cart Message -->
                         <p id="emptyCartMessage" class="text-gray-500 dark:text-gray-400 hidden">Wow, so empty!</p>
@@ -464,8 +457,8 @@
                                 class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base"></textarea>
                         </div>
 
-                        <button type="submit" id="submitOrderBtn" disabled
-                            class="w-full bg-[#44b34e] hover:bg-white text-white hover:text-[#44b34e] py-3 px-2 my-3 rounded-md font-bold transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button type="submit" id="submitOrderBtn"
+                            class="w-full bg-[#44b34e] hover:bg-white text-white hover:text-[#44b34e] py-3 px-2 my-3 rounded-md font-bold transition duration-200 ease-in-out">
                             Place Order
                         </button>
 
@@ -475,7 +468,7 @@
                 <!-- Centered Image Logo v2 -->
                 <!-- <div class="h-full flex items-center justify-center w-full mb-10"> -->
                 <div class="flex items-center justify-center p-10">
-                    <img src="./images-v2/BG_REMOVED_YummyBuy_Customized_Logo_B_001.png" 
+                    <img src="assets/images/BG_REMOVED_YummyBuy_Customized_Logo_B_001.png" 
                          alt="Yummy Buy Mascot" 
                          class="w-full h-auto aspect-square object-contain md:h-auto lg:h-auto">
                          <!-- class="w-3/4 h-auto aspect-square object-contain md:w-1/3 lg:w-2/3"> -->
@@ -682,7 +675,6 @@
         
         // Authentication Elements
         const loginBtn = document.getElementById('loginBtn');
-        // const loginBtnMobile = document.getElementById('loginBtnMobile');
         const authModal = document.getElementById('authModal');
         const phoneInputContainer = document.getElementById('phoneInputContainer');
         const codeInputContainer = document.getElementById('codeInputContainer');
@@ -700,9 +692,9 @@
         loginBtn.addEventListener('click', () => {
             if (isLoggedIn) {
                 // Show logout confirmation or account management options
-                if (confirm('Do you want to log out?')) {
+                // if (confirm('Do you want to log out?')) {
                     logoutUser();
-                }
+                // }
             } else {
                 showAuthModal();
             }
@@ -1201,7 +1193,10 @@ console.log('///////////////////////////////////////////////////////////////////
             const websiteAdmins = ['+17789569063', '+16049778798', '+15054443986', '+17788929401', '+1-778-956-9063', '+1-604-977-8798', '+1-505-444-3986', '+1-778-892-9401' ]
             if (user && websiteAdmins.includes(user.phoneNumber)) {
                 // User is signed in and is an admin
-                currentUser = user;
+                currentUser = {
+                    uid: user.uid,
+                    phoneNumber: user.phoneNumber // Correct property name
+                };
                 isLoggedIn = true;
                 
                 // Update UI
@@ -1215,7 +1210,10 @@ console.log('///////////////////////////////////////////////////////////////////
                 fetchAndPopulateUserData(user.phoneNumber);
             } else if (user) {
                 // User is signed in but not an admin
-                currentUser = user;
+                currentUser = {
+                    uid: user.uid,
+                    phoneNumber: user.phoneNumber // Correct property name
+                };
                 isLoggedIn = true;
                 
                 // Update UI
@@ -1755,8 +1753,6 @@ async function displayProducts() {
                 emptyCartMessage.style.display = 'block';
                 cartItems.innerHTML = '';
                 cartTotal.textContent = 'Total: $0.00';
-                clearCartBtn.disabled = true;
-                submitOrderBtn.disabled = true;
             } else {
                 emptyCartImage.classList.add('hidden');
                 emptyCartMessage.style.display = 'none';
@@ -1795,8 +1791,6 @@ async function displayProducts() {
                 
                 cartItems.innerHTML = cartHTML;
                 cartTotal.textContent = `Total: $${total.toFixed(2)}`;
-                clearCartBtn.disabled = false;
-                submitOrderBtn.disabled = false;
                 
                 // Add event listeners for remove buttons
                 document.querySelectorAll('.remove-item').forEach(button => {
@@ -1979,13 +1973,13 @@ async function displayProducts() {
             img.onerror = null; // Prevent infinite loops if fallback also fails
         }
 
-        // Event listeners
-        if (clearCartBtn) clearCartBtn.addEventListener('click', clearCart);
-        if (orderForm) orderForm.addEventListener('submit', submitOrder);
-        if (closeModalBtn) closeModalBtn.addEventListener('click', () => {
-            confirmationModal.classList.add('hidden');
-        });
-        searchInput.addEventListener('input', searchProducts);
+        // // Event listeners
+        // if (clearCartBtn) clearCartBtn.addEventListener('click', clearCart);
+        // if (orderForm) orderForm.addEventListener('submit', submitOrder);
+        // if (closeModalBtn) closeModalBtn.addEventListener('click', () => {
+        //     confirmationModal.classList.add('hidden');
+        // });
+        // searchInput.addEventListener('input', searchProducts);
 
         // Handle browser back button for modal
         window.addEventListener('popstate', function(e) {
@@ -2039,201 +2033,227 @@ async function displayProducts() {
         }
 
 
-    // // Modified submitOrder function
-    // async function submitOrder(e) {
-    //     e.preventDefault();
-        
-    //     // Show loading overlay
-    //     loadingOverlay.classList.remove('hidden');
 
-    //     // Get form data
-    //     const customerData = {
-    //         name: document.getElementById('name').value,
-    //         wechat: document.getElementById('wechat').value,
-    //         address: document.getElementById('address').value,
-    //         notes: document.getElementById('notes').value,
-    //         userId: currentUser ? currentUser.uid : null, // Add user ID if logged in
-    //         phone: currentUser ? currentUser.phoneNumber : null, // Add phone number if available
-    //         deliveryType: document.getElementById('deliveryType').value
-    //     };
-        
-    //     // Format order items
-    //     const orderItems = cart.map(item => ({
-    //         productId: item.product.id,
-    //         productName: item.product.name,
-    //         price: item.product.price,
-    //         quantity: item.quantity,
-    //         subtotal: (item.product.price * item.quantity).toFixed(2)
-    //     }));
-        
-    //     // Calculate total
-    //     let total = 0;
-    //     cart.forEach(item => {
-    //         total += item.product.price * item.quantity;
-    //     });
-        
-    //     // Create order document
-    //     const orderData = {
-    //         customer: customerData,
-    //         items: orderItems,
-    //         total: total.toFixed(2),
-    //         orderDate: new Date().toISOString(),
-    //         status: 'order placed',
-    //         lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-    //     };
-
-    //     try {
-    //         // Add order to Firestore
-    //         const docRef = await db.collection('orders').add(orderData);
-            
-    //         // Hide loading overlay
-    //         loadingOverlay.classList.add('hidden');
-            
-    //         // Show confirmation modal
-    //         confirmationMessage.textContent = `Thank you ${customerData.name}! Your order #${docRef.id} has been received.`;
-    //         orderReference.textContent = `Order Reference: ${docRef.id}`;
-    //         confirmationModal.classList.remove('hidden');
-            
-    //         // Reset form and cart
-    //         orderForm.reset();
-    //         clearCart();
-            
-    //     } catch (error) {
-    //         console.error("Error submitting order:", error);
-    //         loadingOverlay.classList.add('hidden');
-    //         alert("There was an error processing your order. Please try again.");
-    //     }
-    // }
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//////////////////////////////////////////////////////////////////////////// 
-//////////////////////////////////////////////////////////////////////////// 
+    // Modified submitOrder function
+    async function submitOrder(e) {
+        e.preventDefault();
 
-
-// Function for submitting orders
-function submitOrder(e) {
-            e.preventDefault();
-            
-            // Get order details from form
-            const name = document.getElementById('name').value.trim();
-            const wechat = document.getElementById('wechat').value.trim();
-            const address = document.getElementById('address') ? document.getElementById('address').value.trim() : '';
-            const deliveryType = document.getElementById('deliveryType').value;
-            
-            if (!name || !wechat) {
-                showToast('Please fill out all required fields', 'error');
-                return;
-            }
-            
-            if (cart.length === 0) {
-                showToast('Your cart is empty', 'error');
-                return;
-            }
-            
-            // Show loading overlay
-            if (loadingOverlay) loadingOverlay.classList.remove('hidden');
-            
-            // Prepare order items
-            const orderItems = cart.map(item => ({
-                productId: item.product.id,
-                productName: item.product.name,
-                quantity: item.quantity,
-                price: item.product.price,
-                subtotal: item.product.price * item.quantity
-            }));
-            
-            // Calculate total
-            const total = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
-            
-            // Create order in Firestore
-            db.collection('orders').add({
-                customerName: name,
-                wechat: wechat,
-                address: address,
-                deliveryType: deliveryType,
-                items: orderItems,
-                total: total,
-                status: 'New',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then((docRef) => {
-                // Hide loading overlay
-                if (loadingOverlay) loadingOverlay.classList.add('hidden');
-                
-                // Show confirmation
-                if (orderReference) orderReference.textContent = docRef.id;
-                if (confirmationMessage) confirmationMessage.textContent = `Thank you ${name}! Your order has been placed.`;
-                if (confirmationModal) confirmationModal.classList.remove('hidden');
-                
-                // Clear cart
-                clearCart();
-                
-                // Reset form
-                orderForm.reset();
-            })
-            .catch((error) => {
-                // Hide loading overlay
-                if (loadingOverlay) loadingOverlay.classList.add('hidden');
-                
-                console.error("Error placing order:", error);
-                showToast('Error placing order: ' + error.message, 'error');
-            });
+        // --- Move validation checks here from deprecated submitOrderBtn ---
+        if (typeof isLoggedIn !== 'undefined' && !isLoggedIn) {
+            document.getElementById('customAlert')?.classList.remove('hidden');
+            return; // Stop execution if not logged in
         }
 
+        const requiredFields = [
+            document.getElementById('name'), 
+            document.getElementById('wechat'), 
+            document.getElementById('deliveryType')
+        ].filter(el => el !== null);
+        
+        const allFilled = requiredFields.every(field => field.value.trim() !== '');
+        if (!allFilled) {
+            showToast("Please fill out all required fields.", 'error');
+            return; // Stop execution if validation fails
+        }
+        
+        // Show loading overlay
+        loadingOverlay.classList.remove('hidden');
+
+        // Get form data
+        const customerData = {
+            name: document.getElementById('name').value,
+            wechat: document.getElementById('wechat').value,
+            address: document.getElementById('address').value,
+            notes: document.getElementById('notes').value,
+            userId: currentUser ? currentUser.uid : null, // Add user ID if logged in
+            phone: currentUser.phoneNumber, // Changed for consistency from "phone: currentUser ? currentUser.phoneNumber : null"
+            deliveryType: document.getElementById('deliveryType').value
+        };
+        
+        // Format order items
+        const orderItems = cart.map(item => ({
+            productId: item.product.id,
+            productName: item.product.name,
+            price: item.product.price,
+            quantity: item.quantity,
+            subtotal: (item.product.price * item.quantity).toFixed(2)
+        }));
+        
+        // Calculate total
+        let total = 0;
+        cart.forEach(item => {
+            total += item.product.price * item.quantity;
+        });
+        
+        // Create order document
+        const orderData = {
+            customer: customerData,
+            items: orderItems,
+            total: total.toFixed(2),
+            orderDate: new Date().toISOString(),
+            status: 'order placed',
+            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        try {
+            // Add order to Firestore
+            const docRef = await db.collection('orders').add(orderData);
+            
+            // Hide loading overlay
+            loadingOverlay.classList.add('hidden');
+            
+            // Show confirmation modal
+            confirmationMessage.textContent = `Thank you ${customerData.name}! Your order #${docRef.id} has been received.`;
+            orderReference.textContent = `Order Reference: ${docRef.id}`;
+            confirmationModal.classList.remove('hidden');
+            
+            // Reset form and cart
+            orderForm.reset();
+            clearCart();
+            
+        } catch (error) {
+            console.error("Error submitting order:", error);
+            loadingOverlay.classList.add('hidden');
+            alert("There was an error processing your order. Please try again.");
+        }
+    }
+
 
 //////////////////////////////////////////////////////////////////////////// 
 //////////////////////////////////////////////////////////////////////////// 
 
+
+        // Function for submitting orders
+        // function submitOrder(e) {
+        //     e.preventDefault();
+            
+        //     // Get order details from form
+        //     const name = document.getElementById('name').value.trim();
+        //     const wechat = document.getElementById('wechat').value.trim();
+        //     const address = document.getElementById('address') ? document.getElementById('address').value.trim() : '';
+        //     const deliveryType = document.getElementById('deliveryType').value;
+            
+        //     if (!name || !wechat) {
+        //         showToast('Please fill out all required fields', 'error');
+        //         return;
+        //     }
+            
+        //     if (cart.length === 0) {
+        //         showToast('Your cart is empty', 'error');
+        //         return;
+        //     }
+            
+        //     // Show loading overlay
+        //     if (loadingOverlay) loadingOverlay.classList.remove('hidden');
+            
+        //     // Prepare order items
+        //     const orderItems = cart.map(item => ({
+        //         productId: item.product.id,
+        //         productName: item.product.name,
+        //         quantity: item.quantity,
+        //         price: item.product.price,
+        //         subtotal: item.product.price * item.quantity
+        //     }));
+            
+        //     // Calculate total
+        //     const total = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
+            
+        //     // Create order in Firestore
+        //     db.collection('orders').add({
+        //         customerName: name,
+        //         wechat: wechat,
+        //         address: address,
+        //         deliveryType: deliveryType,
+        //         items: orderItems,
+        //         total: total,
+        //         status: 'New',
+        //         createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        //     })
+        //     .then((docRef) => {
+        //         // Hide loading overlay
+        //         if (loadingOverlay) loadingOverlay.classList.add('hidden');
+                
+        //         // Show confirmation
+        //         if (orderReference) orderReference.textContent = docRef.id;
+        //         if (confirmationMessage) confirmationMessage.textContent = `Thank you ${name}! Your order has been placed.`;
+        //         if (confirmationModal) confirmationModal.classList.remove('hidden');
+                
+        //         // Clear cart
+        //         clearCart();
+                
+        //         // Reset form
+        //         orderForm.reset();
+        //     })
+        //     .catch((error) => {
+        //         // Hide loading overlay
+        //         if (loadingOverlay) loadingOverlay.classList.add('hidden');
+                
+        //         console.error("Error placing order:", error);
+        //         showToast('Error placing order: ' + error.message, 'error');
+        //     });
+        // }
 
         // Initialize
-        displayProducts();
-        if (cartItems) updateCartDisplay();
+        // displayProducts();
+        // if (cartItems) updateCartDisplay();
 
-        // Updated submitOrderBtn click event if element exists
-        if (submitOrderBtn) {
-            submitOrderBtn.addEventListener('click', (e) => {
-                // Prevent default form submission
-                e.preventDefault();
+///////////////////////////////////////////////////////////////////////////////////////////////////////        
+///////////////////////////////////////////////////////////////////////////////////////////////////////        
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                // Check if the user is logged in
-                if (typeof isLoggedIn !== 'undefined' && !isLoggedIn) {
-                    // Show custom alert modal
-                    const customAlert = document.getElementById('customAlert');
-                    if (customAlert) customAlert.classList.remove('hidden');
-                    return;
-                }
+        // REMOVED- APRIL 29, 2025 -- redundant, clashes with orderForm.submit()
+//         // Updated submitOrderBtn click event if element exists
+//         submitOrderBtn.addEventListener('click', (e) => {
+//             // Prevent default form submission
+//             e.preventDefault();
 
-                // Check if required fields are filled
-                const requiredFields = [
-                    document.getElementById('name'), 
-                    document.getElementById('wechat'), 
-                    document.getElementById('deliveryType')
-                ].filter(el => el !== null);
-                
-                const allFilled = requiredFields.every(field => field.value.trim() !== '');
-                
-                if (!allFilled) {
-                    showToast("Please fill out all required fields.", 'error');
-                    return;
-                }
+//             // Check if the user is logged in
+//             if (typeof isLoggedIn !== 'undefined' && !isLoggedIn) {
+//                 // Show custom alert modal
+//                 const customAlert = document.getElementById('customAlert');
+//                 if (customAlert) customAlert.classList.remove('hidden');
+//                 return;
+//             }
+// 
+//             // Check if required fields are filled
+//             const requiredFields = [
+//                 document.getElementById('name'), 
+//                 document.getElementById('wechat'), 
+//                 document.getElementById('deliveryType')
+//             ].filter(el => el !== null);
+            
+//             const allFilled = requiredFields.every(field => field.value.trim() !== '');
+            
+//             if (!allFilled) {
+//                 showToast("Please fill out all required fields.", 'error');
+//                 return;
+//             }
 
-                // If all checks pass, proceed with form submission
-                if (orderForm) orderForm.submit();
-            });
-        }
+//             // If all checks pass, proceed with form submission
+//             if (orderForm) orderForm.submit();
+//         });
 
-        // Handle device orientation changes to update swipers
-        window.addEventListener('orientationchange', function() {
-            setTimeout(() => {
-                // Update all swipers on orientation change
-                Object.values(productSwipers).forEach(swiper => {
-                    if (swiper && typeof swiper.update === 'function') {
-                        swiper.update();
-                    }
-                });
-                if (modalSwiper) modalSwiper.update();
-            }, 300);
-        });
+//         // Handle device orientation changes to update swipers
+//         window.addEventListener('orientationchange', function() {
+//             setTimeout(() => {
+//                 // Update all swipers on orientation change
+//                 Object.values(productSwipers).forEach(swiper => {
+//                     if (swiper && typeof swiper.update === 'function') {
+//                         swiper.update();
+//                     }
+//                 });
+//                 if (modalSwiper) modalSwiper.update();
+//             }, 300);
+//         });
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////        
+///////////////////////////////////////////////////////////////////////////////////////////////////////        
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
         // Ensure proper image dimensions
         function processProductImages() {
@@ -2264,92 +2284,92 @@ function submitOrder(e) {
 
 
         // Search functionality
-        async function searchProducts() {
-            const searchTerm = searchInput.value.toLowerCase();
-            try {
-                const snapshot = await db.collection('products').orderBy('name').get();
-                const filteredProducts = [];
+        // async function searchProducts() {
+        //     const searchTerm = searchInput.value.toLowerCase();
+        //     try {
+        //         const snapshot = await db.collection('products').orderBy('name').get();
+        //         const filteredProducts = [];
                 
-                snapshot.forEach((doc) => {
-                    const product = doc.data();
-                    if (product.name.toLowerCase().includes(searchTerm) || 
-                        (product.description && product.description.toLowerCase().includes(searchTerm))) {
-                        filteredProducts.push({
-                            id: doc.id,
-                            ...product
-                        });
-                    }
-                });
+        //         snapshot.forEach((doc) => {
+        //             const product = doc.data();
+        //             if (product.name.toLowerCase().includes(searchTerm) || 
+        //                 (product.description && product.description.toLowerCase().includes(searchTerm))) {
+        //                 filteredProducts.push({
+        //                     id: doc.id,
+        //                     ...product
+        //                 });
+        //             }
+        //         });
                 
-                // Update the product list display with filtered results
-                productList.innerHTML = '';
-                filteredProducts.forEach(product => {
-                    const productCard = document.createElement('div');
-                    productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
+        //         // Update the product list display with filtered results
+        //         productList.innerHTML = '';
+        //         filteredProducts.forEach(product => {
+        //             const productCard = document.createElement('div');
+        //             productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
 
-                    productCard.innerHTML = `
-                        <div class="bg-gray-100 dark:bg-gray-700 h-[250px] p-2 pb-0 overflow-hidden">
-                            ${product.imageUrl ? `
-                                <img 
-                                    src="${product.imageUrl}" 
-                                    alt="${product.name}" 
-                                    class="w-full h-full object-cover rounded-t-lg"
-                                >
-                            ` : `
-                                <div class="h-full flex items-center justify-center text-gray-400">No Image</div>
-                            `}
-                        </div>
+        //             productCard.innerHTML = `
+        //                 <div class="bg-gray-100 dark:bg-gray-700 h-[250px] p-2 pb-0 overflow-hidden">
+        //                     ${product.imageUrl ? `
+        //                         <img 
+        //                             src="${product.imageUrl}" 
+        //                             alt="${product.name}" 
+        //                             class="w-full h-full object-cover rounded-t-lg"
+        //                         >
+        //                     ` : `
+        //                         <div class="h-full flex items-center justify-center text-gray-400">No Image</div>
+        //                     `}
+        //                 </div>
 
-                        <div class="p-4 flex flex-col flex-grow justify-between">
-                            <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
-                            <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
-                            <div class="flex justify-between items-center mt-auto">
-                                <!-- Quantity Controls -->
-                                <div class="flex items-center">
-                                    <button data-product-id="${product.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
-                                    <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${product.id}">
-                                    <button data-product-id="${product.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
-                                </div>
-                                <!-- Cart Button -->
-                                <button data-product-id="${product.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
-                                    Add to Cart
-                                </button>
-                            </div>
-                        </div>
-                    `;
+        //                 <div class="p-4 flex flex-col flex-grow justify-between">
+        //                     <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
+        //                     <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
+        //                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+        //                     <div class="flex justify-between items-center mt-auto">
+        //                         <!-- Quantity Controls -->
+        //                         <div class="flex items-center">
+        //                             <button data-product-id="${product.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
+        //                             <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${product.id}">
+        //                             <button data-product-id="${product.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
+        //                         </div>
+        //                         <!-- Cart Button -->
+        //                         <button data-product-id="${product.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
+        //                             Add to Cart
+        //                         </button>
+        //                     </div>
+        //                 </div>
+        //             `;
                     
-                    productList.appendChild(productCard);
-                });
+        //             productList.appendChild(productCard);
+        //         });
 
-                // Add event listeners for the new product cards
-                document.querySelectorAll('.add-to-cart').forEach(button => {
-                    button.addEventListener('click', addToCart);
-                });
+        //         // Add event listeners for the new product cards
+        //         document.querySelectorAll('.add-to-cart').forEach(button => {
+        //             button.addEventListener('click', addToCart);
+        //         });
 
-                document.querySelectorAll('.increase-qty').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const id = e.target.dataset.productId;
-                        const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
-                        input.value = parseInt(input.value) + 1;
-                    });
-                });
+        //         document.querySelectorAll('.increase-qty').forEach(button => {
+        //             button.addEventListener('click', (e) => {
+        //                 const id = e.target.dataset.productId;
+        //                 const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+        //                 input.value = parseInt(input.value) + 1;
+        //             });
+        //         });
 
-                document.querySelectorAll('.decrease-qty').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const id = e.target.dataset.productId;
-                        const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
-                        if (parseInt(input.value) > 1) {
-                            input.value = parseInt(input.value) - 1;
-                        }
-                    });
-                });
+        //         document.querySelectorAll('.decrease-qty').forEach(button => {
+        //             button.addEventListener('click', (e) => {
+        //                 const id = e.target.dataset.productId;
+        //                 const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+        //                 if (parseInt(input.value) > 1) {
+        //                     input.value = parseInt(input.value) - 1;
+        //                 }
+        //             });
+        //         });
 
-            } catch (error) {
-                console.error("Error searching products:", error);
-                productList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error searching products: ${error.message}</div>`;
-            }
-        }
+        //     } catch (error) {
+        //         console.error("Error searching products:", error);
+        //         productList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error searching products: ${error.message}</div>`;
+        //     }
+        // }
 
 
 //////////////////////////////////////////////////////////////////////////// 
@@ -2410,34 +2430,42 @@ function submitOrder(e) {
         // Add event listener to the toggle button
         document.getElementById('toggleOrderFormBtn').addEventListener('click', toggleOrderForm);
 
-        // Updated submitOrderBtn click event
-        submitOrderBtn.addEventListener('click', (e) => {
-            // Prevent default form submission
-            e.preventDefault();
 
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////
-            // Check if the user is logged in
-            if (!isLoggedIn) {
+        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                // Show custom alert modal
-                document.getElementById('customAlert').classList.remove('hidden');
+        // // OLD VERSION - NOT ROBUST - submitOrderBtn click event
+        // submitOrderBtn.addEventListener('click', (e) => {
+        //     // Prevent default form submission
+        //     e.preventDefault();
 
-                return;
-            }
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //     // Check if the user is logged in
+        //     if (!isLoggedIn) {
 
-            // Check if required fields are filled
-            const requiredFields = [document.getElementById('name'), document.getElementById('wechat'), document.getElementById('deliveryType')];
-            const allFilled = requiredFields.every(field => field.value.trim() !== '');
+        //         // Show custom alert modal
+        //         document.getElementById('customAlert').classList.remove('hidden');
+
+        //         return;
+        //     }
+        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //     // Check if required fields are filled
+        //     const requiredFields = [document.getElementById('name'), document.getElementById('wechat'), document.getElementById('deliveryType')];
+        //     const allFilled = requiredFields.every(field => field.value.trim() !== '');
             
-            if (!allFilled) {
-                alert("&excl; Please fill out all required fields.");
-                return;
-            }
+        //     if (!allFilled) {
+        //         alert("&excl; Please fill out all required fields.");
+        //         return;
+        //     }
 
-            // If all checks pass, proceed with form submission
-            orderForm.submit();
-        });
+        //     // If all checks pass, proceed with form submission
+        //     orderForm.submit();
+        // });
+        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        
 
         function formatPhoneNumber(phoneNumber) {
             // Remove the leading '+' and country code
@@ -2561,3 +2589,5 @@ function submitOrder(e) {
     </body>
     
 </html>
+
+<!-- END -->

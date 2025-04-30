@@ -378,7 +378,8 @@
 
 ////////////////////////////////////////////////////////////////////////
 
-
+    let currentUser;
+    
     // Init variables
     const userPhoneDisplay = document.getElementById('userPhoneDisplay');
     // userPhoneDisplay.textContent = formattedPhoneNumber;
@@ -386,38 +387,44 @@
 
     // Check if user is already logged in
     firebase.auth().onAuthStateChanged((user) => {
-        const websiteAdmins = ['+17789569063', '+16049778798', '+15054443986', '+17788929401', '+1-778-956-9063', '+1-604-977-8798', '+1-505-444-3986', '+1-778-892-9401' ]
+        const websiteAdmins = ['+17789569063', '+16049778798', '+16049778799', '+15054443986', '+17788929401', '+1-778-956-9063', '+1-604-977-8798', '+1-604-977-8799', '+1-505-444-3986', '+1-778-892-9401' ]
         if (user && websiteAdmins.includes(user.phoneNumber)) {
             // Debug:
-                console.log("if (user && websiteAdmins.includes(user.phoneNumber)) { : ", "User: ", user)
+                console.log("if (user && websiteAdmins.includes(user.phoneNumber)) { : User is signed in and is an admin ", "User: ", user)
             // User is signed in and is an admin
-            currentUser = user;
+            currentUser = {
+                uid: user.uid,
+                phoneNumber: user.phoneNumber // Correct property name
+            };
             isLoggedIn = true;
             
-            // Update UI
-            const formattedPhoneNumber = formatPhoneNumber(user.phoneNumber);
-            userPhoneDisplay.textContent = formattedPhoneNumber;
+            // Update UI with formatted number
+            const formattedPhone = formatPhoneNumber(user.phoneNumber);
+            userPhoneDisplay.textContent = formattedPhone;
             userPhoneDisplay.classList.remove('hidden');
             
             // Fetch and populate user data
             fetchAndPopulateUserData(user.phoneNumber);
         } else if (user) {
             // Debug:
-                console.log("} else if (user) { : ", "User: ", user)
+                console.log("else if (user) { : User is signed in but not an admin ", "User: ", user)
             // User is signed in but not an admin
-            currentUser = user;
+            currentUser = {
+                uid: user.uid,
+                phoneNumber: user.phoneNumber // Correct property name
+            };
             isLoggedIn = true;
             
-            // Update UI
-            const formattedPhoneNumber = formatPhoneNumber(user.phoneNumber);
-            userPhoneDisplay.textContent = formattedPhoneNumber;
+            // Update UI with formatted number
+            const formattedPhone = formatPhoneNumber(user.phoneNumber);
+            userPhoneDisplay.textContent = formattedPhone;
             userPhoneDisplay.classList.remove('hidden');
             
             // Fetch and populate user data
             fetchAndPopulateUserData(user.phoneNumber);
         } else {
             // Debug:
-                console.log("} else { : ", "User: ", user)
+                console.log("else { : User is signed out ", "User: ", user)
             // User is signed out
             currentUser = null;
             isLoggedIn = false;
@@ -449,7 +456,7 @@
             // Query Firestore for the user's most recent order
             const ordersRef = db.collection('orders');
             const querySnapshot = await ordersRef
-                .where('customer.phone', '==', phoneNumber)
+                .where('customer.phone', '==', currentUser.phoneNumber)
                 .orderBy('orderDate', 'desc')
                 .limit(1)
                 .get();
@@ -612,14 +619,18 @@
         try {
             // Only fetch orders once
             if (!myOrders) {
+
+                // get all orders
                 const query = db.collection('orders').orderBy('orderDate', 'desc');
+
+
                 const snapshot = await query.get();
                 
                 if (snapshot.empty) {
-                    ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">No orders found<img src="/images-v2/gif-shaking-no-money-penguin.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>';
+                    ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">No orders found<img src="assets/gifs/gif-shaking-no-money-penguin.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>';
                     return;
                 }
-                
+
                 // Cache orders with deep data structure
                 allOrders = snapshot.docs.map(doc => ({
                     id: doc.id,
@@ -632,9 +643,50 @@
                     orderDate: doc.data().orderDate
                 }));
 
-                myOrders = allOrders.filter( order => order.customer.userPhone === currentUser.userPhone )
+                myOrders = allOrders.filter(order => order.customer.phone === currentUser.phoneNumber)
+                
+                // Alternatively, replace "myOrders = allOrders.filter(order => order.customer.phone === currentUser.userPhone)" with server-side query:
+                // const query = db.collection('orders')
+                //                 .where('customer.phone', '==', currentUser.phoneNumber)
+                //                 .orderBy('orderDate', 'desc');
 
-            }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                // ALTERNATE Logic for getting MY ORDERS
+
+                // // Get current user's phone number first
+                // const userPhone = currentUser?.phoneNumber;
+                // // order filtering by User
+                // const query = db.collection('orders')
+                //                 .where('customer.phone', '==', userPhone)
+                //                 .orderBy('orderDate', 'desc');
+
+                // const snapshot = await query.get();
+                
+                // if (snapshot.empty) {
+                //     ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">No orders found<img src="/images-v2/gif-shaking-no-money-penguin.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>';
+                //     return;
+                // }
+                
+                // // Cache orders with deep data structure
+                // myOrders = snapshot.docs.map(doc => ({
+                //     id: doc.id,
+                //     ...doc.data(),
+                //     // Ensure nested objects are properly preserved
+                //     customer: { ...doc.data().customer },
+                //     items: doc.data().items.map(item => ({ ...item })),
+                //     total: doc.data().total,
+                //     status: doc.data().status,
+                //     orderDate: doc.data().orderDate
+                // }));
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            } // END of IF block
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             // Use cached orders for filtering
             let filteredOrders = [...myOrders];
@@ -658,7 +710,8 @@
             
             if (filteredOrders.length === 0) {
                 
-                ordersContainer.innerHTML = '<div class="col-span-full text-lg text-center font-bold py-2">No orders found.<img src="/assets/images/gif-orca-blue-bg.gif" alt="Orca pod swimming - loading" class="w-auto h-[50vh] mx-auto my-6 rounded-[12em]"></div>';
+                ordersContainer.innerHTML = '<div class="col-span-full text-lg text-center font-bold py-2">No orders found.<img src="assets/gifs/gif-PenguinSearchingbyPudgyPenguins.gif" alt="" class="w-auto h-[50vh] mx-auto my-6 rounded-[6em]"></div>';
+                // ordersContainer.innerHTML = '<div class="col-span-full text-lg text-center font-bold py-2">No orders found.<img src="assets/gifs/gif-orca-blue-bg.gif" alt="" class="w-auto h-[50vh] mx-auto my-6 rounded-[12em]"></div>';
 
                 // ordersContainer.innerHTML = `
                 //     <div class="col-span-full text-center py-8">
