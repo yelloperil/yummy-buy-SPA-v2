@@ -873,14 +873,12 @@
             orderCard.className = 'flex flex-col bg-white rounded-lg shadow-md p-6 order-card transition-all';
             orderCard.innerHTML = `
                 <div class="flex justify-between items-start mb-2">
-                    <h3 class="text-primary text-xl font-bold">Order ID: ${order.id.toUpperCase()}</h3>
+                    <h3 class="bg-[#fae8e0] text-[#ef7c8e] px-4 py-2 rounded-md text-lg sm:text-xl xl:text-2xl font-bold">ID: ${order.id.toUpperCase()}</h3>
                     <span class="bg-[#f1f0fb] px-3 py-1 rounded text-sm font-semibold ${getStatusColor(order.status)}">${order.status}</span>
                 </div>
-                <div class="flex justify-between text-sm">
-                    <span class="font-medium"><strong>Order Date:</strong> ${orderDate}</span>
-                </div>
-                <div class="my-3 mt-6">
-                    <span class="bg-[#f1f0fb] px-3 py-1 rounded text-lg text-[#aca9e4] font-bold">${extractMonthDay(orderDate)}</span>
+                <div class="flex justify-between items-start mt-2 mb-6 pr-1">
+                    <span class="bg-[#ef7c8e] text-[#fae8e0] px-3 py-1 rounded-md text-base font-bold">${extractMonthDay(orderDate)}</span>
+                    <span class="ml-auto text-xs sm:text-sm text-[#807a7d] font-semibold">${orderDate}</span>
                 </div>
                 <div class="flex justify-between items-end">
                     <div class="flex items-center">
