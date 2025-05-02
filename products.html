@@ -687,6 +687,11 @@
         const phoneError = document.getElementById('phoneError');
         const codeError = document.getElementById('codeError');
         const userPhoneDisplay = document.getElementById('userPhoneDisplay');
+
+        // Create modal overlay -- May 1, 2025
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-40 hidden';
+        document.body.appendChild(modalOverlay);
         
         // Open auth modal when login button is clicked
         loginBtn.addEventListener('click', () => {
@@ -714,6 +719,7 @@
         // Close auth modal
         closeAuthModalBtn.addEventListener('click', () => {
             authModal.classList.add('hidden');
+            modalOverlay.classList.add('hidden');
             resetAuthModal();
         });
         
@@ -743,6 +749,8 @@
         // Show auth modal
         function showAuthModal() {
             authModal.classList.remove('hidden');
+            modalOverlay.classList.remove('hidden');
+            sendCodeBtn.classList.remove('scale-105', 'ring-4', 'ring-[#8790ec]', 'transition-transform', 'duration-300', 'ease-in-out', 'animate-pulse-glow');
             resetAuthModal();
             initRecaptcha();
         }
@@ -755,7 +763,7 @@
             phoneNumberInput.value = '';
             phoneError.classList.add('hidden');
             codeError.classList.add('hidden');
-            
+          
             // Reset verification code inputs
             verificationInputs.forEach(input => {
                 input.value = '';
@@ -771,62 +779,6 @@
         phoneNumberInput.addEventListener('blur', () => {
             phoneNumberInput.placeholder = "+1 (604) 969-3855";
         });
-
-        // // @@@@@@@ Phone number validation and formatting
-        // phoneNumberInput.addEventListener('input', function(e) {
-        //     // Get raw input value and remove all non-digit characters
-        //     const constValue = e.target.value.replace(/\D/g, '');
-        //     // const constValue = e.target.value;
-        //     console.log('Current Value:', e.target.value)
-            
-        //     // Limit to 10 digits
-        //     let rawValue = constValue.slice(1);
-        //     console.log('Raw Value:', rawValue)
-        //     // rawValue = rawValue.substring(0, 10);
-            
-        //     // Format the phone number
-        //     let formattedValue = '';
-        //     console.log('Formatted Value:', formattedValue)
-            
-        //     if (constValue.length > 0) {
-        //         formattedValue = '+1 ';
-        //         console.log('Formatted Value after IF #1:', formattedValue)
-
-        //         // Area code
-        //         if (constValue.length > 0) {
-        //             formattedValue += '(' + rawValue.substring(0, Math.min(3, rawValue.length));
-        //             console.log('Formatted Value after IF #2:', formattedValue)
-        //         }
-                
-        //         // Middle digits
-        //         if (constValue.length > 3) {
-        //             formattedValue += ') ' + rawValue.substring(3, Math.min(6, rawValue.length));
-        //             console.log('Formatted Value after IF #3:', formattedValue)
-        //         }
-                
-        //         // Last digits
-        //         if (constValue.length > 6) {
-        //             formattedValue += '-' + rawValue.substring(6, Math.min(10, rawValue.length));
-        //             console.log('Formatted Value after IF #4:', formattedValue)
-        //             }
-        //     } else { 
-        //         formattedValue = '';
-        //     }
-        //     console.log('Formatted Value after ELSE:', formattedValue)
-        //     // Update the input value with the formatted version
-        //     e.target.value = formattedValue;
-        //     console.log('Formatted Value after Update (e.target.value = formattedValue): ', formattedValue)
-
-        //     // Auto-focus to send code button after complete entry (10 digits)
-        //     if (constValue.length === 10) {
-        //         console.log('Auto-focus to send code button after complete entry (10 digits)')
-        //         setTimeout(() => {
-        //             console.log('Auto-focus to send code button after complete entry (10 digits) - setTimeout Activates')
-        //             sendCodeBtn.focus();
-        //             console.log('Auto-focus to send code button after complete entry (10 digits) - sendCodeBtn.focus() Activates')
-        //         }, 300);
-        //     }
-        // });
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -869,16 +821,16 @@
                 spacer = ' '.repeat(Math.max(0, 3 - cleanedValue.length));
                 
                 if (cleanedValue.length <= 3) {
-                    areaCode = '(' + cleanedValue + spacer + ')';
+                    areaCode = ' (' + cleanedValue + spacer + ')';
                 }
                 
                 if (cleanedValue.length > 3) {
-                    areaCode = '(' + cleanedValue.slice(0, 3) + ')';
+                    areaCode = ' (' + cleanedValue.slice(0, 3) + ')';
                     middleDigits = ' ' + cleanedValue.slice(3, Math.min(6, cleanedValue.length));
                 }
                 
                 if (cleanedValue.length > 6) {
-                    areaCode = '(' + cleanedValue.slice(0, 3) + ')';
+                    areaCode = ' (' + cleanedValue.slice(0, 3) + ')';
                     middleDigits = ' ' + cleanedValue.slice(3, 6);
                     lastDigits = '-' + cleanedValue.slice(6, Math.min(10, cleanedValue.length));
                 }
@@ -889,10 +841,15 @@
             
             // Auto-focus to send code button after complete entry (10 digits)
             if (cleanedValue.length === 10) {
-                setTimeout(() => {
-                    sendCodeBtn.focus();
-                }, 300);
-            }
+            setTimeout(() => {
+                sendCodeBtn.focus();
+                // Add visual cue for focus
+                sendCodeBtn.classList.add('scale-105', 'ring-4', 'ring-[#8790ec]', 'transition-transform', 'duration-300', 'ease-in-out', 'animate-pulse-glow');
+                // sendCodeBtn.classList.add('scale-105', 'transition-transform', 'duration-300', 'ease-in-out', 'animate-pulse-glow');
+                // sendCodeBtn.classList.add('scale-105', 'ring-4', 'ring-blue-400', 'transition-transform', 'duration-300', 'ease-in-out', 'animate-pulse-glow');
+                // sendCodeBtn.classList.add('scale-105', 'ring-4', 'ring-blue-400', 'transition', 'duration-300');
+            }, 200);
+        }
         });
 
 
@@ -900,6 +857,10 @@
 // Send Verification Code
 ////////////////////////////////////////////////////////////////////////////////////
         
+        // Remove visual cue when button loses focus
+        sendCodeBtn.addEventListener('blur', () => {
+            sendCodeBtn.classList.remove('scale-105', 'ring-4', 'ring-[#8790ec]', 'transition-transform', 'duration-300', 'ease-in-out', 'animate-pulse-glow');
+        });
 
         // Send verification code
         sendCodeBtn.addEventListener('click', async () => {
