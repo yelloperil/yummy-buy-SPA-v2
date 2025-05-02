@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>p5.js template</title>
+  <script src="https://cdn.jsdelivr.net/npm/p5@0.10.2/lib/p5.min.js"></script>
+</head>
+<body>
+
+
+  <script>
+        
+    // Placeholder for the globally defined currentUser object
+    let currentUser = {
+      userPhone: 'Guest User' // Example phone number
+    };
+
+    // Colors (define hex values first, convert to p5.Color in setup)
+    const furColorHex = '#8B4513';
+    const shadeColorHex = '#654321';
+    const faceColorHex = '#F5F5DC';
+    const patchColorHex = '#404040';
+    const blackHex = '#000000';
+    const whiteHex = '#FFFFFF';
+    const brandColorHex = '#A78BFA';
+    const bgColorHex = '#5D5CDE';
+
+    // p5.Color objects (initialized in setup)
+    let furColor, shadeColor, faceColor, patchColor, blackColor, whiteColor, brandColor, bgColor;
+
+    // Sloth and Text Layout Parameters
+    let slothPixelSize = 10;
+    let bubbleTextPixelSize = 4;
+    let brandTextPixelSize = 7;
+    let textCharWidth = 5;
+    let textCharHeight = 7;
+    let bubbleCharSpacing = 1;
+    let brandCharSpacing = 2;
+    let textLineSpacing = 2;
+    let bubblePadding = 6;
+
+    // Animation State Variables
+    let slothCurrentX;
+    let slothTargetX;
+    let slothDirection = 1;
+    let lastMoveTime = 0;
+    const moveInterval = 1000; // Time between deciding to move
+    const pauseDuration = 500; // ms pause after reaching target
+    let canTriggerMove = true; // Controls if a new move can be triggered
+    let pauseStartTime = 0;
+
+    let brandTextWidth = 0;
+    let brandTextMinX = 0;
+    let brandTextMaxX = 0;
+    let stepWidth = 0;
+    let targetLetterIndex = 0; // Index of the letter the sloth is heading towards/above
+
+    const brandMessage = "YUMMY BUY";
+    let letterScales = []; // Store current scale for each letter
+    let letterColors = []; // Store current color for each letter
+    const highlightScaleTarget = 1.05;
+    const defaultScaleTarget = 1.0;
+    const lerpSpeed = 0.15; // Speed for color/scale transitions
+
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      colorMode(RGB); // Keep RGB mode for hex compatibility initially
+      textFont('sans-serif');
+      rectMode(CENTER);
+      noStroke();
+
+      // --- Initialize p5.Color objects ---
+      // This is the correct place to use the color() function
+      try {
+          furColor = color(furColorHex);
+          shadeColor = color(shadeColorHex);
+          faceColor = color(faceColorHex);
+          patchColor = color(patchColorHex);
+          blackColor = color(blackHex);
+          whiteColor = color(whiteHex);
+          brandColor = color(brandColorHex); // Initialize the brandColor p5.Color object
+          bgColor = color(bgColorHex);
+      } catch (e) {
+          console.error("Error initializing colors in setup:", e);
+          // Provide fallback basic colors if initialization fails
+          furColor = color(139, 69, 19);
+          shadeColor = color(101, 67, 33);
+          faceColor = color(245, 245, 220);
+          patchColor = color(64, 64, 64);
+          blackColor = color(0);
+          whiteColor = color(255);
+          brandColor = color(167, 139, 250);
+          bgColor = color(93, 92, 222);
+      }
+      // --- End Color Initialization ---
+
+      // Initial position centered
+      slothCurrentX = width / 2;
+      slothTargetX = width / 2;
+
+      // Calculate initial layout and initialize letter states AFTER colors defined
+      calculateLayoutParameters();
+
+      // Find initial target letter index based on starting position
+      targetLetterIndex = findLetterIndex(slothTargetX);
+
+      lastMoveTime = millis(); // Start timer
+    }
+
+    // Function to calculate layout and initialize letter animation states
+    function calculateLayoutParameters() {
+        // Ensure colors are initialized before proceeding
+        if (!brandColor || !whiteColor) {
+            console.error("Cannot calculate layout parameters: colors not initialized.");
+            return; // Prevent errors if setup failed
+        }
+
+      let numChars = brandMessage.length;
+      letterScales = [];
+      letterColors = [];
+
+      let totalWidthPixels = numChars * textCharWidth + (numChars - 1) * brandCharSpacing;
+      brandTextWidth = totalWidthPixels * brandTextPixelSize;
+      brandTextMinX = width / 2 - brandTextWidth / 2;
+      brandTextMaxX = width / 2 + brandTextWidth / 2;
+      stepWidth = (textCharWidth + brandCharSpacing) * brandTextPixelSize;
+
+      // Initialize scale and color for each letter using the p5.Color object
+      for (let i = 0; i < numChars; i++) {
+        letterScales.push(defaultScaleTarget);
+        letterColors.push(brandColor); // Use the initialized p5.Color object
+      }
+
+      // Adjust target if calculation happens after setup/resize
+      if (slothTargetX !== undefined) {
+          slothTargetX = constrain(slothTargetX, brandTextMinX, brandTextMaxX);
+      } else {
+          slothTargetX = width/2;
+      }
+      // Prevent error if stepWidth is 0 during initial setup phases
+      if (stepWidth > 0) {
+        targetLetterIndex = findLetterIndex(slothTargetX);
+      } else {
+        targetLetterIndex = 0;
+      }
+    }
+
+    // Find the index of the letter closest to a given X coordinate
+    function findLetterIndex(xPos) {
+        if (stepWidth <= 0) return 0; // Prevent division by zero or invalid step
+        // Calculate the relative position along the text width
+        let relativePos = xPos - brandTextMinX;
+        // Calculate the index based on step width
+        let index = round(relativePos / stepWidth);
+        // Clamp the index to valid bounds
+        return constrain(index, 0, brandMessage.length - 1);
+    }
+
+    function draw() {
+        // Ensure colors are ready before drawing
+        if (!bgColor || !brandColor || !whiteColor || !blackColor) {
+            // console.log("Waiting for colors to initialize...");
+            return; // Don't draw if colors aren't ready
+        }
+
+      // 1. Background
+      background(bgColor); // Use the p5.Color object
+
+      // --- Animation Timing & State ---
+      let now = millis();
+
+      if (!canTriggerMove && now - pauseStartTime >= pauseDuration) {
+        canTriggerMove = true;
+      }
+
+      if (canTriggerMove && now - lastMoveTime >= moveInterval) {
+        lastMoveTime = now;
+
+        let nextTargetX = slothTargetX + slothDirection * stepWidth;
+
+        // Boundary Check & Reversal (using targetLetterIndex)
+        if (slothDirection === 1 && targetLetterIndex >= brandMessage.length - 1) {
+            slothDirection = -1;
+            nextTargetX = slothTargetX + slothDirection * stepWidth; // Recalculate based on new direction
+        } else if (slothDirection === -1 && targetLetterIndex <= 0) {
+            slothDirection = 1;
+            nextTargetX = slothTargetX + slothDirection * stepWidth; // Recalculate based on new direction
+        }
+
+        // Clamp target X to the calculated boundaries
+        nextTargetX = constrain(nextTargetX, brandTextMinX, brandTextMaxX);
+
+        slothTargetX = nextTargetX;
+        targetLetterIndex = findLetterIndex(slothTargetX); // Update index AFTER setting new target X
+
+        canTriggerMove = false;
+        pauseStartTime = now;
+      }
+
+      // --- Smooth Movement ---
+      slothCurrentX = lerp(slothCurrentX, slothTargetX, 0.1);
+
+      // --- Animation Calculation (Bounce) ---
+      let bounceAmplitude = 8;
+      let bounceSpeed = 0.05;
+      let bounceOffset = sin(frameCount * bounceSpeed) * bounceAmplitude;
+
+      // --- Sloth Positioning ---
+      let slothBaseY = height * 0.55;
+      let slothCurrentY = slothBaseY + bounceOffset;
+      let pS = slothPixelSize;
+      let slothHeadCenterY = slothCurrentY - pS * 5;
+      let slothHeadTopEdgeY = slothHeadCenterY - (pS * 7 / 2);
+
+      // --- Draw Pixel Sloth Mascot ---
+      push();
+      translate(slothCurrentX, slothCurrentY);
+      drawPixelSloth(pS); // Uses the globally defined p5.Color objects
+      pop();
+
+      // --- Update Letter Highlight States (Lerping) ---
+      for (let i = 0; i < brandMessage.length; i++) {
+          // Ensure arrays have been initialized
+          if (i >= letterColors.length || i >= letterScales.length) continue;
+
+          let isTarget = (i === targetLetterIndex);
+          // Use the initialized p5.Color objects
+          let targetColor = isTarget ? whiteColor : brandColor;
+          let targetScale = isTarget ? highlightScaleTarget : defaultScaleTarget;
+
+          letterScales[i] = lerp(letterScales[i], targetScale, lerpSpeed);
+          // lerpColor requires p5.Color objects, which we now have
+          if(letterColors[i]) { // Check if color object exists before lerping
+            letterColors[i] = lerpColor(letterColors[i], targetColor, lerpSpeed);
+          } else { // Fallback if initialization failed for some reason
+              letterColors[i] = targetColor;
+          }
+      }
+
+      // --- Draw Pixel Art Brand Text (with Highlighting) ---
+      let brandTextY = slothBaseY + bounceAmplitude + pS * 18 * 0.6;
+      drawPixelText(brandMessage, width / 2, brandTextY, brandTextPixelSize, textCharWidth, textCharHeight, brandCharSpacing, letterColors, letterScales, false);
+
+
+      // --- Pixel Speech Bubble ---
+      let bubbleMaxWidthPixels = 40;
+      let pT = bubbleTextPixelSize;
+
+      // Prepare message and calculate required bubble size
+      let today = new Date().toLocaleDateString();
+      let message = `HELLO, ${currentUser.userPhone}!\nTODAY IS ${today}`;
+      let messageLines = message.split('\n');
+      let bubbleTextHeightPixels = messageLines.length * textCharHeight + (messageLines.length - 1) * textLineSpacing;
+      let longestLineWidthPixels = 0;
+      for (let line of messageLines) {
+        let lineWidth = line.length * textCharWidth + (line.length > 0 ? line.length - 1 : 0) * bubbleCharSpacing;
+        if (lineWidth > longestLineWidthPixels) { longestLineWidthPixels = lineWidth; }
+      }
+      longestLineWidthPixels = max(15, min(longestLineWidthPixels, bubbleMaxWidthPixels));
+      let bubbleContentWidthPixels = longestLineWidthPixels;
+      let bubbleContentHeightPixels = bubbleTextHeightPixels;
+      let bubbleBodyWidthPixels = bubbleContentWidthPixels + bubblePadding * 2;
+      let bubbleBodyHeightPixels = bubbleContentHeightPixels + bubblePadding * 2;
+
+      // Position Bubble Above MOVING Sloth
+      let bubbleBottomMargin = pS * 6;
+      let bubbleBottomY = slothHeadTopEdgeY - bounceAmplitude - bubbleBottomMargin;
+      let bubbleTopY = bubbleBottomY - (bubbleBodyHeightPixels * pT);
+      let bubbleCenterX = slothCurrentX + pS * 5;
+
+      // Draw the bubble body and tail
+      let tailTargetY = slothHeadTopEdgeY + pS * 2;
+      drawPixelBubble(bubbleCenterX, bubbleTopY, bubbleBodyWidthPixels, bubbleBodyHeightPixels, pT, slothCurrentX, tailTargetY, whiteColor);
+
+      // Draw the text inside the bubble
+      let textBlockHeight = bubbleTextHeightPixels * pT;
+      let totalBubbleHeight = bubbleBodyHeightPixels * pT;
+      let verticalPaddingTotal = totalBubbleHeight - textBlockHeight;
+      let textStartY = bubbleTopY + verticalPaddingTotal / 2;
+      let textBlockWidth = bubbleContentWidthPixels * pT;
+      let totalBubbleWidth = bubbleBodyWidthPixels * pT;
+      let horizontalPaddingTotal = totalBubbleWidth - textBlockWidth;
+      let textStartX = bubbleCenterX - totalBubbleWidth / 2 + horizontalPaddingTotal / 2;
+
+      // Prepare default colors/scales using the initialized p5.Color objects
+      let bubbleDefaultColors = [];
+      let bubbleDefaultScales = [];
+      // Calculate length needed based on drawable characters, not raw message length
+      let drawableCharCount = 0;
+        for (let line of messageLines) {
+            drawableCharCount += line.length;
+        }
+      for(let i = 0; i < drawableCharCount; i++) { // Use correct length
+          bubbleDefaultColors.push(blackColor); // Use blackColor p5.Color object
+          bubbleDefaultScales.push(1.0);
+      }
+      drawPixelText(message, textStartX, textStartY, pT, textCharWidth, textCharHeight, bubbleCharSpacing, bubbleDefaultColors, bubbleDefaultScales, true);
+
+
+      // Restore default modes
+      rectMode(CENTER);
+      noStroke();
+    }
+
+    // Function to draw the pixel art sloth centered at (0, 0) after translation
+    function drawPixelSloth(p) {
+        rectMode(CENTER); noStroke();
+        fill(furColor); rect(0, p * 2, p * 10, p * 12); fill(faceColor); rect(0, p * 2, p * 6, p * 8); fill(shadeColor); rect(p * 4, p * 2, p * 2, p * 12); rect(-p * 4, p * 2, p * 2, p * 12); rect(0, p * 7, p * 10, p * 2);
+        let headY = -p * 5; fill(furColor); rect(0, headY, p * 9, p * 7); fill(faceColor); rect(0, headY, p * 7, p * 5); fill(patchColor); rect(-p * 2.5, headY, p * 3, p * 4); rect(p * 2.5, headY, p * 3, p * 4); fill(blackColor); rect(-p * 2.5, headY, p, p); rect(p * 2.5, headY, p, p); fill(blackColor); rect(0, headY + p * 2, p * 3, p);
+        let armY = -p * 1; let armW = p * 3; let armH = p * 9; let armOffsetX = p * 6.5; fill(furColor); rect(-armOffsetX, armY, armW, armH); fill(shadeColor); rect(-armOffsetX + p , armY, p, armH); fill(blackColor); let clawBaseYL = armY + armH / 2; rect(-armOffsetX - p * 0.5, clawBaseYL + p * 0.5, p, p*2); rect(-armOffsetX + p * 0.5, clawBaseYL + p * 1.5, p, p*2); rect(-armOffsetX + p * 1.5, clawBaseYL + p * 0.5, p, p*2); fill(furColor); rect(armOffsetX, armY, armW, armH); fill(shadeColor); rect(armOffsetX - p , armY, p, armH); fill(blackColor); let clawBaseYR = armY + armH / 2; rect(armOffsetX + p * 0.5, clawBaseYR + p * 0.5, p, p*2); rect(armOffsetX - p * 0.5, clawBaseYR + p * 1.5, p, p*2); rect(armOffsetX - p * 1.5, clawBaseYR + p * 0.5, p, p*2);
+        let legY = p * 8.5; let legW = p * 4; let legH = p * 5; let legOffsetX = p * 2.5; fill(furColor); rect(-legOffsetX, legY, legW, legH); fill(shadeColor); rect(-legOffsetX + p*1.5, legY, p, legH); fill(blackColor); rect(-legOffsetX - p * 1, legY + p * 2, p*3, p); rect(-legOffsetX - p * 1, legY + p * 2.5, p, p*2); rect(-legOffsetX + p * 0, legY + p * 2.5, p, p*2); rect(-legOffsetX + p * 1, legY + p * 2.5, p, p*2); fill(furColor); rect(legOffsetX, legY, legW, legH); fill(shadeColor); rect(legOffsetX - p*1.5, legY, p, legH); fill(blackColor); rect(legOffsetX + p * 1, legY + p * 2, p*3, p); rect(legOffsetX + p * 1, legY + p * 2.5, p, p*2); rect(legOffsetX + p * 0, legY + p * 2.5, p, p*2); rect(legOffsetX - p * 1, legY + p * 2.5, p, p*2);
+        rectMode(CENTER);
+    }
+
+    // --- Pixel Bubble Drawing ---
+    function drawPixelBubble(centerX, topY, widthPixels, heightPixels, p, targetX, targetY, bubbleFillColor) {
+        push();
+        rectMode(CORNER); fill(bubbleFillColor); noStroke();
+        let bubbleLeftX = centerX - (widthPixels / 2) * p;
+        let bubbleBottomY = topY + heightPixels * p;
+        rect(bubbleLeftX + p, topY, (widthPixels - 2) * p, heightPixels * p);
+        rect(bubbleLeftX, topY + p, widthPixels * p, (heightPixels - 2) * p);
+        let tailStartX = centerX; let tailStartY = bubbleBottomY; let steps = 4;
+        for (let i = 1; i <= steps; i++) {
+            let intermediateX = lerp(tailStartX, targetX, i / (steps + 1.5));
+            let intermediateY = lerp(tailStartY, targetY, i / (steps + 1.5));
+            let gridX = floor(intermediateX / p) * p; let gridY = floor(intermediateY / p) * p;
+            rect(gridX - p/2, gridY - p/2, p*2, p*2);
+        }
+        pop();
+        rectMode(CENTER);
+    }
+
+
+    // --- Pixel Text Drawing ---
+    function drawPixelText(message, startX, startY, p, charW, charH, spacingP, colors, scales, alignLeft = false) {
+      let currentX = startX;
+      let currentY = startY;
+      let lines = message.split('\n');
+      let charIndex = 0;
+
+      push();
+      noStroke();
+      rectMode(CORNER);
+
+      for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        let line = lines[lineIndex];
+        let lineRenderWidthPixels = line.length * charW + (line.length > 0 ? line.length - 1 : 0) * spacingP;
+        let lineRenderWidth = lineRenderWidthPixels * p;
+        currentX = alignLeft ? startX : startX - lineRenderWidth / 2;
+        currentY = startY + lineIndex * (charH + textLineSpacing) * p;
+
+        for (let i = 0; i < line.length; i++) {
+          let char = line[i].toUpperCase();
+          // Check array bounds explicitly before accessing
+          let charColor = (colors && charIndex < colors.length) ? colors[charIndex] : blackColor;
+          let charScale = (scales && charIndex < scales.length) ? scales[charIndex] : 1.0;
+
+          // Ensure color is valid before filling
+          if (!charColor) charColor = blackColor; // Fallback
+
+          let charCenterX = charW * p / 2;
+          let charCenterY = charH * p / 2;
+
+          push();
+          translate(currentX, currentY);
+          translate(charCenterX, charCenterY);
+          scale(charScale);
+          translate(-charCenterX, -charCenterY);
+          fill(charColor); // Use the p5.Color object
+          drawPixelChar(char, p, charW, charH);
+          pop();
+
+          currentX += (charW + spacingP) * p;
+          charIndex++; // Increment index only for drawn characters
+        }
+      }
+      pop();
+      rectMode(CENTER);
+    }
+
+
+    // Draws a single pixel character relative to the current translation (0,0 is top-left)
+    function drawPixelChar(char, p, cW, cH) {
+        const px = (x, y) => rect(x * p, y * p, p, p);
+            switch (char) { // Cases unchanged
+            case 'A': px(2, 0); for(let i=0; i<3; i++) px(1+i, 1); for(let y=2; y<cH; y++) { px(0, y); px(4, y); } px(1, 3); px(2, 3); px(3, 3); break;
+            case 'B': for(let y=0; y<cH; y++) px(0, y); px(1, 0); px(2, 0); px(3, 0); px(4, 1); px(1, 3); px(2, 3); px(3, 3); px(4, 2); px(4, 4); px(1, cH-1); px(2, cH-1); px(3, cH-1); px(4, cH-2); break;
+            case 'C': for(let y=1; y<cH-1; y++) px(0, y); px(1, 0); px(2, 0); px(3, 0); px(4, 1); px(1, cH-1); px(2, cH-1); px(3, cH-1); px(4, cH-2); break;
+            case 'D': for(let y=0; y<cH; y++) px(0, y); px(1, 0); px(2, 0); px(3, 0); px(4, 1); px(4, cH-2); px(1, cH-1); px(2, cH-1); px(3, cH-1); for(let y=2; y<cH-2; y++) px(4,y); break;
+            case 'E': for(let y=0; y<cH; y++) px(0, y); for(let x=1; x<cW; x++) { px(x, 0); px(x, cH-1); px(x, floor(cH/2));} break;
+
+            // G - Like C but with a horizontal bar
+            case 'G':
+              for(let y=1; y<cH-1; y++) px(0, y);
+              px(1, 0);
+              px(2, 0);
+              px(3, 0);
+              px(4, 1);
+              px(1, cH-1);
+              px(2, cH-1);
+              px(3, cH-1);
+              px(4, cH-2);
+              // Add the horizontal bar
+              for(let x=2; x<cW-1; x++) px(x, floor(cH/2));
+              px(4, floor(cH/2));
+              break;
+
+            case 'H': for(let y=0; y<cH; y++) { px(0, y); px(4, y); } for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); break;
+            case 'I': for(let x=0; x<cW; x++) { px(x, 0); px(x, cH-1); } for(let y=1; y<cH-1; y++) px(2, y); break;
+            case 'L': for(let y=0; y<cH; y++) px(0, y); for(let x=1; x<cW; x++) px(x, cH-1); break;
+            case 'M': for(let y=0; y<cH; y++) { px(0, y); px(4, y); } px(1, 1); px(3, 1); px(2, 2); break;
+            case 'N': for(let y=0; y<cH; y++) { px(0, y); px(4, y); } px(1, 1); px(1, 2); px(2, 3); px(3, 4); px(3, 5); break; // Diagonal approx
+            case 'O': for(let y=1; y<cH-1; y++) { px(0, y); px(4, y); } for(let x=1; x<cW-1; x++) { px(x, 0); px(x, cH-1); } break;
+            case 'P': for(let y=0; y<cH; y++) px(0,y); for(let x=1; x<cW-1; x++) {px(x,0); px(x, floor(cH/2));} px(4,1); px(4,2); break; // Added P
+            case 'R': for(let y=0; y<cH; y++) px(0, y); px(1, 0); px(2, 0); px(3, 0); px(4, 1); px(1, 3); px(2, 3); px(3, 3); px(4, 2); px(3, 4); px(4, 5); px(4, 6); break; // Added R
+            case 'S': for(let x=1; x<cW-1; x++) { px(x, 0); px(x, cH-1); px(x, floor(cH/2)); } px(0, 1); px(0, 2); px(4, cH-3); px(4, cH-2); px(4, 0); px(0, cH-1); break; // Adjusted S
+            case 'T': for(let x=0; x<cW; x++) px(x, 0); for(let y=1; y<cH; y++) px(2, y); break;
+            case 'U': for(let y=0; y<cH-1; y++) { px(0, y); px(4, y); } for(let x=1; x<cW-1; x++) px(x, cH-1); break;
+
+            // W - Wide W shape
+            case 'W':
+              for(let y=0; y<cH; y++) {
+                px(0, y);
+                px(4, y);
+              }
+              px(1, cH-2);
+              px(2, cH-3);
+              px(3, cH-2);
+              break;
+
+            case 'Y': px(0, 0); px(4, 0); px(1, 1); px(3, 1); px(2, 2); for(let y=3; y<cH; y++) px(2, y); break;
+            // Punctuation & Symbols
+            case '!': for(let y=0; y<cH-2; y++) px(2,y); px(2, cH-1); break;
+            case ',': px(2, cH-1); px(1, cH-1); px(1, cH-2); break; // Simplified comma
+            case '.': px(2, cH-1); break;
+            case '-': for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); break; // Dash
+            case '/': px(4, 0); px(4, 1); px(3, 2); px(2, 3); px(1, 4); px(0, 5); px(0, 6); break; // Forward slash approx
+            // Digits
+            case '0': for(let y=1; y<cH-1; y++) { px(0, y); px(4, y); } for(let x=1; x<cW-1; x++) { px(x, 0); px(x, cH-1); } px(3, 1); px(2,2); px(1,3); px(1,4); break; // 0 with slash
+            case '1': for (let x=1; x<cW-1; x++) px(x,cH-1); for (let y=0; y<cH; y++) px(2,y); px(1,1); break;
+            // case '2': for(let x=0; x<cW; x++) px(x,cH-1); px(0,cH-2); px(1,cH-2); px(4,0); px(3,0); px(2,0); px(1,1); px(0,2); px(1,3); px(2,3); px(3,3); px(4,4); break; // Complex 2
+            // 2 - Classic digital 2 shape
+            case '2':
+              for(let x=0; x<cW; x++) px(x, 0);
+              px(4, 1);
+              px(4, 2);
+              for(let x=0; x<cW; x++) px(x, floor(cH/2));
+              px(0, floor(cH/2)+1);
+              px(0, cH-2);
+              for(let x=0; x<cW; x++) px(x, cH-1);
+              break;
+            case '3': for(let x=0; x<cW-1; x++) { px(x,0); px(x, cH-1); } for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); for(let y=1; y<cH-1; y++) px(4,y); break;
+            case '4': for(let y=0; y<floor(cH/2)+1; y++) px(0,y); for(let y=0; y<cH; y++) px(4,y); for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); break;
+            case '5': for(let x=0; x<cW; x++) px(x,0); px(0,1); px(0,2); px(1,3); px(2,3); px(3,3); px(4,4); px(4,5); px(3,6); px(2,6); px(1,6); break; // Complex 5
+            case '6': for(let x=1; x<cW; x++) px(x,0); for(let y=1; y<cH; y++) px(0,y); for(let y=floor(cH/2)+1; y<cH-1; y++) px(4,y); for(let x=1; x<cW-1; x++) { px(x, floor(cH/2)); px(x, cH-1); } break;
+            case '7': for(let x=0; x<cW; x++) px(x,0); px(4,1); px(4,2); px(3,3); px(2,4); px(2,5); px(2,6); break;
+            case '8': for(let x=1; x<cW-1; x++) { px(x,0); px(x,cH-1); px(x,floor(cH/2)); } for(let y=1; y<cH-1; y++) { px(0,y); px(4,y); } break;
+            case '9': for(let x=0; x<cW-1; x++) px(x,cH-1); for(let y=0; y<cH; y++) px(4,y); for(let y=1; y<floor(cH/2); y++) px(0,y); for(let x=1; x<cW-1; x++) { px(x,0); px(x, floor(cH/2)); } break;
+
+            case ' ': break; // Space
+            default: px(0, 0); px(cW - 1, 0); px(0, cH - 1); px(cW - 1, cH - 1); break; // Unknown char placeholder
+        }
+    }
+
+
+    // Responsive Canvas
+    function windowResized() {
+      resizeCanvas(windowWidth, windowHeight);
+      // Ensure colors are ready before calculating layout
+      if (brandColor) {
+          calculateLayoutParameters();
+      }
+      slothCurrentX = width / 2;
+      slothTargetX = width / 2;
+      // Prevent error if stepWidth is 0 during initial setup phases
+      if (stepWidth > 0) {
+        targetLetterIndex = findLetterIndex(slothTargetX);
+      } else {
+        targetLetterIndex = 0;
+      }
+      canTriggerMove = true;
+      lastMoveTime = millis();
+      pauseStartTime = 0;
+    }
+
+
+  </script>
+
+
+
+</html>
