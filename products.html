@@ -948,19 +948,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
         
 
-        function setupVerificationInputs() {
-            verificationInputs.forEach((input, index) => {
-                // Clear existing event listeners
-                input.removeEventListener('input', handleVerificationInput);
-                input.removeEventListener('keydown', handleVerificationKeyDown);
-                
-                // Add new event listeners
-                input.addEventListener('input', handleVerificationInput);
-                input.addEventListener('keydown', handleVerificationKeyDown);
-            });
-        }
-        
-        // Handle verification input
+        // Handle verification input -- May 1, 2025
         function handleVerificationInput(e) {
             const input = e.target;
             const value = input.value;
@@ -972,7 +960,17 @@
                     const nextInput = input.nextElementSibling;
                     if (nextInput && nextInput.classList.contains('verification-code-input')) {
                         nextInput.focus();
-            } else {
+                        
+                        // For mobile: Force focus programmatically
+                        setTimeout(() => {
+                            nextInput.focus();
+                            
+                            // For iOS specifically
+                            if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                                nextInput.setSelectionRange(0, nextInput.value.length);
+                            }
+                        }, 0);
+                    } else {
                         // If it's the last input, check if all fields are filled
                         checkVerificationCompletion();
                     }
@@ -982,8 +980,8 @@
                 input.value = '';
             }
         }
-        
-        // Handle verification keydown
+
+        // Handle verification keydown -- May 1, 2025
         function handleVerificationKeyDown(e) {
             const input = e.target;
             
@@ -993,9 +991,68 @@
                 if (prevInput && prevInput.classList.contains('verification-code-input')) {
                     prevInput.focus();
                     prevInput.value = '';
+                    
+                    // For mobile: Force focus programmatically
+                    setTimeout(() => {
+                        prevInput.focus();
+                        
+                        // For iOS specifically
+                        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                            prevInput.setSelectionRange(0, prevInput.value.length);
+                        }
+                    }, 0);
                 }
             }
         }
+
+        // Set up verification Inputs -- May 1, 2025
+        function setupVerificationInputs() {
+            verificationInputs.forEach((input, index) => {
+                // Clear existing event listeners
+                input.removeEventListener('input', handleVerificationInput);
+                input.removeEventListener('keydown', handleVerificationKeyDown);
+                input.removeEventListener('focus', handleVerificationFocus);
+                
+                // Add new event listeners
+                input.addEventListener('input', handleVerificationInput);
+                input.addEventListener('keydown', handleVerificationKeyDown);
+                input.addEventListener('focus', handleVerificationFocus);
+                
+                // Clear inputs
+                input.value = '';
+                input.classList.remove('border-red-500');
+            });
+        }
+
+        // Handle focus event - select text on focus -- May 1, 2025
+        function handleVerificationFocus(e) {
+            e.target.select();
+        }
+
+        // Ensure paste works properly across inputs -- May 1, 2025
+        document.addEventListener('paste', function(e) {
+            // Check if the target is a verification input
+            if (e.target.classList.contains('verification-code-input')) {
+                e.preventDefault();
+                
+                // Get pasted data
+                const pastedData = (e.clipboardData || window.clipboardData).getData('text');
+                
+                // If pasted data contains exactly 6 digits
+                if (/^\d{6}$/.test(pastedData)) {
+                    // Fill in all inputs
+                    verificationInputs.forEach((input, index) => {
+                        input.value = pastedData[index] || '';
+                    });
+                    
+                    // Focus on the last input
+                    verificationInputs[5].focus();
+                    
+                    // Check if verification is complete
+                    checkVerificationCompletion();
+                }
+            }
+        });
         
         // Check if all verification inputs are filled
         function checkVerificationCompletion() {
