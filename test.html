@@ -56,8 +56,10 @@ const baseBrandSizeRelBelow = 1 / 70;  // Example: Make slightly larger below br
     const textLineSpacing = 2;
     const bubbleVerticalPadding = 6;
 
-    // Animation State
-    let slothCurrentX, slothTargetX;
+// Animation State Variables
+    let slothCurrentX;
+    let slothCurrentY; // <<< ADD THIS LINE for mousepress event on sloth, linking to product.html page
+    let slothTargetX;
     let slothDirection = 1, lastMoveTime = 0;
     const moveInterval = 1000, pauseDuration = 500;
     let canTriggerMove = true, pauseStartTime = 0;
@@ -195,9 +197,11 @@ const baseBrandSizeRelBelow = 1 / 70;  // Example: Make slightly larger below br
 
         // --- Sloth Movement & Positioning --- (unchanged)
         slothCurrentX = lerp(slothCurrentX, slothTargetX, 0.1);
-        let bounceAmplitude = pS * 0.8; let bounceSpeed = 0.05;
+        let bounceAmplitude = pS * 0.8; 
+        let bounceSpeed = 0.05;
         let bounceOffset = sin(frameCount * bounceSpeed) * bounceAmplitude;
-        let slothBaseY = height * 0.55; let slothCurrentY = slothBaseY + bounceOffset;
+        let slothBaseY = height * 0.55;
+        slothCurrentY = slothBaseY + bounceOffset; // <<< REMOVE 'let' from this line since declaring it locally means mouse press can't access globally
         let slothHeadCenterY = slothCurrentY - pS * 5;
         let slothHeadTopEdgeY = slothHeadCenterY - (pS * 7 / 2);
 
@@ -333,7 +337,7 @@ function updateMessage() {
     //   message = `Welcome To:\nThe MIRANDA MARKET\n────────────────────\n${dateStr}\n${timeStr} ${ampm}`;
     message = `Welcome To:\n------------------\nThe MIRANDA MARKET\n------------------\n${dateStr}\n${timeStr} ${ampm}`;
     //   message = `HELLO, ${currentUser.userPhone}!\n${dynamicTime}`;
-    console.log(message);
+    // console.log(message);
    
 }
 
@@ -426,9 +430,10 @@ let adjustedHeadTopY = slothHeadTopEdgeY - verticalShift - breakpointShiftAmount
         push(); // Isolate scale transformation
 
         // CHANGE: Modify the Y-component in these translate calls
-        let verticalTextShift = -18; // Example: Move text up by 10 pixels
+        let verticalTextShift = -40; // Example: Move text up by 10 pixels
         translate(textBlockVisualCenterX, textBlockVisualCenterY - verticalTextShift); // Move origin to shifted text block center
         scale(finalBubbleScale); // Apply visual scaling
+        // translate(-textBlockVisualCenterX, -(verticalTextShift - textBlockVisualCenterY)); // Move origin back relative to shifted center
         translate(-textBlockVisualCenterX, -(textBlockVisualCenterY - verticalTextShift)); // Move origin back relative to shifted center
 
         // Draw text using base pT (scaling is handled by transformation)

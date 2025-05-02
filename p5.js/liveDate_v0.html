@@ -56,10 +56,8 @@ const baseBrandSizeRelBelow = 1 / 70;  // Example: Make slightly larger below br
     const textLineSpacing = 2;
     const bubbleVerticalPadding = 6;
 
-// Animation State Variables
-    let slothCurrentX;
-    let slothCurrentY; // <<< ADD THIS LINE for mousepress event on sloth, linking to product.html page
-    let slothTargetX;
+    // Animation State
+    let slothCurrentX, slothTargetX;
     let slothDirection = 1, lastMoveTime = 0;
     const moveInterval = 1000, pauseDuration = 500;
     let canTriggerMove = true, pauseStartTime = 0;
@@ -197,11 +195,9 @@ const baseBrandSizeRelBelow = 1 / 70;  // Example: Make slightly larger below br
 
         // --- Sloth Movement & Positioning --- (unchanged)
         slothCurrentX = lerp(slothCurrentX, slothTargetX, 0.1);
-        let bounceAmplitude = pS * 0.8; 
-        let bounceSpeed = 0.05;
+        let bounceAmplitude = pS * 0.8; let bounceSpeed = 0.05;
         let bounceOffset = sin(frameCount * bounceSpeed) * bounceAmplitude;
-        let slothBaseY = height * 0.55;
-        slothCurrentY = slothBaseY + bounceOffset; // <<< REMOVE 'let' from this line since declaring it locally means mouse press can't access globally
+        let slothBaseY = height * 0.55; let slothCurrentY = slothBaseY + bounceOffset;
         let slothHeadCenterY = slothCurrentY - pS * 5;
         let slothHeadTopEdgeY = slothHeadCenterY - (pS * 7 / 2);
 
