@@ -1,3 +1,5 @@
+<!-- // ─────────────────────────────────────────────────────── -->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -54,8 +56,10 @@ const baseBrandSizeRelBelow = 1 / 70;  // Example: Make slightly larger below br
     const textLineSpacing = 2;
     const bubbleVerticalPadding = 6;
 
-    // Animation State
-    let slothCurrentX, slothTargetX;
+// Animation State Variables
+    let slothCurrentX;
+    let slothCurrentY; // <<< ADD THIS LINE for mousepress event on sloth, linking to product.html page
+    let slothTargetX;
     let slothDirection = 1, lastMoveTime = 0;
     const moveInterval = 1000, pauseDuration = 500;
     let canTriggerMove = true, pauseStartTime = 0;
@@ -172,6 +176,10 @@ const baseBrandSizeRelBelow = 1 / 70;  // Example: Make slightly larger below br
         return constrain(index, 0, brandMessage.length - 1);
      }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// Start of draw()
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
     function draw() {
         if (!bgColor || !brandColor || !pS || !pT) return;
 
@@ -193,9 +201,11 @@ const baseBrandSizeRelBelow = 1 / 70;  // Example: Make slightly larger below br
 
         // --- Sloth Movement & Positioning --- (unchanged)
         slothCurrentX = lerp(slothCurrentX, slothTargetX, 0.1);
-        let bounceAmplitude = pS * 0.8; let bounceSpeed = 0.05;
+        let bounceAmplitude = pS * 0.8; 
+        let bounceSpeed = 0.05;
         let bounceOffset = sin(frameCount * bounceSpeed) * bounceAmplitude;
-        let slothBaseY = height * 0.55; let slothCurrentY = slothBaseY + bounceOffset;
+        let slothBaseY = height * 0.55;
+        slothCurrentY = slothBaseY + bounceOffset; // <<< REMOVE 'let' from this line since declaring it locally means mouse press can't access globally
         let slothHeadCenterY = slothCurrentY - pS * 5;
         let slothHeadTopEdgeY = slothHeadCenterY - (pS * 7 / 2);
 
@@ -220,9 +230,129 @@ const baseBrandSizeRelBelow = 1 / 70;  // Example: Make slightly larger below br
         let finalBubbleScale = getBubbleScaleFactor();
         // pT is the base pixel size calculated respecting height constraints
 
+//////////////////////////////////////////////////////////////////////////////////
+
         // --- Text Content Size (Character Pixels) ---
-        let today = new Date().toLocaleDateString();
-        let message = `HELLO, ${currentUser.userPhone}!\nTODAY IS ${today}`;
+
+//////////////////////////////////////////////////////////////////////////////////
+
+// OLD TIME TEXT /////////////////////////////////////////////////////////////////
+        // let today = new Date().toLocaleDateString();
+        // let message = `HELLO, ${currentUser.userPhone}!\nTODAY IS ${today}`;
+        
+
+// NEW TIME TEXT /////////////////////////////////////////////////////////////////
+
+// 1. USING 24 HOUR TIME - Build and update the message
+// function updateMessage() {
+    //   const now = new Date();
+    //   // format "Thursday, May 2"
+    //   const dateOpts = { weekday: 'long', month: 'long', day: 'numeric' };
+    //   // get locale date and uppercase, drop the year
+//   const dateStr = now
+//   .toLocaleDateString('en-US', dateOpts)               // Thursday, May 2 :contentReference[oaicite:0]{index=0}
+//   .toUpperCase()
+//   .replace(/, \d{4}/, '');                             
+//   // zero‑pad HH, MM, SS
+//   const timeStr = [now.getHours(), now.getMinutes(), now.getSeconds()]
+//   .map(n => String(n).padStart(2, '0'))                 // padStart(2,'0') :contentReference[oaicite:1]{index=1}
+//   .join(':');
+//   // final
+//   const dynamicTime = `${dateStr} @${timeStr}`;
+//   message = `MIRANDA's MARKET!\n${dateStr}\n@${timeStr}`;
+// //   message = `HELLO, ${currentUser.userPhone}!\n${dynamicTime}`;
+//   console.log(message);
+// }
+
+// let message
+
+// // USING 12 HOUR TIME with AM/PM
+// function updateMessage() {
+//   const now = new Date();
+
+//   // Format "Thursday, May 2"
+//   const dateOpts = { weekday: 'long', month: 'long', day: 'numeric' };
+//   const dateStr = now
+//     .toLocaleDateString('en-US', dateOpts)
+//     .toUpperCase()
+//     .replace(/, \d{4}/, '');
+
+//   // Extract hours, minutes, seconds
+//   let hours = now.getHours();
+//   const minutes = now.getMinutes();
+//   const seconds = now.getSeconds();
+
+//   // Determine AM/PM
+//   const ampm = hours >= 12 ? 'PM' : 'AM';
+
+//   // Convert to 12-hour format
+//   hours = hours % 12;
+//   if (hours === 0) hours = 12;
+
+//   // Zero‑pad
+//   const timeStr = [hours, minutes, seconds]
+//     .map(n => String(n).padStart(2, '0'))
+//     .join(':');
+
+//   // Final formatted string
+//   const dynamicTime = `${dateStr} @${timeStr} ${ampm}`;
+// //   message = `Welcome To:\nThe MIRANDA MARKET\n────────────────────\n${dateStr}\n${timeStr} ${ampm}`;
+//   message = `Welcome To:\n------------------\nThe MIRANDA MARKET\n------------------\n${dateStr}\n${timeStr} ${ampm}`;
+// //   message = `HELLO, ${currentUser.userPhone}!\n${dynamicTime}`;
+//   console.log(message);
+   
+// }
+
+
+let message
+
+// USING 12 HOUR TIME with AM/PM
+function updateMessage() {
+
+    const now = new Date();
+
+    // Format "Thursday, May 2"
+    const dateOpts = { weekday: 'long', month: 'long', day: 'numeric' };
+    const dateStr = now
+    .toLocaleDateString('en-US', dateOpts)
+    .toUpperCase()
+    .replace(',', '') // removes the first comma (after the weekday)
+    // .replace(/, \d{4}/, '');
+
+    // Extract hours, minutes, seconds
+    let hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    // Determine AM/PM
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+
+    // Convert to 12-hour format
+    hours = hours % 12;
+    if (hours === 0) hours = 12;
+
+    // Zero‑pad minutes and seconds only
+    const timeStr = `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+    // Final formatted string
+    const dynamicTime = `${dateStr} @${timeStr} ${ampm}`;
+
+
+    //   message = `Welcome To:\nThe MIRANDA MARKET\n────────────────────\n${dateStr}\n${timeStr} ${ampm}`;
+    message = `Welcome To:\n------------------\nThe MIRANDA MARKET\n------------------\n${dateStr}\n${timeStr} ${ampm}`;
+    //   message = `HELLO, ${currentUser.userPhone}!\n${dynamicTime}`;
+    // console.log(message);
+   
+}
+
+// 2. Kick it off and update every second
+updateMessage();
+setInterval(updateMessage, 1000);                         // runs every 1000 ms :contentReference[oaicite:2]{index=2}
+
+// END NEW CHANGE /////////////////////////////////////////////////////////////////
+
+
+
         let messageLines = message.split('\n');
         let bubbleContentHeightPixels = messageLines.length * textCharHeight + (messageLines.length - 1) * textLineSpacing;
         let longestLineWidthPixels = 0;
@@ -230,7 +360,13 @@ const baseBrandSizeRelBelow = 1 / 70;  // Example: Make slightly larger below br
         longestLineWidthPixels = max(15, longestLineWidthPixels);
         let bubbleContentWidthPixels = longestLineWidthPixels;
 
+
+//////////////////////////////////////////////////////////////////////////////////
+
         // --- Text Block Positioning (with vertical shift) ---
+
+//////////////////////////////////////////////////////////////////////////////////
+
         let slothHeadHeight = pS * 7;
         let verticalShift = slothHeadHeight / 3;
 
@@ -298,9 +434,10 @@ let adjustedHeadTopY = slothHeadTopEdgeY - verticalShift - breakpointShiftAmount
         push(); // Isolate scale transformation
 
         // CHANGE: Modify the Y-component in these translate calls
-        let verticalTextShift = -18; // Example: Move text up by 10 pixels
+        let verticalTextShift = -40; // Example: Move text up by 10 pixels
         translate(textBlockVisualCenterX, textBlockVisualCenterY - verticalTextShift); // Move origin to shifted text block center
         scale(finalBubbleScale); // Apply visual scaling
+        // translate(-textBlockVisualCenterX, -(verticalTextShift - textBlockVisualCenterY)); // Move origin back relative to shifted center
         translate(-textBlockVisualCenterX, -(textBlockVisualCenterY - verticalTextShift)); // Move origin back relative to shifted center
 
         // Draw text using base pT (scaling is handled by transformation)
@@ -357,11 +494,24 @@ let adjustedHeadTopY = slothHeadTopEdgeY - verticalShift - breakpointShiftAmount
         }
         pop(); // Restore previous drawing state
 
+
+    // --- CHANGE: Add Hover Effect ---
+    if (isMouseOverSloth(mouseX, mouseY)) {
+        cursor('pointer'); // Change cursor to pointer finger
+    } else {
+        cursor(ARROW); // Reset cursor to default arrow
+    }
+    // --- END CHANGE ---
+
+
         // === End Text Block ===
 
         rectMode(CENTER); // Ensure default rectMode is restored
         noStroke();
-    }
+        
+/////////////////////////////////////////////////////////////////////////////////////////////////
+} // End of draw()
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
     // --- Drawing Functions ---
     function drawPixelSloth(p) { /* ... unchanged ... */
@@ -411,6 +561,31 @@ let adjustedHeadTopY = slothHeadTopEdgeY - verticalShift - breakpointShiftAmount
             case 'U': for(let y=0; y<cH-1; y++) { px(0, y); px(4, y); } for(let x=1; x<cW-1; x++) px(x, cH-1); break;
             case 'W': for(let y=0; y<cH; y++) { px(0, y); px(4, y); } px(1, cH-2); px(2, cH-3); px(3, cH-2); break;
             case 'Y': px(0, 0); px(4, 0); px(1, 1); px(3, 1); px(2, 2); for(let y=3; y<cH; y++) px(2, y); break;
+
+// NEW added May 1, 2025
+case 'F': for (let y = 0; y < cH; y++) px(0, y); for (let x = 0; x < cW; x++) px(x, 0); for (let x = 0; x < cW; x++) px(x, floor(cH/2)); break;
+case 'J': for (let x = 0; x < cW; x++) px(x, 0); for (let y = 1; y < cH; y++) px(cW - 2, y); for (let x = 0; x < 3; x++) px(x, cH - 1); break;
+
+// Vertical left stem // Upper right diagonal (slants up) — shifted down and extended // Lower right diagonal (slants down) — shifted down and extended
+case 'K': for (let y = 0; y < cH; y++) px(0, y); for (let i = 0; i <= floor(cH/2); i++) px(1 + i, floor(cH/2) - i); for (let i = 0; i <= floor(cH/2); i++) px(1 + i, floor(cH/2) + 0 + i); break;
+
+case 'Q': for (let y = 1; y < cH - 1; y++) { px(0, y); px(cW - 1, y); } for (let x = 1; x < cW - 1; x++) { px(x, 0); px(x, cH - 2); } px(cW - 2, cH - 1); break;
+case 'V': for (let y = 0; y < cH - 1; y++) px(y < cW ? y : 0, y); for (let y = 0; y < cH - 1; y++) px(cW - 1 - (y < cW ? y : 0), y); break;
+case 'X': for (let i = 0; i < min(cW, cH); i++) px(i, i); for (let i = 0; i < min(cW, cH); i++) px(cW - 1 - i, i); break;
+case 'Z': for (let x = 0; x < cW; x++) px(x, 0); for (let i = 0; i < cH; i++) px(cW - 1 - i * (cW-1)/(cH-1), i); for (let x = 0; x < cW; x++) px(x, cH - 1); break;
+case '?': for(let x=1; x<cW-1; x++) px(x, 0); px(3, 1); px(2, 2); px(2, floor(cH/2)); px(2, cH - 1); break;
+case ':': px(2, floor(cH/3)); px(2, floor(2 * cH/3)); break;
+case '@': for(let y=1; y<cH-1; y++){ px(1, y); px(cW-2, y); } for(let x=2; x<cW-2; x++){ px(x, 0); px(x, cH-2); } px(cW-3, floor(cH/2)); px(floor(cW/2), floor(cH/2)); px(cW-3, floor(cH/2 + 1)); break;
+case '#': for(let x=0; x<cW; x++){ px(x, floor(cH/3)); px(x, floor(2 * cH/3)); } for(let y=0; y<cH; y+=2){ px(1, y); px(3, y); } break;
+case '$': for(let y=1; y<cH-1; y++){ if(y < floor(cH/2)) { px(2, y); px(1, 1); px(2, 0); px(3, 1); } else { px(2, y); px(3, cH-2); px(2, cH-1); px(1, cH-2); } } for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); break;
+case '%': px(0, 0); px(1, 0); px(0, 1); px(2, floor(cH/2)); px(cW-1, cH-1); px(cW-2, cH-1); px(cW-1, cH-2); break;
+case '&': for(let y=1; y<floor(cH/2); y++){ px(1, y); px(3, y); } for(let x=2; x<4; x++){ px(x, 0); px(x, floor(cH/2) - 1); } px(2, floor(cH/2)); px(3, floor(cH/2) + 1); px(1, cH-1); break;
+case '+': for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); for(let y=1; y<cH-1; y++) px(2, y); break;
+case '=': for(let x=1; x<cW-1; x++){ px(x, floor(cH/3)); px(x, floor(2 * cH/3)); } break;
+case '(': for(let y=1; y<cH-1; y++){ if (y < cH/3) { px(2, y); } else if (y > 2*cH/3) { px(2, y); } else { px(1, y); } } break;
+case ')': for(let y=1; y<cH-1; y++){ if (y < cH/3) { px(2, y); } else if (y > 2*cH/3) { px(2, y); } else { px(3, y); } } break;
+case '\'': px(3, 1); break;
+
             case '!': for(let y=0; y<cH-2; y++) px(2,y); px(2, cH-1); break;
             case ',': px(2, cH-1); px(1, cH-1); px(1, cH-2); break; // Simplified comma
             case '.': px(2, cH-1); break;
@@ -431,6 +606,7 @@ let adjustedHeadTopY = slothHeadTopEdgeY - verticalShift - breakpointShiftAmount
         }
     }
 
+ 
     // Responsive Canvas
     function windowResized() { /* ... unchanged ... */
       resizeCanvas(windowWidth, windowHeight);
@@ -441,18 +617,54 @@ let adjustedHeadTopY = slothHeadTopEdgeY - verticalShift - breakpointShiftAmount
       canTriggerMove = true; lastMoveTime = millis(); pauseStartTime = 0;
     }
 
-    // --- Click/Tap Interaction --- (unchanged)
-    function handleInteraction(px, py) { /* ... */
-        if (!pS || !slothCurrentX || !slothCurrentY) return;
-        let slothDrawWidth = 16 * pS; let slothTopOffset = -8.5 * pS; let slothBottomOffset = 11 * pS;
-        let slothLeft = slothCurrentX - slothDrawWidth / 2; let slothRight = slothCurrentX + slothDrawWidth / 2;
-        let slothTop = slothCurrentY + slothTopOffset; let slothBottom = slothCurrentY + slothBottomOffset;
-        if (px > slothLeft && px < slothRight && py > slothTop && py < slothBottom) { console.log("Sloth clicked!"); window.location.href = '/products.html'; }
-     }
-    function mousePressed() { handleInteraction(mouseX, mouseY); return false; }
-    function touchStarted() { if (touches.length > 0) { handleInteraction(touches[0].x, touches[0].y); } return false; }
+// --- Helper function to check hover/click bounds ---
+function isMouseOverSloth(checkX, checkY) {
+    // Ensure necessary variables are defined before checking
+    if (!pS || slothCurrentX === undefined || slothCurrentY === undefined) {
+        return false;
+    }
+
+    // Approximate Sloth Bounding Box Calculation (relative to its translation point)
+    let slothDrawWidth = 16 * pS;
+    let slothTopOffset = -8.5 * pS;
+    let slothBottomOffset = 11 * pS;
+
+    let slothLeft = slothCurrentX - slothDrawWidth / 2;
+    let slothRight = slothCurrentX + slothDrawWidth / 2;
+    let slothTop = slothCurrentY + slothTopOffset;
+    let slothBottom = slothCurrentY + slothBottomOffset;
+
+    // Check if point is within the bounding box
+    return (checkX > slothLeft && checkX < slothRight && checkY > slothTop && checkY < slothBottom);
+}
+
+// --- Click/Tap Interaction ---
+function handleInteraction(px, py) {
+    if (isMouseOverSloth(px, py)) { // Use the helper function
+        console.log("Sloth clicked!");
+        window.location.href = '/products.html'; // Navigate
+    }
+ }
+// mousePressed and touchStarted remain the same, calling handleInteraction
+function mousePressed() { handleInteraction(mouseX, mouseY); return false; }
+function touchStarted() { if (touches.length > 0) { handleInteraction(touches[0].x, touches[0].y); } return false; }
+
+    // THIS HAS BEEN EXTRACTED/REFACTORED -- SEE ABOVE
+    // // --- Click/Tap Interaction --- (unchanged)
+    // function handleInteraction(px, py) { /* ... */
+    //     if (!pS || !slothCurrentX || !slothCurrentY) return;
+    //     let slothDrawWidth = 16 * pS; let slothTopOffset = -8.5 * pS; let slothBottomOffset = 11 * pS;
+    //     let slothLeft = slothCurrentX - slothDrawWidth / 2; let slothRight = slothCurrentX + slothDrawWidth / 2;
+    //     let slothTop = slothCurrentY + slothTopOffset; let slothBottom = slothCurrentY + slothBottomOffset;
+    //     if (px > slothLeft && px < slothRight && py > slothTop && py < slothBottom) { console.log("Sloth clicked!"); window.location.href = '/products.html'; }
+    //  }
+    // function mousePressed() { handleInteraction(mouseX, mouseY); return false; }
+    // function touchStarted() { if (touches.length > 0) { handleInteraction(touches[0].x, touches[0].y); } return false; }
 
   </script>
 
 </body>
+
 </html>
+
+<!-- // ─────────────────────────────────────────────────────── -->
