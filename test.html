@@ -176,6 +176,10 @@ const baseBrandSizeRelBelow = 1 / 70;  // Example: Make slightly larger below br
         return constrain(index, 0, brandMessage.length - 1);
      }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// Start of draw()
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
     function draw() {
         if (!bgColor || !brandColor || !pS || !pT) return;
 
@@ -490,11 +494,24 @@ let adjustedHeadTopY = slothHeadTopEdgeY - verticalShift - breakpointShiftAmount
         }
         pop(); // Restore previous drawing state
 
+
+    // --- CHANGE: Add Hover Effect ---
+    if (isMouseOverSloth(mouseX, mouseY)) {
+        cursor('pointer'); // Change cursor to pointer finger
+    } else {
+        cursor(ARROW); // Reset cursor to default arrow
+    }
+    // --- END CHANGE ---
+
+
         // === End Text Block ===
 
         rectMode(CENTER); // Ensure default rectMode is restored
         noStroke();
-    }
+        
+/////////////////////////////////////////////////////////////////////////////////////////////////
+} // End of draw()
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
     // --- Drawing Functions ---
     function drawPixelSloth(p) { /* ... unchanged ... */
@@ -600,16 +617,49 @@ case '\'': px(3, 1); break;
       canTriggerMove = true; lastMoveTime = millis(); pauseStartTime = 0;
     }
 
-    // --- Click/Tap Interaction --- (unchanged)
-    function handleInteraction(px, py) { /* ... */
-        if (!pS || !slothCurrentX || !slothCurrentY) return;
-        let slothDrawWidth = 16 * pS; let slothTopOffset = -8.5 * pS; let slothBottomOffset = 11 * pS;
-        let slothLeft = slothCurrentX - slothDrawWidth / 2; let slothRight = slothCurrentX + slothDrawWidth / 2;
-        let slothTop = slothCurrentY + slothTopOffset; let slothBottom = slothCurrentY + slothBottomOffset;
-        if (px > slothLeft && px < slothRight && py > slothTop && py < slothBottom) { console.log("Sloth clicked!"); window.location.href = '/products.html'; }
-     }
-    function mousePressed() { handleInteraction(mouseX, mouseY); return false; }
-    function touchStarted() { if (touches.length > 0) { handleInteraction(touches[0].x, touches[0].y); } return false; }
+// --- Helper function to check hover/click bounds ---
+function isMouseOverSloth(checkX, checkY) {
+    // Ensure necessary variables are defined before checking
+    if (!pS || slothCurrentX === undefined || slothCurrentY === undefined) {
+        return false;
+    }
+
+    // Approximate Sloth Bounding Box Calculation (relative to its translation point)
+    let slothDrawWidth = 16 * pS;
+    let slothTopOffset = -8.5 * pS;
+    let slothBottomOffset = 11 * pS;
+
+    let slothLeft = slothCurrentX - slothDrawWidth / 2;
+    let slothRight = slothCurrentX + slothDrawWidth / 2;
+    let slothTop = slothCurrentY + slothTopOffset;
+    let slothBottom = slothCurrentY + slothBottomOffset;
+
+    // Check if point is within the bounding box
+    return (checkX > slothLeft && checkX < slothRight && checkY > slothTop && checkY < slothBottom);
+}
+
+// --- Click/Tap Interaction ---
+function handleInteraction(px, py) {
+    if (isMouseOverSloth(px, py)) { // Use the helper function
+        console.log("Sloth clicked!");
+        window.location.href = '/products.html'; // Navigate
+    }
+ }
+// mousePressed and touchStarted remain the same, calling handleInteraction
+function mousePressed() { handleInteraction(mouseX, mouseY); return false; }
+function touchStarted() { if (touches.length > 0) { handleInteraction(touches[0].x, touches[0].y); } return false; }
+
+    // THIS HAS BEEN EXTRACTED/REFACTORED -- SEE ABOVE
+    // // --- Click/Tap Interaction --- (unchanged)
+    // function handleInteraction(px, py) { /* ... */
+    //     if (!pS || !slothCurrentX || !slothCurrentY) return;
+    //     let slothDrawWidth = 16 * pS; let slothTopOffset = -8.5 * pS; let slothBottomOffset = 11 * pS;
+    //     let slothLeft = slothCurrentX - slothDrawWidth / 2; let slothRight = slothCurrentX + slothDrawWidth / 2;
+    //     let slothTop = slothCurrentY + slothTopOffset; let slothBottom = slothCurrentY + slothBottomOffset;
+    //     if (px > slothLeft && px < slothRight && py > slothTop && py < slothBottom) { console.log("Sloth clicked!"); window.location.href = '/products.html'; }
+    //  }
+    // function mousePressed() { handleInteraction(mouseX, mouseY); return false; }
+    // function touchStarted() { if (touches.length > 0) { handleInteraction(touches[0].x, touches[0].y); } return false; }
 
   </script>
 
