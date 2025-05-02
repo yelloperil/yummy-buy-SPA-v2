@@ -69,13 +69,9 @@ function getBubbleScaleFactor() {
         let prelim_pT = max(minPixelSize, floor(width * baseBubbleSizeRel));
         let prelim_brandP = max(minPixelSize, floor(width * baseBrandSizeRel));
 
-    // // CHANGE: Determine estimation scale factor based on width
-    // let estBubbleScaleFactor = getBubbleScaleFactor();
-    // let est_final_pT = max(minPixelSize, floor(prelim_pT * estBubbleScaleFactor)); // Use dynamic factor
-
-    // CHANGE: Use ceil() for estimation to match draw() behavior
+    // CHANGE: Determine estimation scale factor based on width
     let estBubbleScaleFactor = getBubbleScaleFactor();
-    let est_final_pT = max(minPixelSize, ceil(prelim_pT * estBubbleScaleFactor)); // Use ceil
+    let est_final_pT = max(minPixelSize, floor(prelim_pT * estBubbleScaleFactor)); // Use dynamic factor
 
 
     // ... rest of the height estimation logic using est_final_pT ...
@@ -238,15 +234,9 @@ function getBubbleScaleFactor() {
 
         // // Calculate final text pixel size (75% reduction)
         // let finalBubble_pT = max(minPixelSize, floor(pT * 0.75));
-
-// // CHANGE: Calculate final text pixel size based on screen width
-// let bubbleScaleFactor = getBubbleScaleFactor(); // Get 1.25 or 1.5
-// let finalBubble_pT = max(minPixelSize, floor(pT * bubbleScaleFactor)); // Apply the factor
-
-// CHANGE: Calculate final text pixel size using ceil()
+// CHANGE: Calculate final text pixel size based on screen width
 let bubbleScaleFactor = getBubbleScaleFactor(); // Get 1.25 or 1.5
-// Use ceil() to ensure fractional increases take effect, especially at small base sizes
-let finalBubble_pT = max(minPixelSize, ceil(pT * bubbleScaleFactor));
+let finalBubble_pT = max(minPixelSize, floor(pT * bubbleScaleFactor)); // Apply the factor
 
         // --- Text Content Size (Character Pixels) ---
         let today = new Date().toLocaleDateString();

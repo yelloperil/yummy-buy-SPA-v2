@@ -20,7 +20,6 @@
     const furColorHex = '#8B4513', shadeColorHex = '#654321', faceColorHex = '#F5F5DC';
     const patchColorHex = '#404040', blackHex = '#000000', whiteHex = '#FFFFFF';
     const brandColorHex = '#A78BFA', bgColorHex = '#5D5CDE';
-    // Keep bubble colors for tail and text
     const bubbleBorderColorHex = '#9178d9', bubbleFillColorHex = '#d1c6ff', bubbleTextColorHex = '#a78bfa';
 
     // p5.Color objects
@@ -29,7 +28,7 @@
 
     // Base Sizes and Constraints
     const baseSlothSizeRel = 1 / 75;
-    const baseBubbleSizeRel = 1 / 220;
+    const baseBubbleSizeRel = 1 / 220; // Base relative size for text block pixels
     const baseBrandSizeRel = 1 / 110;
     const minPixelSize = 1;
     const breakpointWidth = 768;
@@ -42,7 +41,7 @@
     const textCharWidth = 5, textCharHeight = 7;
     const bubbleCharSpacing = 1, brandCharSpacing = 2;
     const textLineSpacing = 2;
-    const bubbleVerticalPadding = 6; // Used for vertical positioning calculation
+    const bubbleVerticalPadding = 6;
 
     // Animation State
     let slothCurrentX, slothTargetX;
@@ -57,90 +56,45 @@
     let letterScales = [], letterColors = [];
     const highlightScaleTarget = 1.05, defaultScaleTarget = 1.0, lerpSpeed = 0.15;
 
-
-// Add this function somewhere globally or near calculatePixelSizes/draw
-function getBubbleScaleFactor() {
-    return (width > breakpointWidth) ? 1.25 : 2;
-}
-
     // calculatePixelSizes function (includes height constraint)
     function calculatePixelSizes() {
         let prelim_pS = max(minPixelSize, floor(width * baseSlothSizeRel));
         let prelim_pT = max(minPixelSize, floor(width * baseBubbleSizeRel));
         let prelim_brandP = max(minPixelSize, floor(width * baseBrandSizeRel));
 
-    // // CHANGE: Determine estimation scale factor based on width
-    // let estBubbleScaleFactor = getBubbleScaleFactor();
-    // let est_final_pT = max(minPixelSize, floor(prelim_pT * estBubbleScaleFactor)); // Use dynamic factor
+        // CHANGE: Estimate height using 150% text block size
+        let est_final_pT = max(minPixelSize, floor(prelim_pT * 1.5)); // Estimate the 150% size
 
-    // CHANGE: Use ceil() for estimation to match draw() behavior
-    let estBubbleScaleFactor = getBubbleScaleFactor();
-    let est_final_pT = max(minPixelSize, ceil(prelim_pT * estBubbleScaleFactor)); // Use ceil
+        let est_bounce = prelim_pS * 0.8;
+        let est_slothBaseY = height * 0.55;
+        let est_slothHeadCenterY = est_slothBaseY - prelim_pS * 5;
+        let est_slothHeadTopY = est_slothHeadCenterY - (prelim_pS * 7 / 2);
+        let est_bubbleTextH_pixels = 2 * textCharHeight + (2 - 1) * textLineSpacing;
+        let est_bubbleBodyH_pixels = est_bubbleTextH_pixels + bubbleVerticalPadding * 2; // Conceptual height for positioning
+        let est_bubbleBottomMargin = prelim_pS * 2;
+        let est_verticalShift = (prelim_pS * 7) / 3;
+        let est_adjustedHeadTopY = est_slothHeadTopY - est_verticalShift;
+        // Use the *estimated final* text block size (est_final_pT) for height
+        let est_textBlockTopY = est_adjustedHeadTopY - est_bounce - est_bubbleBottomMargin - (est_bubbleBodyH_pixels * est_final_pT);
 
+        let est_brandTextY = est_slothBaseY + est_bounce + prelim_pS * 10;
+        let est_brandTextBottomY = est_brandTextY + (textCharHeight * prelim_brandP);
+        let estimatedDrawingHeight = est_brandTextBottomY - est_textBlockTopY;
 
-    // ... rest of the height estimation logic using est_final_pT ...
-    let est_bounce = prelim_pS * 0.8;
-    let est_slothBaseY = height * 0.55;
-    let est_slothHeadCenterY = est_slothBaseY - prelim_pS * 5;
-    let est_slothHeadTopY = est_slothHeadCenterY - (prelim_pS * 7 / 2);
-    let est_bubbleTextH_pixels = 2 * textCharHeight + (2 - 1) * textLineSpacing;
-    let est_bubbleBodyH_pixels = est_bubbleTextH_pixels + bubbleVerticalPadding * 2;
-    let est_bubbleBottomMargin = prelim_pS * 2;
-    let est_verticalShift = (prelim_pS * 7) / 3;
-    let est_adjustedHeadTopY = est_slothHeadTopY - est_verticalShift;
-    let est_textBlockTopY = est_adjustedHeadTopY - est_bounce - est_bubbleBottomMargin - (est_bubbleBodyH_pixels * est_final_pT);
-    let est_brandTextY = est_slothBaseY + est_bounce + prelim_pS * 10;
-    let est_brandTextBottomY = est_brandTextY + (textCharHeight * prelim_brandP);
-    let estimatedDrawingHeight = est_brandTextBottomY - est_textBlockTopY;
+        let targetMaxHeight = (width > breakpointWidth) ? height * 0.50 : height * 0.333;
+        let heightScaleFactor = 1.0;
+        if (estimatedDrawingHeight > targetMaxHeight && estimatedDrawingHeight > 0) {
+            heightScaleFactor = targetMaxHeight / estimatedDrawingHeight;
+        }
 
-    let targetMaxHeight = (width > breakpointWidth) ? height * 0.50 : height * 0.333;
-    let heightScaleFactor = 1.0;
-    if (estimatedDrawingHeight > targetMaxHeight && estimatedDrawingHeight > 0) {
-        heightScaleFactor = targetMaxHeight / estimatedDrawingHeight;
+        slothPixelSize = max(minPixelSize, floor(prelim_pS * heightScaleFactor));
+        // pT still holds the base size before the final 1.5x adjustment in draw()
+        bubbleTextPixelSize = max(minPixelSize, floor(prelim_pT * heightScaleFactor));
+        brandTextPixelSize = max(minPixelSize, floor(prelim_brandP * heightScaleFactor));
+
+        pS = slothPixelSize;
+        pT = bubbleTextPixelSize;
     }
-
-    slothPixelSize = max(minPixelSize, floor(prelim_pS * heightScaleFactor));
-    bubbleTextPixelSize = max(minPixelSize, floor(prelim_pT * heightScaleFactor));
-    brandTextPixelSize = max(minPixelSize, floor(prelim_brandP * heightScaleFactor));
-
-    pS = slothPixelSize;
-    pT = bubbleTextPixelSize;
-}
-
-    //     // let est_final_pT = max(minPixelSize, floor(prelim_pT * 0.75));
-    //     let est_bounce = prelim_pS * 0.8;
-    //     let est_slothBaseY = height * 0.55;
-    //     let est_slothHeadCenterY = est_slothBaseY - prelim_pS * 5;
-    //     let est_slothHeadTopY = est_slothHeadCenterY - (prelim_pS * 7 / 2);
-    //     let est_bubbleTextH_pixels = 2 * textCharHeight + (2 - 1) * textLineSpacing;
-    //     // Estimate height based on text lines and vertical padding - needed for positioning text block
-    //     let est_bubbleBodyH_pixels = est_bubbleTextH_pixels + bubbleVerticalPadding * 2;
-    //     let est_bubbleBottomMargin = prelim_pS * 2;
-    //     let est_verticalShift = (prelim_pS * 7) / 3;
-    //     let est_adjustedHeadTopY = est_slothHeadTopY - est_verticalShift;
-    //     // Estimate Top Y based on the conceptual space the text block occupies
-    //     let est_textBlockTopY = est_adjustedHeadTopY - est_bounce - est_bubbleBottomMargin - (est_bubbleBodyH_pixels * est_final_pT);
-
-    //     let est_brandTextY = est_slothBaseY + est_bounce + prelim_pS * 10;
-    //     let est_brandTextBottomY = est_brandTextY + (textCharHeight * prelim_brandP);
-    //     // Height is now from estimated text top to brand bottom
-    //     let estimatedDrawingHeight = est_brandTextBottomY - est_textBlockTopY;
-
-    //     let targetMaxHeight = (width > breakpointWidth) ? height * 0.50 : height * 0.333;
-    //     let heightScaleFactor = 1.0;
-    //     if (estimatedDrawingHeight > targetMaxHeight && estimatedDrawingHeight > 0) {
-    //         heightScaleFactor = targetMaxHeight / estimatedDrawingHeight;
-    //     }
-
-    //     slothPixelSize = max(minPixelSize, floor(prelim_pS * heightScaleFactor));
-    //     bubbleTextPixelSize = max(minPixelSize, floor(prelim_pT * heightScaleFactor));
-    //     brandTextPixelSize = max(minPixelSize, floor(prelim_brandP * heightScaleFactor));
-
-    //     pS = slothPixelSize;
-    //     pT = bubbleTextPixelSize;
-    // }
-
-
 
     function setup() {
       createCanvas(windowWidth, windowHeight);
@@ -236,17 +190,10 @@ function getBubbleScaleFactor() {
 
         // === Text Block (Previously Bubble Text) ===
 
-        // // Calculate final text pixel size (75% reduction)
-        // let finalBubble_pT = max(minPixelSize, floor(pT * 0.75));
-
-// // CHANGE: Calculate final text pixel size based on screen width
-// let bubbleScaleFactor = getBubbleScaleFactor(); // Get 1.25 or 1.5
-// let finalBubble_pT = max(minPixelSize, floor(pT * bubbleScaleFactor)); // Apply the factor
-
-// CHANGE: Calculate final text pixel size using ceil()
-let bubbleScaleFactor = getBubbleScaleFactor(); // Get 1.25 or 1.5
-// Use ceil() to ensure fractional increases take effect, especially at small base sizes
-let finalBubble_pT = max(minPixelSize, ceil(pT * bubbleScaleFactor));
+        // CHANGE: Calculate final text pixel size (150% increase)
+        // pT comes from calculatePixelSizes (accounts for height constraint)
+        // Apply the 150% factor specifically for text block drawing
+        let finalBubble_pT = max(minPixelSize, floor(pT * 1.5));
 
         // --- Text Content Size (Character Pixels) ---
         let today = new Date().toLocaleDateString();
@@ -255,7 +202,6 @@ let finalBubble_pT = max(minPixelSize, ceil(pT * bubbleScaleFactor));
         let bubbleContentHeightPixels = messageLines.length * textCharHeight + (messageLines.length - 1) * textLineSpacing;
         let longestLineWidthPixels = 0;
         for (let line of messageLines) { let lineWidth = line.length * textCharWidth + (line.length > 0 ? line.length - 1 : 0) * bubbleCharSpacing; longestLineWidthPixels = max(lineWidth, longestLineWidthPixels); }
-        // No longer constrained by bubbleMaxWidthPixels
         longestLineWidthPixels = max(15, longestLineWidthPixels);
         let bubbleContentWidthPixels = longestLineWidthPixels;
 
@@ -263,11 +209,11 @@ let finalBubble_pT = max(minPixelSize, ceil(pT * bubbleScaleFactor));
         let slothHeadHeight = pS * 7;
         let verticalShift = slothHeadHeight / 3;
         let adjustedHeadTopY = slothHeadTopEdgeY - verticalShift;
-
-        // Calculate conceptual TopY based on original vertical padding logic
+        // Calculate conceptual TopY based on original vertical padding logic and final size
         let conceptualBubbleBodyHeightPixels = bubbleContentHeightPixels + 2 * bubbleVerticalPadding;
         let bubbleBottomMargin = pS * 2;
         let conceptualBubbleBottomY = adjustedHeadTopY - bounceAmplitude - bubbleBottomMargin;
+        // Use finalBubble_pT here for correct vertical positioning
         let conceptualBubbleTopY = conceptualBubbleBottomY - (conceptualBubbleBodyHeightPixels * finalBubble_pT);
 
         // Calculate text block dimensions using finalBubble_pT
@@ -275,7 +221,7 @@ let finalBubble_pT = max(minPixelSize, ceil(pT * bubbleScaleFactor));
         let textBlockWidth = bubbleContentWidthPixels * finalBubble_pT;
 
         // Calculate text StartX for centering relative to sloth's projected center
-        let textBlockCenterX = slothCurrentX + pS * 1; // Where the bubble center *used* to be
+        let textBlockCenterX = slothCurrentX + pS * 1;
         let textStartX = textBlockCenterX - (textBlockWidth / 2);
 
         // Calculate text StartY using the conceptual top and vertical padding logic
@@ -292,53 +238,30 @@ let finalBubble_pT = max(minPixelSize, ceil(pT * bubbleScaleFactor));
         // Draw text (using finalBubble_pT and calculated positions)
         drawPixelText(message, textStartX, textStartY, finalBubble_pT, textCharWidth, textCharHeight, bubbleCharSpacing, bubbleDefaultColors, bubbleDefaultScales, true);
 
-
-        // --- CHANGE: Draw Tail ---
+        // --- Draw Tail ---
         // Calculate Tail starting point (bottom-center of text block)
         let tailStartX = textStartX + textBlockWidth / 2;
         let tailStartY = textStartY + textBlockHeight;
-
         // Calculate Tail target point (near shifted head top)
-        let tailTargetX = slothCurrentX; // Point towards sloth center X
-        let tailTargetY = adjustedHeadTopY + pS * 2; // Use shifted Y
+        let tailTargetX = slothCurrentX;
+        let tailTargetY = adjustedHeadTopY + pS * 2;
 
-        // Draw the tail directly
+        // Draw the tail directly (using finalBubble_pT for scaling)
         push();
-        rectMode(CORNER); // Tail drawing uses CORNER mode
-        noStroke();
-        let steps = 4;
-        // Tail Border (using bubbleBorderColor)
+        rectMode(CORNER); noStroke(); let steps = 4;
         fill(bubbleBorderColor);
-        for (let i = 1; i <= steps; i++) {
-            let intermediateX = lerp(tailStartX, tailTargetX, i / (steps + 1));
-            let intermediateY = lerp(tailStartY, tailTargetY, i / (steps + 1));
-            let gridX = floor(intermediateX / finalBubble_pT) * finalBubble_pT; // Use finalBubble_pT for grid snapping
-            let gridY = floor(intermediateY / finalBubble_pT) * finalBubble_pT;
-            // Draw slightly thicker border blocks
-            rect(gridX - finalBubble_pT * 1.5, gridY - finalBubble_pT * 1.5, finalBubble_pT * 4, finalBubble_pT * 4);
-        }
-        // Tail Fill (using bubbleFillColor)
+        for (let i = 1; i <= steps; i++) { let intermediateX = lerp(tailStartX, tailTargetX, i / (steps + 1)); let intermediateY = lerp(tailStartY, tailTargetY, i / (steps + 1)); let gridX = floor(intermediateX / finalBubble_pT) * finalBubble_pT; let gridY = floor(intermediateY / finalBubble_pT) * finalBubble_pT; rect(gridX - finalBubble_pT * 1.5, gridY - finalBubble_pT * 1.5, finalBubble_pT * 4, finalBubble_pT * 4); }
         fill(bubbleFillColor);
-        for (let i = 1; i <= steps; i++) {
-            let intermediateX = lerp(tailStartX, tailTargetX, i / (steps + 1.5));
-            let intermediateY = lerp(tailStartY, tailTargetY, i / (steps + 1.5));
-            let gridX = floor(intermediateX / finalBubble_pT) * finalBubble_pT; // Use finalBubble_pT for grid snapping
-            let gridY = floor(intermediateY / finalBubble_pT) * finalBubble_pT;
-            // Draw slightly smaller fill blocks
-            rect(gridX - finalBubble_pT/2, gridY - finalBubble_pT/2, finalBubble_pT*2, finalBubble_pT*2);
-        }
-        pop(); // Restore previous drawing settings (like rectMode)
+        for (let i = 1; i <= steps; i++) { let intermediateX = lerp(tailStartX, tailTargetX, i / (steps + 1.5)); let intermediateY = lerp(tailStartY, tailTargetY, i / (steps + 1.5)); let gridX = floor(intermediateX / finalBubble_pT) * finalBubble_pT; let gridY = floor(intermediateY / finalBubble_pT) * finalBubble_pT; rect(gridX - finalBubble_pT/2, gridY - finalBubble_pT/2, finalBubble_pT*2, finalBubble_pT*2); }
+        pop();
         // --- End Tail Drawing ---
-
 
         // === End Text Block ===
 
-        rectMode(CENTER); // Ensure default rectMode is restored
-        noStroke();
+        rectMode(CENTER); noStroke();
     }
 
     // --- Drawing Functions ---
-
     function drawPixelSloth(p) { /* ... unchanged ... */
         rectMode(CENTER); noStroke();
         fill(furColor); rect(0, p * 2, p * 10, p * 12); fill(faceColor); rect(0, p * 2, p * 6, p * 8); fill(shadeColor); rect(p * 4, p * 2, p * 2, p * 12); rect(-p * 4, p * 2, p * 2, p * 12); rect(0, p * 7, p * 10, p * 2);
@@ -347,9 +270,6 @@ let finalBubble_pT = max(minPixelSize, ceil(pT * bubbleScaleFactor));
         let legY = p * 8.5; let legW = p * 4; let legH = p * 5; let legOffsetX = p * 2.5; fill(furColor); rect(-legOffsetX, legY, legW, legH); fill(shadeColor); rect(-legOffsetX + p*1.5, legY, p, legH); fill(blackColor); rect(-legOffsetX - p * 1, legY + p * 2, p*3, p); rect(-legOffsetX - p * 1, legY + p * 2.5, p, p*2); rect(-legOffsetX + p * 0, legY + p * 2.5, p, p*2); rect(-legOffsetX + p * 1, legY + p * 2.5, p, p*2); fill(furColor); rect(legOffsetX, legY, legW, legH); fill(shadeColor); rect(legOffsetX - p*1.5, legY, p, legH); fill(blackColor); rect(legOffsetX + p * 1, legY + p * 2, p*3, p); rect(legOffsetX + p * 1, legY + p * 2.5, p, p*2); rect(legOffsetX + p * 0, legY + p * 2.5, p, p*2); rect(legOffsetX - p * 1, legY + p * 2.5, p, p*2);
         rectMode(CENTER);
     }
-
-    // CHANGE: Removed drawPixelBubble function as it's no longer called
-
     function drawPixelText(message, startX, startY, p, charW, charH, spacingP, colors, scales, alignLeft = false) { /* ... unchanged ... */
         let currentX = startX; let currentY = startY; let lines = message.split('\n'); let charIndex = 0;
         push(); noStroke(); rectMode(CORNER);
@@ -365,7 +285,6 @@ let finalBubble_pT = max(minPixelSize, ceil(pT * bubbleScaleFactor));
             }
         } pop(); rectMode(CENTER);
     }
-
     function drawPixelChar(char, p, cW, cH) { /* ... unchanged character map ... */
         const px = (x, y) => rect(x * p, y * p, p, p);
             switch (char) {

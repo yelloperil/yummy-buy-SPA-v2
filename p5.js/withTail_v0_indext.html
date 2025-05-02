@@ -57,90 +57,44 @@
     let letterScales = [], letterColors = [];
     const highlightScaleTarget = 1.05, defaultScaleTarget = 1.0, lerpSpeed = 0.15;
 
-
-// Add this function somewhere globally or near calculatePixelSizes/draw
-function getBubbleScaleFactor() {
-    return (width > breakpointWidth) ? 1.25 : 2;
-}
-
     // calculatePixelSizes function (includes height constraint)
     function calculatePixelSizes() {
         let prelim_pS = max(minPixelSize, floor(width * baseSlothSizeRel));
         let prelim_pT = max(minPixelSize, floor(width * baseBubbleSizeRel));
         let prelim_brandP = max(minPixelSize, floor(width * baseBrandSizeRel));
 
-    // // CHANGE: Determine estimation scale factor based on width
-    // let estBubbleScaleFactor = getBubbleScaleFactor();
-    // let est_final_pT = max(minPixelSize, floor(prelim_pT * estBubbleScaleFactor)); // Use dynamic factor
+        let est_final_pT = max(minPixelSize, floor(prelim_pT * 0.75));
+        let est_bounce = prelim_pS * 0.8;
+        let est_slothBaseY = height * 0.55;
+        let est_slothHeadCenterY = est_slothBaseY - prelim_pS * 5;
+        let est_slothHeadTopY = est_slothHeadCenterY - (prelim_pS * 7 / 2);
+        let est_bubbleTextH_pixels = 2 * textCharHeight + (2 - 1) * textLineSpacing;
+        // Estimate height based on text lines and vertical padding - needed for positioning text block
+        let est_bubbleBodyH_pixels = est_bubbleTextH_pixels + bubbleVerticalPadding * 2;
+        let est_bubbleBottomMargin = prelim_pS * 2;
+        let est_verticalShift = (prelim_pS * 7) / 3;
+        let est_adjustedHeadTopY = est_slothHeadTopY - est_verticalShift;
+        // Estimate Top Y based on the conceptual space the text block occupies
+        let est_textBlockTopY = est_adjustedHeadTopY - est_bounce - est_bubbleBottomMargin - (est_bubbleBodyH_pixels * est_final_pT);
 
-    // CHANGE: Use ceil() for estimation to match draw() behavior
-    let estBubbleScaleFactor = getBubbleScaleFactor();
-    let est_final_pT = max(minPixelSize, ceil(prelim_pT * estBubbleScaleFactor)); // Use ceil
+        let est_brandTextY = est_slothBaseY + est_bounce + prelim_pS * 10;
+        let est_brandTextBottomY = est_brandTextY + (textCharHeight * prelim_brandP);
+        // Height is now from estimated text top to brand bottom
+        let estimatedDrawingHeight = est_brandTextBottomY - est_textBlockTopY;
 
+        let targetMaxHeight = (width > breakpointWidth) ? height * 0.50 : height * 0.333;
+        let heightScaleFactor = 1.0;
+        if (estimatedDrawingHeight > targetMaxHeight && estimatedDrawingHeight > 0) {
+            heightScaleFactor = targetMaxHeight / estimatedDrawingHeight;
+        }
 
-    // ... rest of the height estimation logic using est_final_pT ...
-    let est_bounce = prelim_pS * 0.8;
-    let est_slothBaseY = height * 0.55;
-    let est_slothHeadCenterY = est_slothBaseY - prelim_pS * 5;
-    let est_slothHeadTopY = est_slothHeadCenterY - (prelim_pS * 7 / 2);
-    let est_bubbleTextH_pixels = 2 * textCharHeight + (2 - 1) * textLineSpacing;
-    let est_bubbleBodyH_pixels = est_bubbleTextH_pixels + bubbleVerticalPadding * 2;
-    let est_bubbleBottomMargin = prelim_pS * 2;
-    let est_verticalShift = (prelim_pS * 7) / 3;
-    let est_adjustedHeadTopY = est_slothHeadTopY - est_verticalShift;
-    let est_textBlockTopY = est_adjustedHeadTopY - est_bounce - est_bubbleBottomMargin - (est_bubbleBodyH_pixels * est_final_pT);
-    let est_brandTextY = est_slothBaseY + est_bounce + prelim_pS * 10;
-    let est_brandTextBottomY = est_brandTextY + (textCharHeight * prelim_brandP);
-    let estimatedDrawingHeight = est_brandTextBottomY - est_textBlockTopY;
+        slothPixelSize = max(minPixelSize, floor(prelim_pS * heightScaleFactor));
+        bubbleTextPixelSize = max(minPixelSize, floor(prelim_pT * heightScaleFactor));
+        brandTextPixelSize = max(minPixelSize, floor(prelim_brandP * heightScaleFactor));
 
-    let targetMaxHeight = (width > breakpointWidth) ? height * 0.50 : height * 0.333;
-    let heightScaleFactor = 1.0;
-    if (estimatedDrawingHeight > targetMaxHeight && estimatedDrawingHeight > 0) {
-        heightScaleFactor = targetMaxHeight / estimatedDrawingHeight;
+        pS = slothPixelSize;
+        pT = bubbleTextPixelSize;
     }
-
-    slothPixelSize = max(minPixelSize, floor(prelim_pS * heightScaleFactor));
-    bubbleTextPixelSize = max(minPixelSize, floor(prelim_pT * heightScaleFactor));
-    brandTextPixelSize = max(minPixelSize, floor(prelim_brandP * heightScaleFactor));
-
-    pS = slothPixelSize;
-    pT = bubbleTextPixelSize;
-}
-
-    //     // let est_final_pT = max(minPixelSize, floor(prelim_pT * 0.75));
-    //     let est_bounce = prelim_pS * 0.8;
-    //     let est_slothBaseY = height * 0.55;
-    //     let est_slothHeadCenterY = est_slothBaseY - prelim_pS * 5;
-    //     let est_slothHeadTopY = est_slothHeadCenterY - (prelim_pS * 7 / 2);
-    //     let est_bubbleTextH_pixels = 2 * textCharHeight + (2 - 1) * textLineSpacing;
-    //     // Estimate height based on text lines and vertical padding - needed for positioning text block
-    //     let est_bubbleBodyH_pixels = est_bubbleTextH_pixels + bubbleVerticalPadding * 2;
-    //     let est_bubbleBottomMargin = prelim_pS * 2;
-    //     let est_verticalShift = (prelim_pS * 7) / 3;
-    //     let est_adjustedHeadTopY = est_slothHeadTopY - est_verticalShift;
-    //     // Estimate Top Y based on the conceptual space the text block occupies
-    //     let est_textBlockTopY = est_adjustedHeadTopY - est_bounce - est_bubbleBottomMargin - (est_bubbleBodyH_pixels * est_final_pT);
-
-    //     let est_brandTextY = est_slothBaseY + est_bounce + prelim_pS * 10;
-    //     let est_brandTextBottomY = est_brandTextY + (textCharHeight * prelim_brandP);
-    //     // Height is now from estimated text top to brand bottom
-    //     let estimatedDrawingHeight = est_brandTextBottomY - est_textBlockTopY;
-
-    //     let targetMaxHeight = (width > breakpointWidth) ? height * 0.50 : height * 0.333;
-    //     let heightScaleFactor = 1.0;
-    //     if (estimatedDrawingHeight > targetMaxHeight && estimatedDrawingHeight > 0) {
-    //         heightScaleFactor = targetMaxHeight / estimatedDrawingHeight;
-    //     }
-
-    //     slothPixelSize = max(minPixelSize, floor(prelim_pS * heightScaleFactor));
-    //     bubbleTextPixelSize = max(minPixelSize, floor(prelim_pT * heightScaleFactor));
-    //     brandTextPixelSize = max(minPixelSize, floor(prelim_brandP * heightScaleFactor));
-
-    //     pS = slothPixelSize;
-    //     pT = bubbleTextPixelSize;
-    // }
-
-
 
     function setup() {
       createCanvas(windowWidth, windowHeight);
@@ -236,17 +190,8 @@ function getBubbleScaleFactor() {
 
         // === Text Block (Previously Bubble Text) ===
 
-        // // Calculate final text pixel size (75% reduction)
-        // let finalBubble_pT = max(minPixelSize, floor(pT * 0.75));
-
-// // CHANGE: Calculate final text pixel size based on screen width
-// let bubbleScaleFactor = getBubbleScaleFactor(); // Get 1.25 or 1.5
-// let finalBubble_pT = max(minPixelSize, floor(pT * bubbleScaleFactor)); // Apply the factor
-
-// CHANGE: Calculate final text pixel size using ceil()
-let bubbleScaleFactor = getBubbleScaleFactor(); // Get 1.25 or 1.5
-// Use ceil() to ensure fractional increases take effect, especially at small base sizes
-let finalBubble_pT = max(minPixelSize, ceil(pT * bubbleScaleFactor));
+        // Calculate final text pixel size (75% reduction)
+        let finalBubble_pT = max(minPixelSize, floor(pT * 0.75));
 
         // --- Text Content Size (Character Pixels) ---
         let today = new Date().toLocaleDateString();
