@@ -1,0 +1,1054 @@
+<!-- // ─────────────────────────────────────────────────────── -->
+<!-- LAST UPDATE: May 2, 2025 -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>p5.js template</title>
+  <script src="https://cdn.jsdelivr.net/npm/p5@0.10.2/lib/p5.min.js"></script>
+  <style>
+    html, body { margin: 0; padding: 0; overflow: hidden; height: 100%; width: 100%; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+
+  <script>
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////
+// SECTION DIVIDER - VARIABLES @@@@@
+//////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+    let currentUser = { userPhone: 'Guest User' };
+
+    // Colors (Hex)
+    const furColorHex = '#8B4513', shadeColorHex = '#654321', faceColorHex = '#F5F5DC';
+    const patchColorHex = '#404040', blackHex = '#000000', whiteHex = '#FFFFFF';
+    const brandColorHex = '#A78BFA', bgColorHex = '#5D5CDE';
+    const bubbleBorderColorHex = '#9178d9', bubbleFillColorHex = '#d1c6ff', bubbleTextColorHex = '#a78bfa';
+
+    // p5.Color objects
+    let furColor, shadeColor, faceColor, patchColor, blackColor, whiteColor, brandColor, bgColor;
+    let bubbleBorderColor, bubbleFillColor, bubbleTextColor;
+
+    // Base Sizes and Constraints
+    const baseSlothSizeRel = 1 / 75;
+    const baseBubbleSizeRel = 1 / 220; // Base relative size for text block pixels
+    const minPixelSize = 1;
+    const breakpointWidth = 768;
+    
+    // const baseBrandSizeRel = 1 / 110;
+// // //  // // //  // // //  // // //  // // //  // // //  // // //  // // //  // // //  // // //  // // //  // // //  // // //
+      
+// REMOVE this line:
+// const baseBrandSizeRel = 1 / 110;
+
+// ADD these lines near the other base size constants:
+const baseBrandSizeRelAbove = 1 / 100; // Example: Keep current size for larger screens
+const baseBrandSizeRelBelow = 1 / 70;  // Example: Make slightly larger below breakpoint (smaller denominator = larger)
+
+// // //  // // //  // // //  // // //  // // //  // // //  // // //  // // //  // // //  // // //  // // //  // // //  // // //
+
+    // Dynamic Pixel Sizes (calculated)
+    let slothPixelSize, bubbleTextPixelSize, brandTextPixelSize;
+    let pS, pT; // Shortcuts (pT is the base pixel size for text block drawing)
+
+    // Layout Parameters
+    const textCharWidth = 5, textCharHeight = 7;
+    const bubbleCharSpacing = 1, brandCharSpacing = 2;
+    const textLineSpacing = 2;
+    const bubbleVerticalPadding = 6;
+
+// Animation State Variables
+    let slothCurrentX;
+    let slothCurrentY; // <<< ADD THIS LINE for mousepress event on sloth, linking to product.html page
+    let slothTargetX;
+    let slothDirection = 1, lastMoveTime = 0;
+    const moveInterval = 1000, pauseDuration = 500;
+    let canTriggerMove = true, pauseStartTime = 0;
+
+    // Brand Text Layout
+    let brandTextWidth = 0, brandTextMinX = 0, brandTextMaxX = 0, stepWidth = 0;
+    let targetLetterIndex = 0;
+    const brandMessage = "YUMMY BUY";
+    let letterScales = [], letterColors = [];
+    const highlightScaleTarget = 1.05, defaultScaleTarget = 1.0, lerpSpeed = 0.15;
+
+    // --- Helper function for text block scaling ---
+    function getBubbleScaleFactor() {
+        return (width > breakpointWidth) ? 1 : 1;
+    }
+
+    // calculatePixelSizes function (includes height constraint)
+    function calculatePixelSizes() {
+        // Calculate preliminary sizes based purely on width
+        let prelim_pS = max(minPixelSize, floor(width * baseSlothSizeRel));
+        // Calculate base pT (bubble text pixel size before visual scaling)
+        let prelim_pT = max(minPixelSize, floor(width * baseBubbleSizeRel));
+        
+        // let prelim_brandP = max(minPixelSize, floor(width * baseBrandSizeRel));
+    // --- CHANGE: Select Brand Text base size based on breakpoint ---
+    let currentBaseBrandSizeRel = (width > breakpointWidth) ? baseBrandSizeRelAbove : baseBrandSizeRelBelow;
+    let prelim_brandP = max(minPixelSize, floor(width * currentBaseBrandSizeRel));
+    // --- END CHANGE ---
+
+        // Estimate height using the *visual scale factor* applied to base pT height
+        let estBubbleScaleFactor = getBubbleScaleFactor();
+        // Base height calculation (conceptual)
+        let est_bubbleTextH_pixels = 2 * textCharHeight + (2 - 1) * textLineSpacing;
+        let est_bubbleBodyH_pixels = est_bubbleTextH_pixels + bubbleVerticalPadding * 2;
+        // Estimated visual height using the scale factor
+        let est_visualTextBlockHeight = est_bubbleBodyH_pixels * prelim_pT * estBubbleScaleFactor; // Use base pT * factor
+
+        let est_bounce = prelim_pS * 0.8;
+        let est_slothBaseY = height * 0.55;
+        let est_slothHeadCenterY = est_slothBaseY - prelim_pS * 5;
+        let est_slothHeadTopY = est_slothHeadCenterY - (prelim_pS * 7 / 2);
+        let est_bubbleBottomMargin = prelim_pS * 2;
+        let est_verticalShift = (prelim_pS * 7) / 3;
+        let est_adjustedHeadTopY = est_slothHeadTopY - est_verticalShift;
+        // Estimate Top Y based on the *visual* height of the text block
+        let est_textBlockTopY = est_adjustedHeadTopY - est_bounce - est_bubbleBottomMargin - est_visualTextBlockHeight;
+
+        let est_brandTextY = est_slothBaseY + est_bounce + prelim_pS * 10;
+        let est_brandTextBottomY = est_brandTextY + (textCharHeight * prelim_brandP);
+        let estimatedDrawingHeight = est_brandTextBottomY - est_textBlockTopY;
+
+        let targetMaxHeight = (width > breakpointWidth) ? height * 0.50 : height * 0.333;
+///////////////////////////////////////////////////////////////////////////////////////////
+        // @@@ Controls scaling of ALL elements on page
+        let heightScaleFactor = 1.0;
+        // ABOVE VERY IMPORTANT
+///////////////////////////////////////////////////////////////////////////////////////////
+        if (estimatedDrawingHeight > targetMaxHeight && estimatedDrawingHeight > 0) {
+            heightScaleFactor = targetMaxHeight / estimatedDrawingHeight;
+        }
+
+        slothPixelSize = max(minPixelSize, floor(prelim_pS * heightScaleFactor));
+        // bubbleTextPixelSize (pT) is the base size *before* visual scaling in draw()
+        bubbleTextPixelSize = max(minPixelSize, floor(prelim_pT * heightScaleFactor));
+        brandTextPixelSize = max(minPixelSize, floor(prelim_brandP * heightScaleFactor));
+
+        pS = slothPixelSize;
+        pT = bubbleTextPixelSize; // pT is the base pixel size for text/tail drawing
+    }
+
+
+// --- Confetti Variables ---
+let confettiParticles = [];
+let confettiActive = false;
+let navigationTimer = null; // To hold the setTimeout ID
+const confettiCount = 150; // Number of confetti pieces
+const navigationDelay = 1200; // ms
+// const navigationDelay = 1000; // ms
+// const navigationDelay = 800; // ms
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+// SECTION DIVIDER - CLASSES & FUNCTIONS @@@@@
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////
+// CLASSES @@@
+////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////
+// FEATURE - CONFETTI
+
+// --- Particle Class ---
+class Particle {
+  constructor(x, y) {
+    this.pos = createVector(x, y);
+    this.vel = p5.Vector.random2D().mult(random(1.5, 5));
+    this.acc = createVector(0, 0.08);
+    this.colorHue = random(360);
+    this.colorSat = 90;
+    this.colorBri = 90;
+    this.lifespan = random(120, 200);
+    this.age = 0;
+    this.initialSize = random(3, 8);
+    this.angle = random(TWO_PI);
+    this.rotSpeed = random(-0.08, 0.08);
+  }
+
+  update() {
+    this.vel.add(this.acc);
+    this.vel.mult(0.98);
+    this.pos.add(this.vel);
+    this.angle += this.rotSpeed;
+    this.age++;
+  }
+
+  display() {
+    let alpha = map(this.age, 0, this.lifespan, 1, 0);
+    alpha = constrain(alpha, 0, 1);
+
+    push();
+    translate(this.pos.x, this.pos.y);
+    rotate(this.angle);
+    noStroke();
+    fill(this.colorHue, this.colorSat, this.colorBri, alpha);
+    rectMode(CENTER);
+    rect(0, 0, this.initialSize * alpha, this.initialSize * alpha * 1.5);
+    pop();
+  }
+
+  isDead() {
+    return this.age >= this.lifespan;
+  }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+// FUNCTIONS @@@
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+    // MODIFIED for Confetti, HSB color mode (May 2, 2025)
+    function setup() {
+        createCanvas(windowWidth, windowHeight);
+        colorMode(HSB, 360, 100, 100, 1); // Set HSB color mode
+        textFont('sans-serif');
+        rectMode(CENTER);
+        noStroke();
+
+        try {
+            furColor = color(furColorHex);
+            shadeColor = color(shadeColorHex);
+            faceColor = color(faceColorHex);
+            patchColor = color(patchColorHex);
+            blackColor = color(blackHex);
+            whiteColor = color(whiteHex);
+            brandColor = color(brandColorHex);
+            bgColor = color(bgColorHex);
+            bubbleBorderColor = color(bubbleBorderColorHex);
+            bubbleFillColor = color(bubbleFillColorHex);
+            bubbleTextColor = color(bubbleTextColorHex);
+        } catch (e) {
+            console.error("Error initializing colors:", e);
+            furColor = color(30, 70, 54);
+            shadeColor = color(29, 67, 40);
+            faceColor = color(60, 10, 96);
+            patchColor = color(0, 0, 25);
+            blackColor = color(0, 0, 0);
+            whiteColor = color(0, 0, 100);
+            brandColor = color(258, 44, 98);
+            bgColor = color(241, 59, 87);
+            bubbleBorderColor = color(257, 43, 85);
+            bubbleFillColor = color(250, 18, 100);
+            bubbleTextColor = color(258, 44, 98);
+        }
+
+        calculatePixelSizes();
+        slothCurrentX = width / 2;
+        slothTargetX = width / 2;
+        calculateLayoutParameters();
+        targetLetterIndex = findLetterIndex(slothTargetX);
+        lastMoveTime = millis();
+    }
+
+
+    // ORIGINAL -- RGB Color Mode
+    // function setup() {
+    //   createCanvas(windowWidth, windowHeight);
+    //   colorMode(RGB);
+    //   textFont('sans-serif');
+    //   rectMode(CENTER); // Default, but drawPixelText uses CORNER
+    //   noStroke();
+
+    //   try { // Color initialization
+    //       furColor = color(furColorHex);  shadeColor = color(shadeColorHex);  faceColor = color(faceColorHex); 
+    //       patchColor = color(patchColorHex);  blackColor = color(blackHex);  whiteColor = color(whiteHex); 
+    //       brandColor = color(brandColorHex);  bgColor = color(bgColorHex); 
+    //       bubbleBorderColor = color(bubbleBorderColorHex);  bubbleFillColor = color(bubbleFillColorHex);  bubbleTextColor = color(bubbleTextColorHex); 
+    //   } catch (e) { /* Fallbacks */
+    //       console.error("Error initializing colors:", e); 
+    //       furColor = color(139, 69, 19);  shadeColor = color(101, 67, 33);  faceColor = color(245, 245, 220); 
+    //       patchColor = color(64, 64, 64);  blackColor = color(0);  whiteColor = color(255); 
+    //       brandColor = color(167, 139, 250);  bgColor = color(93, 92, 222); 
+    //       bubbleBorderColor = color(145, 120, 217);  bubbleFillColor = color(209, 198, 255);  bubbleTextColor = color(167, 139, 250); 
+    //    }
+
+    //   calculatePixelSizes();
+    //   slothCurrentX = width / 2;
+    //   slothTargetX = width / 2;
+    //   calculateLayoutParameters();
+    //   targetLetterIndex = findLetterIndex(slothTargetX);
+    //   lastMoveTime = millis();
+    // }
+
+    function calculateLayoutParameters() { // Calculates brand text layout
+        if (!brandColor || !whiteColor || !brandTextPixelSize) { return; }
+        let numChars = brandMessage.length;
+        letterScales = []; letterColors = [];
+        let totalWidthPixels = numChars * textCharWidth + (numChars - 1) * brandCharSpacing;
+        brandTextWidth = totalWidthPixels * brandTextPixelSize;
+        brandTextMinX = width / 2 - brandTextWidth / 2;
+        brandTextMaxX = width / 2 + brandTextWidth / 2;
+        stepWidth = (textCharWidth + brandCharSpacing) * brandTextPixelSize;
+
+        for (let i = 0; i < numChars; i++) { letterScales.push(defaultScaleTarget); letterColors.push(brandColor); }
+        slothTargetX = constrain(slothTargetX !== undefined ? slothTargetX : width/2, brandTextMinX, brandTextMaxX);
+        targetLetterIndex = stepWidth > 0 ? findLetterIndex(slothTargetX) : 0;
+    }
+
+    function findLetterIndex(xPos) { /* ... unchanged ... */
+        if (stepWidth <= 0) return 0;
+        let relativePos = xPos - brandTextMinX;
+        let index = round(relativePos / stepWidth);
+        return constrain(index, 0, brandMessage.length - 1);
+     }
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// Start of draw() @@@@@
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    function draw() {
+        if (!bgColor || !brandColor || !pS || !pT) return;
+
+        background(bgColor);
+        let now = millis();
+
+        // --- Animation Timing & State --- (unchanged)
+        if (!canTriggerMove && now - pauseStartTime >= pauseDuration) canTriggerMove = true;
+        if (canTriggerMove && now - lastMoveTime >= moveInterval) {
+            lastMoveTime = now; let nextTargetX = slothTargetX + slothDirection * stepWidth;
+            if (stepWidth > 0) {
+                 if (slothDirection === 1 && targetLetterIndex >= brandMessage.length - 1) { slothDirection = -1; nextTargetX = slothTargetX + slothDirection * stepWidth; }
+                 else if (slothDirection === -1 && targetLetterIndex <= 0) { slothDirection = 1; nextTargetX = slothTargetX + slothDirection * stepWidth; }
+                 slothTargetX = constrain(nextTargetX, brandTextMinX, brandTextMaxX);
+                 targetLetterIndex = findLetterIndex(slothTargetX);
+             }
+             canTriggerMove = false; pauseStartTime = now;
+        }
+
+        // --- Sloth Movement & Positioning --- (unchanged)
+        slothCurrentX = lerp(slothCurrentX, slothTargetX, 0.1);
+        let bounceAmplitude = pS * 0.8; 
+        let bounceSpeed = 0.05;
+        let bounceOffset = sin(frameCount * bounceSpeed) * bounceAmplitude;
+        let slothBaseY = height * 0.55;
+        slothCurrentY = slothBaseY + bounceOffset; // <<< REMOVE 'let' from this line since declaring it locally means mouse press can't access globally
+        let slothHeadCenterY = slothCurrentY - pS * 5;
+        let slothHeadTopEdgeY = slothHeadCenterY - (pS * 7 / 2);
+
+        // --- Draw Sloth --- (unchanged)
+        push(); translate(slothCurrentX, slothCurrentY); drawPixelSloth(pS); pop();
+
+        
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // DRAW PIXEL TEXT
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    // NEW v2.0: To fix non-scaling of highlighted text - May 2, 2025
+
+    // --- Update Brand Text Highlight ---
+      for (let i = 0; i < brandMessage.length; i++) {
+          if (i >= letterColors.length || i >= letterScales.length) continue;
+          let isTarget = (i === targetLetterIndex); 
+          let targetColor = isTarget ? whiteColor : brandColor; 
+          let targetScale = isTarget ? highlightScaleTarget : defaultScaleTarget;
+          
+          letterScales[i] = lerp(letterScales[i], targetScale, lerpSpeed);
+          if(letterColors[i]) { 
+              letterColors[i] = lerpColor(letterColors[i], targetColor, lerpSpeed); 
+          } else { 
+              letterColors[i] = targetColor; 
+          }
+      }
+
+      // --- Draw Brand Text ---
+      let brandTextY = slothBaseY + bounceAmplitude + pS * 10;
+      drawPixelText(
+          brandMessage,
+          width / 2,
+          brandTextY,
+          brandTextPixelSize,
+          textCharWidth,
+          textCharHeight,
+          brandCharSpacing,
+          letterColors,
+          letterScales,
+          false
+      );
+
+
+        // NEW v1.0: To fix non-scaling of highlighted text - May 2, 2025 (DOESN'T WORK!)
+        // --- Update Brand Text Highlight (ONLY updates scales/colors) ---
+        // for (let i = 0; i < brandMessage.length; i++) {
+        //     if (i >= letterColors.length || i >= letterScales.length) continue;
+        //     let isTarget = (i === targetLetterIndex);
+        //     let targetColor = isTarget ? whiteColor : brandColor;
+        //     let targetScale = isTarget ? highlightScaleTarget : defaultScaleTarget;
+            
+        //     letterScales[i] = lerp(letterScales[i], targetScale, lerpSpeed);
+        //     if (letterColors[i]) {
+        //         letterColors[i] = lerpColor(letterColors[i], targetColor, lerpSpeed);
+        //     } else {
+        //         letterColors[i] = targetColor;
+        //     }
+        // }
+
+        // // --- Draw Brand Text (ONLY renders text) ---
+        // let brandTextY = slothBaseY + bounceAmplitude + pS * 10;
+        // drawPixelText(
+        //     brandMessage,
+        //     width / 2,
+        //     brandTextY,
+        //     brandTextPixelSize,
+        //     textCharWidth,
+        //     textCharHeight,
+        //     brandCharSpacing,
+        //     letterColors,
+        //     letterScales,
+        //     false
+        // );
+
+        // Removed on May 2, 2025
+        // // --- Update Brand Text Highlight --- (unchanged)
+        // for (let i = 0; i < brandMessage.length; i++) { /* ... */
+        //     // let x = brandTextMinX + i * stepWidth;
+        //     // // Apply scale to text size
+        //     // textSize(brandTextPixelSize * letterScales[i]);
+        //     // fill(letterColors[i]);
+        //     // text(brandMessage[i], x, height / 2);
+        //     // above added - May 2, 2025
+        //     if (i >= letterColors.length || i >= letterScales.length) continue;
+        //     let isTarget = (i === targetLetterIndex); let targetColor = isTarget ? whiteColor : brandColor; let targetScale = isTarget ? highlightScaleTarget : defaultScaleTarget;
+        //     letterScales[i] = lerp(letterScales[i], targetScale, lerpSpeed);
+        //     if(letterColors[i]) { letterColors[i] = lerpColor(letterColors[i], targetColor, lerpSpeed); } else { letterColors[i] = targetColor; }
+        // }
+
+        // // --- Draw Brand Text --- (unchanged)
+        // let brandTextY = slothBaseY + bounceAmplitude + pS * 10;
+        // drawPixelText(brandMessage, width / 2, brandTextY, brandTextPixelSize, textCharWidth, textCharHeight, brandCharSpacing, letterColors, letterScales, false);
+
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+  // END - UPDATE BRAND TEXT
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+  
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+  // START - TEXT BLOCK
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // === Text Block (Previously Bubble Text) ===
+
+        // Get the visual scale factor (1.25 or 1.5)
+        // let finalBubbleScale = getBubbleScaleFactor();
+        // pT is the base pixel size calculated respecting height constraints
+
+//////////////////////////////////////////////////////////////////////////////////
+
+        // --- Text Content Size (Character Pixels) ---
+
+//////////////////////////////////////////////////////////////////////////////////
+
+// OLD TIME TEXT /////////////////////////////////////////////////////////////////
+        // let today = new Date().toLocaleDateString();
+        // let message = `HELLO, ${currentUser.userPhone}!\nTODAY IS ${today}`;
+        
+
+// NEW TIME TEXT /////////////////////////////////////////////////////////////////
+
+let message
+
+// USING 12 HOUR TIME with AM/PM
+function updateMessage() {
+
+    const now = new Date();
+
+    // Format "Thursday, May 2"
+    const dateOpts = { weekday: 'long', month: 'long', day: 'numeric' };
+    const dateStr = now
+    .toLocaleDateString('en-US', dateOpts)
+    .toUpperCase()
+    .replace(',', '') // removes the first comma (after the weekday)
+    // .replace(/, \d{4}/, '');
+
+    // Extract hours, minutes, seconds
+    let hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    // Determine AM/PM
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+
+    // Convert to 12-hour format
+    hours = hours % 12;
+    if (hours === 0) hours = 12;
+
+    // Zero‑pad minutes and seconds only
+    const timeStr = `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+    // Final formatted string
+    const dynamicTime = `${dateStr} @${timeStr} ${ampm}`;
+
+
+    //   message = `Welcome To:\nThe MIRANDA MARKET\n────────────────────\n${dateStr}\n${timeStr} ${ampm}`;
+    message = `Welcome To:\n------------------\nThe MIRANDA MARKET\n------------------\n${dateStr}\n${timeStr} ${ampm}`;
+    //   message = `HELLO, ${currentUser.userPhone}!\n${dynamicTime}`;
+    // console.log(message);
+   
+}
+
+// 2. Kick it off and update every second
+updateMessage();
+setInterval(updateMessage, 1000);                         // runs every 1000 ms :contentReference[oaicite:2]{index=2}
+
+// END NEW CHANGE /////////////////////////////////////////////////////////////////
+
+
+
+        let messageLines = message.split('\n');
+        let bubbleContentHeightPixels = messageLines.length * textCharHeight + (messageLines.length - 1) * textLineSpacing;
+        let longestLineWidthPixels = 0;
+        for (let line of messageLines) { let lineWidth = line.length * textCharWidth + (line.length > 0 ? line.length - 1 : 0) * bubbleCharSpacing; longestLineWidthPixels = max(lineWidth, longestLineWidthPixels); }
+        longestLineWidthPixels = max(15, longestLineWidthPixels);
+        let bubbleContentWidthPixels = longestLineWidthPixels;
+
+
+//////////////////////////////////////////////////////////////////////////////////
+
+        // --- Text Block Positioning (with vertical shift) ---
+
+//////////////////////////////////////////////////////////////////////////////////
+
+        // let slothHeadHeight = pS * 7;
+        // let verticalShift = slothHeadHeight / 3;
+
+// MAY 2, 2025
+let finalBubbleScale = getBubbleScaleFactor();
+let slothHeadHeight = pS * 7;
+let verticalShift = slothHeadHeight / 3;
+
+
+// --- CHANGE: Add conditional upward shift for small screens ---
+let breakpointShiftAmount = 0; // Default to no extra shift
+if (width < breakpointWidth) {
+  // Adjust this value (e.g., pS * 5) to control how much it moves up on mobile
+  breakpointShiftAmount = pS * 3;
+}
+// Apply both shifts
+let adjustedHeadTopY = slothHeadTopEdgeY - verticalShift - breakpointShiftAmount;
+
+// --- Keep original conceptual calculations ---
+let conceptualBubbleBodyHeightPixels = bubbleContentHeightPixels + 2 * bubbleVerticalPadding;
+let bubbleBottomMargin = pS * 2;
+let conceptualBubbleBottomY = adjustedHeadTopY - bounceAmplitude - bubbleBottomMargin;
+let conceptualBubbleTopY = conceptualBubbleBottomY - (conceptualBubbleBodyHeightPixels * pT);
+
+// --- Calculate both scaled and unscaled dimensions ---
+let textBlockHeightUnscaled = bubbleContentHeightPixels * pT;
+let textBlockWidthUnscaled = bubbleContentWidthPixels * pT;
+let textBlockHeightScaled = textBlockHeightUnscaled * finalBubbleScale;
+let textBlockWidthScaled = textBlockWidthUnscaled * finalBubbleScale;
+
+// --- Update positioning with scale awareness ---
+let textBlockCenterX = slothCurrentX + pS * 1;
+let textStartX = textBlockCenterX - (textBlockWidthScaled / 2);
+let verticalPaddingTotal = (conceptualBubbleBodyHeightPixels * pT) - textBlockHeightUnscaled;
+let textStartY = conceptualBubbleTopY + (verticalPaddingTotal * finalBubbleScale) / 2;
+
+// --- Prepare text colors/scales (keep existing logic) ---
+let bubbleDefaultColors = [];
+let bubbleDefaultScales = [];
+let drawableCharCount = message.replace(/\n/g, '').length;
+for(let i = 0; i < drawableCharCount; i++) { 
+  bubbleDefaultColors.push(bubbleTextColor); 
+  bubbleDefaultScales.push(1.0); 
+}
+
+// --- Revised scaling transformations ---
+push();
+// Center the transformation on the scaled text block
+translate(textBlockCenterX, textStartY + textBlockHeightScaled/2);
+scale(finalBubbleScale);
+// Adjust for scaled dimensions
+translate(
+  -textBlockCenterX / finalBubbleScale, 
+  -(textStartY + textBlockHeightScaled/2) / finalBubbleScale
+);
+
+// Draw using original base dimensions (scaling handled by transform)
+drawPixelText(
+  message, 
+  textBlockCenterX - textBlockWidthUnscaled/2,  // Unscaled X
+  textStartY,                                   // Unscaled Y
+  pT, 
+  textCharWidth, 
+  textCharHeight, 
+  bubbleCharSpacing, 
+  bubbleDefaultColors, 
+  bubbleDefaultScales, 
+  true
+);
+
+pop();
+
+        // let adjustedHeadTopY = slothHeadTopEdgeY - verticalShift;
+        // Calculate conceptual TopY based on original vertical padding logic and *base* pT
+        // let conceptualBubbleBodyHeightPixels = bubbleContentHeightPixels + 2 * bubbleVerticalPadding;
+        // let bubbleBottomMargin = pS * 2;
+        // let conceptualBubbleBottomY = adjustedHeadTopY - bounceAmplitude - bubbleBottomMargin;
+        // // Use base pT here for initial position calculation before scaling
+        // let conceptualBubbleTopY = conceptualBubbleBottomY - (conceptualBubbleBodyHeightPixels * pT);
+
+        // // Calculate text block *unscaled* dimensions using base pT
+        // let textBlockHeightUnscaled = bubbleContentHeightPixels * pT;
+        // let textBlockWidthUnscaled = bubbleContentWidthPixels * pT;
+
+        // // Calculate text StartX for centering relative to sloth's projected center
+        // let textBlockCenterX = slothCurrentX + pS * 1;
+        // let textStartX = textBlockCenterX - (textBlockWidthUnscaled / 2);
+
+        // // Calculate text StartY using the conceptual top and vertical padding logic
+        // let conceptualTotalBubbleHeight = conceptualBubbleBodyHeightPixels * pT;
+        // let verticalPaddingTotal = conceptualTotalBubbleHeight - textBlockHeightUnscaled;
+        // let textStartY = conceptualBubbleTopY + verticalPaddingTotal / 2 ;
+
+        // // --- Draw SCALED Text Block ---
+        // // Prepare text colors/scales
+        // let bubbleDefaultColors = []; let bubbleDefaultScales = [];
+        // let drawableCharCount = message.replace(/\n/g, '').length;
+        // for(let i = 0; i < drawableCharCount; i++) { bubbleDefaultColors.push(bubbleTextColor); bubbleDefaultScales.push(1.0); }
+
+        // // Calculate the visual center of the *unscaled* text block
+        // let textBlockVisualCenterX = textStartX + textBlockWidthUnscaled / 2;
+        // let textBlockVisualCenterY = textStartY + textBlockHeightUnscaled / 2;
+
+        // push(); // Isolate scale transformation
+
+        // // CHANGE: Modify the Y-component in these translate calls
+        // let verticalTextShift = -40; // Example: Move text up by 10 pixels
+        // translate(textBlockVisualCenterX, textBlockVisualCenterY - verticalTextShift); // Move origin to shifted text block center
+        // scale(finalBubbleScale); // Apply visual scaling
+        // // translate(-textBlockVisualCenterX, -(verticalTextShift - textBlockVisualCenterY)); // Move origin back relative to shifted center
+        // translate(-textBlockVisualCenterX, -(textBlockVisualCenterY - verticalTextShift)); // Move origin back relative to shifted center
+
+        // // Draw text using base pT (scaling is handled by transformation)
+        // // The text will be drawn relative to the translated/scaled origin
+        // // Use the ORIGINAL textStartY for the drawing function's reference
+        // drawPixelText(message, textStartX, textStartY, pT, textCharWidth, textCharHeight, bubbleCharSpacing, bubbleDefaultColors, bubbleDefaultScales, true);
+
+        // pop(); // Restore previous drawing state
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// // VERSION 1.0
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // push(); // Isolate scale transformation
+
+        // translate(textBlockVisualCenterX, textBlockVisualCenterY); // Move origin to text block center
+        // scale(finalBubbleScale); // Apply visual scaling
+        // translate(-textBlockVisualCenterX, -textBlockVisualCenterY); // Move origin back
+
+
+        // // Draw text using base pT (scaling is handled by transformation)
+        // // The text will be drawn relative to the translated/scaled origin
+        // drawPixelText(message, textStartX, textStartY, pT, textCharWidth, textCharHeight, bubbleCharSpacing, bubbleDefaultColors, bubbleDefaultScales, true);
+
+        // pop(); // Restore previous drawing state
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// // VERSION 2.0
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // push(); // Isolate scale transformation
+
+        // // CHANGE: Modify the Y-component in these translate calls
+        // let verticalTextShift = -40; // Example: Move text up by 10 pixels
+        // translate(textBlockVisualCenterX, textBlockVisualCenterY - verticalTextShift); // Move origin to shifted text block center
+        // scale(finalBubbleScale); // Apply visual scaling
+        // // translate(-textBlockVisualCenterX, -(verticalTextShift - textBlockVisualCenterY)); // Move origin back relative to shifted center
+        // translate(-textBlockVisualCenterX, -(textBlockVisualCenterY - verticalTextShift)); // Move origin back relative to shifted center
+
+        // // Draw text using base pT (scaling is handled by transformation)
+        // // The text will be drawn relative to the translated/scaled origin
+        // // Use the ORIGINAL textStartY for the drawing function's reference
+        // drawPixelText(message, textStartX, textStartY, pT, textCharWidth, textCharHeight, bubbleCharSpacing, bubbleDefaultColors, bubbleDefaultScales, true);
+
+        // pop(); // Restore previous drawing state
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// // END of CHANGE to Text Block Vertical
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // --- Draw SCALED Tail ---
+        // CHANGE: Calculate smaller base pixel size for tail segments
+        let tail_pT = max(1, floor(pT * 0.5));
+
+        // Calculate Tail starting point (bottom-center of *unscaled* text block)
+        let tailStartX = textStartX + textBlockWidthUnscaled / 2;
+        let tailStartY = textStartY + textBlockHeightUnscaled;
+        // Calculate Tail target point (near shifted head top)
+        let tailTargetX = slothCurrentX;
+        let tailTargetY = adjustedHeadTopY + pS * 2;
+
+        push(); // Isolate scale transformation for tail
+        // Translate origin to tail start point
+        translate(tailStartX, tailStartY);
+        // Apply the same visual scale as the text block
+        scale(finalBubbleScale);
+        // Translate origin back
+        translate(-tailStartX, -tailStartY);
+
+        // Draw the tail segments using the smaller tail_pT
+        // Coordinates are relative to the original unscaled position, but drawing is scaled
+        rectMode(CORNER); noStroke(); let steps = 4;
+        fill(bubbleBorderColor);
+        for (let i = 1; i <= steps; i++) {
+            // Lerp between original start/target for position
+            let intermediateX = lerp(tailStartX, tailTargetX, i / (steps + 1));
+            let intermediateY = lerp(tailStartY, tailTargetY, i / (steps + 1));
+            // Snap to grid using the *drawing* pixel size (tail_pT)
+            let gridX = floor(intermediateX / tail_pT) * tail_pT;
+            let gridY = floor(intermediateY / tail_pT) * tail_pT;
+            // Draw using tail_pT for size
+            rect(gridX - tail_pT * 1.5, gridY - tail_pT * 1.5, tail_pT * 4, tail_pT * 4);
+        }
+        fill(bubbleFillColor);
+        for (let i = 1; i <= steps; i++) {
+            let intermediateX = lerp(tailStartX, tailTargetX, i / (steps + 1.5));
+            let intermediateY = lerp(tailStartY, tailTargetY, i / (steps + 1.5));
+            let gridX = floor(intermediateX / tail_pT) * tail_pT;
+            let gridY = floor(intermediateY / tail_pT) * tail_pT;
+            rect(gridX - tail_pT/2, gridY - tail_pT/2, tail_pT*2, tail_pT*2);
+        }
+        pop(); // Restore previous drawing state
+
+
+        // === End Text Block ===
+        
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // HOVER OVER - CURSOR Effect - April 30, 2025
+
+    // --- CHANGE: Add Hover Effect ---
+    if (isMouseOverSloth(mouseX, mouseY)) {
+        cursor('pointer'); // Change cursor to pointer finger
+    } else {
+        cursor(ARROW); // Reset cursor to default arrow
+    }
+    // --- END CHANGE ---
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // RESTORE DEFAULT DRAWING STATE
+
+
+        rectMode(CENTER); // Ensure default rectMode is restored
+        noStroke();
+        
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // CONFETTI - Adding Confetti Logic - May 2, 2025
+
+    if (confettiActive) {
+      for (let i = confettiParticles.length - 1; i >= 0; i--) {
+        let p = confettiParticles[i];
+        p.update();
+        p.display();
+        if (p.isDead()) {
+          confettiParticles.splice(i, 1);
+        }
+      }
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+} // End of draw() @@@@@
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    // --- Drawing Functions ---
+    function drawPixelSloth(p) { /* ... unchanged ... */
+        rectMode(CENTER); noStroke();
+        fill(furColor); rect(0, p * 2, p * 10, p * 12); fill(faceColor); rect(0, p * 2, p * 6, p * 8); fill(shadeColor); rect(p * 4, p * 2, p * 2, p * 12); rect(-p * 4, p * 2, p * 2, p * 12); rect(0, p * 7, p * 10, p * 2);
+        let headY = -p * 5; fill(furColor); rect(0, headY, p * 9, p * 7); fill(faceColor); rect(0, headY, p * 7, p * 5); fill(patchColor); rect(-p * 2.5, headY, p * 3, p * 4); rect(p * 2.5, headY, p * 3, p * 4); fill(blackColor); rect(-p * 2.5, headY, p, p); rect(p * 2.5, headY, p, p); fill(blackColor); rect(0, headY + p * 2, p * 3, p);
+        let armY = -p * 1; let armW = p * 3; let armH = p * 9; let armOffsetX = p * 6.5; fill(furColor); rect(-armOffsetX, armY, armW, armH); fill(shadeColor); rect(-armOffsetX + p , armY, p, armH); fill(blackColor); let clawBaseYL = armY + armH / 2; rect(-armOffsetX - p * 0.5, clawBaseYL + p * 0.5, p, p*2); rect(-armOffsetX + p * 0.5, clawBaseYL + p * 1.5, p, p*2); rect(-armOffsetX + p * 1.5, clawBaseYL + p * 0.5, p, p*2); fill(furColor); rect(armOffsetX, armY, armW, armH); fill(shadeColor); rect(armOffsetX - p , armY, p, armH); fill(blackColor); let clawBaseYR = armY + armH / 2; rect(armOffsetX + p * 0.5, clawBaseYR + p * 0.5, p, p*2); rect(armOffsetX - p * 0.5, clawBaseYR + p * 1.5, p, p*2); rect(armOffsetX - p * 1.5, clawBaseYR + p * 0.5, p, p*2);
+        let legY = p * 8.5; let legW = p * 4; let legH = p * 5; let legOffsetX = p * 2.5; fill(furColor); rect(-legOffsetX, legY, legW, legH); fill(shadeColor); rect(-legOffsetX + p*1.5, legY, p, legH); fill(blackColor); rect(-legOffsetX - p * 1, legY + p * 2, p*3, p); rect(-legOffsetX - p * 1, legY + p * 2.5, p, p*2); rect(-legOffsetX + p * 0, legY + p * 2.5, p, p*2); rect(-legOffsetX + p * 1, legY + p * 2.5, p, p*2); fill(furColor); rect(legOffsetX, legY, legW, legH); fill(shadeColor); rect(legOffsetX - p*1.5, legY, p, legH); fill(blackColor); rect(legOffsetX + p * 1, legY + p * 2, p*3, p); rect(legOffsetX + p * 1, legY + p * 2.5, p, p*2); rect(legOffsetX + p * 0, legY + p * 2.5, p, p*2); rect(legOffsetX - p * 1, legY + p * 2.5, p, p*2);
+        rectMode(CENTER);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // DRAW PIXEL TEXT
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // MODIFIED - MAY 1, 2025
+    function drawPixelText(message, startX, startY, p, charW, charH, spacingP, colors, scales, alignLeft = false) {
+    let currentX = startX; 
+    let currentY = startY; 
+    let lines = message.split('\n'); 
+    let charIndex = 0;
+    
+    push(); 
+    noStroke(); 
+    rectMode(CENTER); // Changed from CORNER to CENTER
+    
+    for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        let line = lines[lineIndex]; 
+        let lineRenderWidthPixels = line.length * charW + (line.length > 0 ? line.length - 1 : 0) * spacingP; 
+        let lineRenderWidth = lineRenderWidthPixels * p;
+        
+        currentX = alignLeft ? startX : startX - lineRenderWidth / 2;
+        currentY = startY + lineIndex * (charH + textLineSpacing) * p;
+        
+        for (let i = 0; i < line.length; i++) {
+            let char = line[i].toUpperCase(); 
+            let charColor = (colors && charIndex < colors.length) ? colors[charIndex] : blackColor; 
+            let charScale = (scales && charIndex < scales.length) ? scales[charIndex] : 1.0; 
+            if (!charColor) charColor = blackColor;
+            
+            // Calculate character center position
+            let charCenterX = currentX + (charW * p) / 2;
+            let charCenterY = currentY + (charH * p) / 2;
+            
+            push();
+            translate(charCenterX, charCenterY);
+            scale(charScale);
+            
+            fill(charColor); 
+            drawPixelChar(char, p, charW, charH);
+            pop();
+            
+            currentX += (charW + spacingP) * p; 
+            charIndex++;
+        }
+    } 
+    
+    pop(); 
+}
+
+    // function drawPixelText(message, startX, startY, p, charW, charH, spacingP, colors, scales, alignLeft = false) { /* ... unchanged ... */
+    //     // Note: p here is the *base* pixel size. Visual scale is handled by transform.
+    //     let currentX = startX; let currentY = startY; let lines = message.split('\n'); let charIndex = 0;
+    //     push(); noStroke(); rectMode(CORNER);
+    //     for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+    //         let line = lines[lineIndex]; let lineRenderWidthPixels = line.length * charW + (line.length > 0 ? line.length - 1 : 0) * spacingP; let lineRenderWidth = lineRenderWidthPixels * p;
+    //         currentX = alignLeft ? startX : startX - lineRenderWidth / 2; // Use startX directly if alignLeft is true
+    //         currentY = startY + lineIndex * (charH + textLineSpacing) * p;
+    //         for (let i = 0; i < line.length; i++) {
+    //             let char = line[i].toUpperCase(); let charColor = (colors && charIndex < colors.length) ? colors[charIndex] : blackColor; let charScale = (scales && charIndex < scales.length) ? scales[charIndex] : 1.0; if (!charColor) charColor = blackColor;
+    //             let charCenterX = charW * p / 2; let charCenterY = charH * p / 2;
+    //             // Don't scale individual letters here if overall block is scaled
+    //             push(); translate(currentX, currentY); /*translate(charCenterX, charCenterY); scale(charScale); translate(-charCenterX, -charCenterY);*/ fill(charColor); drawPixelChar(char, p, charW, charH); pop();
+    //             currentX += (charW + spacingP) * p; charIndex++;
+    //         }
+    //     } pop(); rectMode(CENTER); // Restore default rectMode after drawing text
+    // }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // END - DRAW PIXEL TEXT
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    function drawPixelChar(char, p, cW, cH) { /* ... unchanged character map ... */
+
+        // Replace the existing px function with this centered version
+        const px = (x, y) => {
+            let centerX = cW / 2;
+            let centerY = cH / 2;
+            rect((x - centerX) * p, (y - centerY) * p, p, p);
+        };
+        // const px = (x, y) => rect(x * p, y * p, p, p);
+
+        switch (char) {
+            case 'A': px(2, 0); for(let i=0; i<3; i++) px(1+i, 1); for(let y=2; y<cH; y++) { px(0, y); px(4, y); } px(1, 3); px(2, 3); px(3, 3); break;
+            case 'B': for(let y=0; y<cH; y++) px(0, y); px(1, 0); px(2, 0); px(3, 0); px(4, 1); px(1, 3); px(2, 3); px(3, 3); px(4, 2); px(4, 4); px(1, cH-1); px(2, cH-1); px(3, cH-1); px(4, cH-2); break;
+            case 'C': for(let y=1; y<cH-1; y++) px(0, y); px(1, 0); px(2, 0); px(3, 0); px(4, 1); px(1, cH-1); px(2, cH-1); px(3, cH-1); px(4, cH-2); break;
+            case 'D': for(let y=0; y<cH; y++) px(0, y); px(1, 0); px(2, 0); px(3, 0); px(4, 1); px(4, cH-2); px(1, cH-1); px(2, cH-1); px(3, cH-1); for(let y=2; y<cH-2; y++) px(4,y); break;
+            case 'E': for(let y=0; y<cH; y++) px(0, y); for(let x=1; x<cW; x++) { px(x, 0); px(x, cH-1); px(x, floor(cH/2));} break;
+            case 'G': for(let y=1; y<cH-1; y++) px(0, y); px(1, 0); px(2, 0); px(3, 0); px(4, 1); px(1, cH-1); px(2, cH-1); px(3, cH-1); px(4, cH-2); for(let x=2; x<cW-1; x++) px(x, floor(cH/2)); px(4, floor(cH/2)); break;
+            case 'H': for(let y=0; y<cH; y++) { px(0, y); px(4, y); } for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); break;
+            case 'I': for(let x=0; x<cW; x++) { px(x, 0); px(x, cH-1); } for(let y=1; y<cH-1; y++) px(2, y); break;
+            case 'L': for(let y=0; y<cH; y++) px(0, y); for(let x=1; x<cW; x++) px(x, cH-1); break;
+            case 'M': for(let y=0; y<cH; y++) { px(0, y); px(4, y); } px(1, 1); px(3, 1); px(2, 2); break;
+            case 'N': for(let y=0; y<cH; y++) { px(0, y); px(4, y); } px(1, 1); px(1, 2); px(2, 3); px(3, 4); px(3, 5); break; // Diagonal approx
+            case 'O': for(let y=1; y<cH-1; y++) { px(0, y); px(4, y); } for(let x=1; x<cW-1; x++) { px(x, 0); px(x, cH-1); } break;
+            case 'P': for(let y=0; y<cH; y++) px(0,y); for(let x=1; x<cW-1; x++) {px(x,0); px(x, floor(cH/2));} px(4,1); px(4,2); break; // Added P
+            case 'R': for(let y=0; y<cH; y++) px(0, y); px(1, 0); px(2, 0); px(3, 0); px(4, 1); px(1, 3); px(2, 3); px(3, 3); px(4, 2); px(3, 4); px(4, 5); px(4, 6); break; // Added R
+            case 'S': for(let x=1; x<cW-1; x++) { px(x, 0); px(x, cH-1); px(x, floor(cH/2)); } px(0, 1); px(0, 2); px(4, cH-3); px(4, cH-2); px(4, 0); px(0, cH-1); break; // Adjusted S
+            case 'T': for(let x=0; x<cW; x++) px(x, 0); for(let y=1; y<cH; y++) px(2, y); break;
+            case 'U': for(let y=0; y<cH-1; y++) { px(0, y); px(4, y); } for(let x=1; x<cW-1; x++) px(x, cH-1); break;
+            case 'W': for(let y=0; y<cH; y++) { px(0, y); px(4, y); } px(1, cH-2); px(2, cH-3); px(3, cH-2); break;
+            case 'Y': px(0, 0); px(4, 0); px(1, 1); px(3, 1); px(2, 2); for(let y=3; y<cH; y++) px(2, y); break;
+
+      // NEW added May 1, 2025
+      case 'F': for (let y = 0; y < cH; y++) px(0, y); for (let x = 0; x < cW; x++) px(x, 0); for (let x = 0; x < cW; x++) px(x, floor(cH/2)); break;
+      case 'J': for (let x = 0; x < cW; x++) px(x, 0); for (let y = 1; y < cH; y++) px(cW - 2, y); for (let x = 0; x < 3; x++) px(x, cH - 1); break;
+
+      // Vertical left stem // Upper right diagonal (slants up) — shifted down and extended // Lower right diagonal (slants down) — shifted down and extended
+      case 'K': for (let y = 0; y < cH; y++) px(0, y); for (let i = 0; i <= floor(cH/2); i++) px(1 + i, floor(cH/2) - i); for (let i = 0; i <= floor(cH/2); i++) px(1 + i, floor(cH/2) + 0 + i); break;
+
+      case 'Q': for (let y = 1; y < cH - 1; y++) { px(0, y); px(cW - 1, y); } for (let x = 1; x < cW - 1; x++) { px(x, 0); px(x, cH - 2); } px(cW - 2, cH - 1); break;
+      case 'V': for (let y = 0; y < cH - 1; y++) px(y < cW ? y : 0, y); for (let y = 0; y < cH - 1; y++) px(cW - 1 - (y < cW ? y : 0), y); break;
+      case 'X': for (let i = 0; i < min(cW, cH); i++) px(i, i); for (let i = 0; i < min(cW, cH); i++) px(cW - 1 - i, i); break;
+      case 'Z': for (let x = 0; x < cW; x++) px(x, 0); for (let i = 0; i < cH; i++) px(cW - 1 - i * (cW-1)/(cH-1), i); for (let x = 0; x < cW; x++) px(x, cH - 1); break;
+      case '?': for(let x=1; x<cW-1; x++) px(x, 0); px(3, 1); px(2, 2); px(2, floor(cH/2)); px(2, cH - 1); break;
+      case ':': px(2, floor(cH/3)); px(2, floor(2 * cH/3)); break;
+      case '@': for(let y=1; y<cH-1; y++){ px(1, y); px(cW-2, y); } for(let x=2; x<cW-2; x++){ px(x, 0); px(x, cH-2); } px(cW-3, floor(cH/2)); px(floor(cW/2), floor(cH/2)); px(cW-3, floor(cH/2 + 1)); break;
+      case '#': for(let x=0; x<cW; x++){ px(x, floor(cH/3)); px(x, floor(2 * cH/3)); } for(let y=0; y<cH; y+=2){ px(1, y); px(3, y); } break;
+      case '$': for(let y=1; y<cH-1; y++){ if(y < floor(cH/2)) { px(2, y); px(1, 1); px(2, 0); px(3, 1); } else { px(2, y); px(3, cH-2); px(2, cH-1); px(1, cH-2); } } for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); break;
+      case '%': px(0, 0); px(1, 0); px(0, 1); px(2, floor(cH/2)); px(cW-1, cH-1); px(cW-2, cH-1); px(cW-1, cH-2); break;
+      case '&': for(let y=1; y<floor(cH/2); y++){ px(1, y); px(3, y); } for(let x=2; x<4; x++){ px(x, 0); px(x, floor(cH/2) - 1); } px(2, floor(cH/2)); px(3, floor(cH/2) + 1); px(1, cH-1); break;
+      case '+': for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); for(let y=1; y<cH-1; y++) px(2, y); break;
+      case '=': for(let x=1; x<cW-1; x++){ px(x, floor(cH/3)); px(x, floor(2 * cH/3)); } break;
+      case '(': for(let y=1; y<cH-1; y++){ if (y < cH/3) { px(2, y); } else if (y > 2*cH/3) { px(2, y); } else { px(1, y); } } break;
+      case ')': for(let y=1; y<cH-1; y++){ if (y < cH/3) { px(2, y); } else if (y > 2*cH/3) { px(2, y); } else { px(3, y); } } break;
+      case '\'': px(3, 1); break;
+
+            case '!': for(let y=0; y<cH-2; y++) px(2,y); px(2, cH-1); break;
+            case ',': px(2, cH-1); px(1, cH-1); px(1, cH-2); break; // Simplified comma
+            case '.': px(2, cH-1); break;
+            case '-': for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); break; // Dash
+            case '/': px(4, 0); px(4, 1); px(3, 2); px(2, 3); px(1, 4); px(0, 5); px(0, 6); break; // Forward slash approx
+            case '0': for(let y=1; y<cH-1; y++) { px(0, y); px(4, y); } for(let x=1; x<cW-1; x++) { px(x, 0); px(x, cH-1); } px(3, 1); px(2,2); px(1,3); px(1,4); break; // 0 with slash
+            case '1': for (let x=1; x<cW-1; x++) px(x,cH-1); for (let y=0; y<cH; y++) px(2,y); px(1,1); break;
+            case '2': for(let x=0; x<cW; x++) px(x, 0); px(4, 1); px(4, 2); for(let x=0; x<cW; x++) px(x, floor(cH/2)); px(0, floor(cH/2)+1); px(0, cH-2); for(let x=0; x<cW; x++) px(x, cH-1); break;
+            case '3': for(let x=0; x<cW-1; x++) { px(x,0); px(x, cH-1); } for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); for(let y=1; y<cH-1; y++) px(4,y); break;
+            case '4': for(let y=0; y<floor(cH/2)+1; y++) px(0,y); for(let y=0; y<cH; y++) px(4,y); for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); break;
+            case '5': for(let x=0; x<cW; x++) px(x,0); px(0,1); px(0,2); px(1,3); px(2,3); px(3,3); px(4,4); px(4,5); px(3,6); px(2,6); px(1,6); break; // Complex 5
+            case '6': for(let x=1; x<cW; x++) px(x,0); for(let y=1; y<cH; y++) px(0,y); for(let y=floor(cH/2)+1; y<cH-1; y++) px(4,y); for(let x=1; x<cW-1; x++) { px(x, floor(cH/2)); px(x, cH-1); } break;
+            case '7': for(let x=0; x<cW; x++) px(x,0); px(4,1); px(4,2); px(3,3); px(2,4); px(2,5); px(2,6); break;
+            case '8': for(let x=1; x<cW-1; x++) { px(x,0); px(x,cH-1); px(x,floor(cH/2)); } for(let y=1; y<cH-1; y++) { px(0,y); px(4,y); } break;
+            case '9': for(let x=0; x<cW-1; x++) px(x,cH-1); for(let y=0; y<cH; y++) px(4,y); for(let y=1; y<floor(cH/2); y++) px(0,y); for(let x=1; x<cW-1; x++) { px(x,0); px(x, floor(cH/2)); } break;
+            case ' ': break; // Space
+            default: px(0, 0); px(cW - 1, 0); px(0, cH - 1); px(cW - 1, cH - 1); break; // Unknown char placeholder
+        }
+    }
+
+ 
+    // Responsive Canvas
+    function windowResized() { /* ... unchanged ... */
+      resizeCanvas(windowWidth, windowHeight);
+      calculatePixelSizes();
+      if (brandColor) { calculateLayoutParameters(); }
+      slothCurrentX = width / 2; slothTargetX = width / 2;
+      targetLetterIndex = stepWidth > 0 ? findLetterIndex(slothTargetX) : 0;
+      canTriggerMove = true; lastMoveTime = millis(); pauseStartTime = 0;
+    }
+
+// --- Helper function to check hover/click bounds ---
+function isMouseOverSloth(checkX, checkY) {
+    // Ensure necessary variables are defined before checking
+    if (!pS || slothCurrentX === undefined || slothCurrentY === undefined) {
+        return false;
+    }
+
+    // Approximate Sloth Bounding Box Calculation (relative to its translation point)
+    let slothDrawWidth = 16 * pS;
+    let slothTopOffset = -8.5 * pS;
+    let slothBottomOffset = 11 * pS;
+
+    let slothLeft = slothCurrentX - slothDrawWidth / 2;
+    let slothRight = slothCurrentX + slothDrawWidth / 2;
+    let slothTop = slothCurrentY + slothTopOffset;
+    let slothBottom = slothCurrentY + slothBottomOffset;
+
+    // Check if point is within the bounding box
+    return (checkX > slothLeft && checkX < slothRight && checkY > slothTop && checkY < slothBottom);
+}
+
+// --- Click/Tap Interaction ---
+
+// MODIFIED for Confetti logic
+function handleInteraction(px, py) {
+  if (!confettiActive && isMouseOverSloth(px, py)) {
+    console.log("Sloth clicked!");
+    confettiActive = true;
+
+    if (navigationTimer) clearTimeout(navigationTimer);
+
+    confettiParticles = [];
+    for (let i = 0; i < confettiCount; i++) {
+      confettiParticles.push(new Particle(px, py));
+    }
+
+    navigationTimer = setTimeout(() => {
+      window.location.href = '/products.html';
+      confettiActive = false;
+      confettiParticles = [];
+    }, navigationDelay);
+  }
+}
+
+
+// ORIGINAL logic as of May 1, 2025
+// function handleInteraction(px, py) {
+//     if (isMouseOverSloth(px, py)) { // Use the helper function
+//         console.log("Sloth clicked!");
+//         window.location.href = '/products.html'; // Navigate
+//     }
+//  }
+
+
+
+// mousePressed and touchStarted remain the same, calling handleInteraction
+function mousePressed() { handleInteraction(mouseX, mouseY); return false; }
+function touchStarted() { if (touches.length > 0) { handleInteraction(touches[0].x, touches[0].y); } return false; }
+
+    // THIS HAS BEEN EXTRACTED/REFACTORED -- SEE ABOVE
+    // // --- Click/Tap Interaction --- (unchanged)
+    // function handleInteraction(px, py) { /* ... */
+    //     if (!pS || !slothCurrentX || !slothCurrentY) return;
+    //     let slothDrawWidth = 16 * pS; let slothTopOffset = -8.5 * pS; let slothBottomOffset = 11 * pS;
+    //     let slothLeft = slothCurrentX - slothDrawWidth / 2; let slothRight = slothCurrentX + slothDrawWidth / 2;
+    //     let slothTop = slothCurrentY + slothTopOffset; let slothBottom = slothCurrentY + slothBottomOffset;
+    //     if (px > slothLeft && px < slothRight && py > slothTop && py < slothBottom) { console.log("Sloth clicked!"); window.location.href = '/products.html'; }
+    //  }
+    // function mousePressed() { handleInteraction(mouseX, mouseY); return false; }
+    // function touchStarted() { if (touches.length > 0) { handleInteraction(touches[0].x, touches[0].y); } return false; }
+
+  </script>
+
+</body>
+
+</html>
+
+<!-- // ─────────────────────────────────────────────────────── -->
