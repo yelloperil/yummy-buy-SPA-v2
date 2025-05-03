@@ -360,17 +360,102 @@ class Particle {
         // --- Draw Sloth --- (unchanged)
         push(); translate(slothCurrentX, slothCurrentY); drawPixelSloth(pS); pop();
 
-        // --- Update Brand Text Highlight --- (unchanged)
-        for (let i = 0; i < brandMessage.length; i++) { /* ... */
-             if (i >= letterColors.length || i >= letterScales.length) continue;
-             let isTarget = (i === targetLetterIndex); let targetColor = isTarget ? whiteColor : brandColor; let targetScale = isTarget ? highlightScaleTarget : defaultScaleTarget;
-             letterScales[i] = lerp(letterScales[i], targetScale, lerpSpeed);
-             if(letterColors[i]) { letterColors[i] = lerpColor(letterColors[i], targetColor, lerpSpeed); } else { letterColors[i] = targetColor; }
-        }
+        
 
-        // --- Draw Brand Text --- (unchanged)
-        let brandTextY = slothBaseY + bounceAmplitude + pS * 10;
-        drawPixelText(brandMessage, width / 2, brandTextY, brandTextPixelSize, textCharWidth, textCharHeight, brandCharSpacing, letterColors, letterScales, false);
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // DRAW PIXEL TEXT
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    // NEW v2.0: To fix non-scaling of highlighted text - May 2, 2025
+
+    // --- Update Brand Text Highlight ---
+      for (let i = 0; i < brandMessage.length; i++) {
+          if (i >= letterColors.length || i >= letterScales.length) continue;
+          let isTarget = (i === targetLetterIndex); 
+          let targetColor = isTarget ? whiteColor : brandColor; 
+          let targetScale = isTarget ? highlightScaleTarget : defaultScaleTarget;
+          
+          letterScales[i] = lerp(letterScales[i], targetScale, lerpSpeed);
+          if(letterColors[i]) { 
+              letterColors[i] = lerpColor(letterColors[i], targetColor, lerpSpeed); 
+          } else { 
+              letterColors[i] = targetColor; 
+          }
+      }
+
+      // --- Draw Brand Text ---
+      let brandTextY = slothBaseY + bounceAmplitude + pS * 10;
+      drawPixelText(
+          brandMessage,
+          width / 2,
+          brandTextY,
+          brandTextPixelSize,
+          textCharWidth,
+          textCharHeight,
+          brandCharSpacing,
+          letterColors,
+          letterScales,
+          false
+      );
+
+
+        // NEW v1.0: To fix non-scaling of highlighted text - May 2, 2025 (DOESN'T WORK!)
+        // --- Update Brand Text Highlight (ONLY updates scales/colors) ---
+        // for (let i = 0; i < brandMessage.length; i++) {
+        //     if (i >= letterColors.length || i >= letterScales.length) continue;
+        //     let isTarget = (i === targetLetterIndex);
+        //     let targetColor = isTarget ? whiteColor : brandColor;
+        //     let targetScale = isTarget ? highlightScaleTarget : defaultScaleTarget;
+            
+        //     letterScales[i] = lerp(letterScales[i], targetScale, lerpSpeed);
+        //     if (letterColors[i]) {
+        //         letterColors[i] = lerpColor(letterColors[i], targetColor, lerpSpeed);
+        //     } else {
+        //         letterColors[i] = targetColor;
+        //     }
+        // }
+
+        // // --- Draw Brand Text (ONLY renders text) ---
+        // let brandTextY = slothBaseY + bounceAmplitude + pS * 10;
+        // drawPixelText(
+        //     brandMessage,
+        //     width / 2,
+        //     brandTextY,
+        //     brandTextPixelSize,
+        //     textCharWidth,
+        //     textCharHeight,
+        //     brandCharSpacing,
+        //     letterColors,
+        //     letterScales,
+        //     false
+        // );
+
+        // Removed on May 2, 2025
+        // // --- Update Brand Text Highlight --- (unchanged)
+        // for (let i = 0; i < brandMessage.length; i++) { /* ... */
+        //     // let x = brandTextMinX + i * stepWidth;
+        //     // // Apply scale to text size
+        //     // textSize(brandTextPixelSize * letterScales[i]);
+        //     // fill(letterColors[i]);
+        //     // text(brandMessage[i], x, height / 2);
+        //     // above added - May 2, 2025
+        //     if (i >= letterColors.length || i >= letterScales.length) continue;
+        //     let isTarget = (i === targetLetterIndex); let targetColor = isTarget ? whiteColor : brandColor; let targetScale = isTarget ? highlightScaleTarget : defaultScaleTarget;
+        //     letterScales[i] = lerp(letterScales[i], targetScale, lerpSpeed);
+        //     if(letterColors[i]) { letterColors[i] = lerpColor(letterColors[i], targetColor, lerpSpeed); } else { letterColors[i] = targetColor; }
+        // }
+
+        // // --- Draw Brand Text --- (unchanged)
+        // let brandTextY = slothBaseY + bounceAmplitude + pS * 10;
+        // drawPixelText(brandMessage, width / 2, brandTextY, brandTextPixelSize, textCharWidth, textCharHeight, brandCharSpacing, letterColors, letterScales, false);
+
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+  // END - UPDATE BRAND TEXT
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+
 
         // === Text Block (Previously Bubble Text) ===
 
@@ -642,23 +727,83 @@ let adjustedHeadTopY = slothHeadTopEdgeY - verticalShift - breakpointShiftAmount
         let legY = p * 8.5; let legW = p * 4; let legH = p * 5; let legOffsetX = p * 2.5; fill(furColor); rect(-legOffsetX, legY, legW, legH); fill(shadeColor); rect(-legOffsetX + p*1.5, legY, p, legH); fill(blackColor); rect(-legOffsetX - p * 1, legY + p * 2, p*3, p); rect(-legOffsetX - p * 1, legY + p * 2.5, p, p*2); rect(-legOffsetX + p * 0, legY + p * 2.5, p, p*2); rect(-legOffsetX + p * 1, legY + p * 2.5, p, p*2); fill(furColor); rect(legOffsetX, legY, legW, legH); fill(shadeColor); rect(legOffsetX - p*1.5, legY, p, legH); fill(blackColor); rect(legOffsetX + p * 1, legY + p * 2, p*3, p); rect(legOffsetX + p * 1, legY + p * 2.5, p, p*2); rect(legOffsetX + p * 0, legY + p * 2.5, p, p*2); rect(legOffsetX - p * 1, legY + p * 2.5, p, p*2);
         rectMode(CENTER);
     }
-    function drawPixelText(message, startX, startY, p, charW, charH, spacingP, colors, scales, alignLeft = false) { /* ... unchanged ... */
-        // Note: p here is the *base* pixel size. Visual scale is handled by transform.
-        let currentX = startX; let currentY = startY; let lines = message.split('\n'); let charIndex = 0;
-        push(); noStroke(); rectMode(CORNER);
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // DRAW PIXEL TEXT
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // MODIFIED - MAY 1, 2025
+    function drawPixelText(message, startX, startY, p, charW, charH, spacingP, colors, scales, alignLeft = false) {
+        let currentX = startX; 
+        let currentY = startY; 
+        let lines = message.split('\n'); 
+        let charIndex = 0;
+        
+        push(); 
+        noStroke(); 
+        rectMode(CORNER);
+        
         for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-            let line = lines[lineIndex]; let lineRenderWidthPixels = line.length * charW + (line.length > 0 ? line.length - 1 : 0) * spacingP; let lineRenderWidth = lineRenderWidthPixels * p;
-            currentX = alignLeft ? startX : startX - lineRenderWidth / 2; // Use startX directly if alignLeft is true
+            let line = lines[lineIndex]; 
+            let lineRenderWidthPixels = line.length * charW + (line.length > 0 ? line.length - 1 : 0) * spacingP; 
+            let lineRenderWidth = lineRenderWidthPixels * p;
+            
+            currentX = alignLeft ? startX : startX - lineRenderWidth / 2;
             currentY = startY + lineIndex * (charH + textLineSpacing) * p;
+            
             for (let i = 0; i < line.length; i++) {
-                let char = line[i].toUpperCase(); let charColor = (colors && charIndex < colors.length) ? colors[charIndex] : blackColor; let charScale = (scales && charIndex < scales.length) ? scales[charIndex] : 1.0; if (!charColor) charColor = blackColor;
-                let charCenterX = charW * p / 2; let charCenterY = charH * p / 2;
-                // Don't scale individual letters here if overall block is scaled
-                push(); translate(currentX, currentY); /*translate(charCenterX, charCenterY); scale(charScale); translate(-charCenterX, -charCenterY);*/ fill(charColor); drawPixelChar(char, p, charW, charH); pop();
-                currentX += (charW + spacingP) * p; charIndex++;
+                let char = line[i].toUpperCase(); 
+                let charColor = (colors && charIndex < colors.length) ? colors[charIndex] : blackColor; 
+                let charScale = (scales && charIndex < scales.length) ? scales[charIndex] : 1.0; 
+                if (!charColor) charColor = blackColor;
+                
+                let charCenterX = currentX + (charW * p) / 2;
+                let charCenterY = currentY + (charH * p) / 2;
+                
+                // Apply scale transformation for each character
+                push();
+                translate(charCenterX, charCenterY);
+                scale(charScale);
+                translate(-charCenterX, -charCenterY);
+                
+                fill(charColor); 
+                drawPixelChar(char, p, charW, charH);
+                pop();
+                
+                currentX += (charW + spacingP) * p; 
+                charIndex++;
             }
-        } pop(); rectMode(CENTER); // Restore default rectMode after drawing text
+        } 
+        
+        pop(); 
+        rectMode(CENTER);
     }
+
+
+    // function drawPixelText(message, startX, startY, p, charW, charH, spacingP, colors, scales, alignLeft = false) { /* ... unchanged ... */
+    //     // Note: p here is the *base* pixel size. Visual scale is handled by transform.
+    //     let currentX = startX; let currentY = startY; let lines = message.split('\n'); let charIndex = 0;
+    //     push(); noStroke(); rectMode(CORNER);
+    //     for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+    //         let line = lines[lineIndex]; let lineRenderWidthPixels = line.length * charW + (line.length > 0 ? line.length - 1 : 0) * spacingP; let lineRenderWidth = lineRenderWidthPixels * p;
+    //         currentX = alignLeft ? startX : startX - lineRenderWidth / 2; // Use startX directly if alignLeft is true
+    //         currentY = startY + lineIndex * (charH + textLineSpacing) * p;
+    //         for (let i = 0; i < line.length; i++) {
+    //             let char = line[i].toUpperCase(); let charColor = (colors && charIndex < colors.length) ? colors[charIndex] : blackColor; let charScale = (scales && charIndex < scales.length) ? scales[charIndex] : 1.0; if (!charColor) charColor = blackColor;
+    //             let charCenterX = charW * p / 2; let charCenterY = charH * p / 2;
+    //             // Don't scale individual letters here if overall block is scaled
+    //             push(); translate(currentX, currentY); /*translate(charCenterX, charCenterY); scale(charScale); translate(-charCenterX, -charCenterY);*/ fill(charColor); drawPixelChar(char, p, charW, charH); pop();
+    //             currentX += (charW + spacingP) * p; charIndex++;
+    //         }
+    //     } pop(); rectMode(CENTER); // Restore default rectMode after drawing text
+    // }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // END - DRAW PIXEL TEXT
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
     function drawPixelChar(char, p, cW, cH) { /* ... unchanged character map ... */
         const px = (x, y) => rect(x * p, y * p, p, p);
             switch (char) {
