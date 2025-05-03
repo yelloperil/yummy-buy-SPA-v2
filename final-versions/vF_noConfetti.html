@@ -1,5 +1,7 @@
 <!-- // ─────────────────────────────────────────────────────── -->
 
+<!-- LAST CHANGE - MAY 1, 2025 -->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,16 +17,6 @@
 <body>
 
   <script>
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////////////////////
-// SECTION DIVIDER - VARIABLES @@@@@
-//////////////////////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////////////////////
-
 
     let currentUser = { userPhone: 'Guest User' };
 
@@ -136,156 +128,33 @@ const baseBrandSizeRelBelow = 1 / 70;  // Example: Make slightly larger below br
         pT = bubbleTextPixelSize; // pT is the base pixel size for text/tail drawing
     }
 
-
-// --- Confetti Variables ---
-let confettiParticles = [];
-let confettiActive = false;
-let navigationTimer = null; // To hold the setTimeout ID
-const confettiCount = 150; // Number of confetti pieces
-const navigationDelay = 3000; // ms
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-// SECTION DIVIDER - CLASSES & FUNCTIONS @@@@@
-//////////////////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-
-
-////////////////////////////////////////////////////////////////////////////
-// CLASSES @@@
-////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////
-// FEATURE - CONFETTI
-
-// --- Particle Class ---
-class Particle {
-  constructor(x, y) {
-    this.pos = createVector(x, y);
-    this.vel = p5.Vector.random2D().mult(random(1.5, 5));
-    this.acc = createVector(0, 0.08);
-    this.colorHue = random(360);
-    this.colorSat = 90;
-    this.colorBri = 90;
-    this.lifespan = random(120, 200);
-    this.age = 0;
-    this.initialSize = random(3, 8);
-    this.angle = random(TWO_PI);
-    this.rotSpeed = random(-0.08, 0.08);
-  }
-
-  update() {
-    this.vel.add(this.acc);
-    this.vel.mult(0.98);
-    this.pos.add(this.vel);
-    this.angle += this.rotSpeed;
-    this.age++;
-  }
-
-  display() {
-    let alpha = map(this.age, 0, this.lifespan, 1, 0);
-    alpha = constrain(alpha, 0, 1);
-
-    push();
-    translate(this.pos.x, this.pos.y);
-    rotate(this.angle);
-    noStroke();
-    fill(this.colorHue, this.colorSat, this.colorBri, alpha);
-    rectMode(CENTER);
-    rect(0, 0, this.initialSize * alpha, this.initialSize * alpha * 1.5);
-    pop();
-  }
-
-  isDead() {
-    return this.age >= this.lifespan;
-  }
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-// FUNCTIONS @@@
-//////////////////////////////////////////////////////////////////////////////////////
-
-
-    // MODIFIED for Confetti, HSB color mode (May 2, 2025)
     function setup() {
-        createCanvas(windowWidth, windowHeight);
-        colorMode(HSB, 360, 100, 100, 1); // Set HSB color mode
-        textFont('sans-serif');
-        rectMode(CENTER);
-        noStroke();
+      createCanvas(windowWidth, windowHeight);
+      colorMode(RGB);
+      textFont('sans-serif');
+      rectMode(CENTER); // Default, but drawPixelText uses CORNER
+      noStroke();
 
-        try {
-            furColor = color(furColorHex);
-            shadeColor = color(shadeColorHex);
-            faceColor = color(faceColorHex);
-            patchColor = color(patchColorHex);
-            blackColor = color(blackHex);
-            whiteColor = color(whiteHex);
-            brandColor = color(brandColorHex);
-            bgColor = color(bgColorHex);
-            bubbleBorderColor = color(bubbleBorderColorHex);
-            bubbleFillColor = color(bubbleFillColorHex);
-            bubbleTextColor = color(bubbleTextColorHex);
-        } catch (e) {
-            console.error("Error initializing colors:", e);
-            furColor = color(30, 70, 54);
-            shadeColor = color(29, 67, 40);
-            faceColor = color(60, 10, 96);
-            patchColor = color(0, 0, 25);
-            blackColor = color(0, 0, 0);
-            whiteColor = color(0, 0, 100);
-            brandColor = color(258, 44, 98);
-            bgColor = color(241, 59, 87);
-            bubbleBorderColor = color(257, 43, 85);
-            bubbleFillColor = color(250, 18, 100);
-            bubbleTextColor = color(258, 44, 98);
-        }
+      try { // Color initialization
+          furColor = color(furColorHex); shadeColor = color(shadeColorHex); faceColor = color(faceColorHex);
+          patchColor = color(patchColorHex); blackColor = color(blackHex); whiteColor = color(whiteHex);
+          brandColor = color(brandColorHex); bgColor = color(bgColorHex);
+          bubbleBorderColor = color(bubbleBorderColorHex); bubbleFillColor = color(bubbleFillColorHex); bubbleTextColor = color(bubbleTextColorHex);
+      } catch (e) { /* Fallbacks */
+          console.error("Error initializing colors:", e);
+          furColor = color(139, 69, 19); shadeColor = color(101, 67, 33); faceColor = color(245, 245, 220);
+          patchColor = color(64, 64, 64); blackColor = color(0); whiteColor = color(255);
+          brandColor = color(167, 139, 250); bgColor = color(93, 92, 222);
+          bubbleBorderColor = color(145, 120, 217); bubbleFillColor = color(209, 198, 255); bubbleTextColor = color(167, 139, 250);
+       }
 
-        calculatePixelSizes();
-        slothCurrentX = width / 2;
-        slothTargetX = width / 2;
-        calculateLayoutParameters();
-        targetLetterIndex = findLetterIndex(slothTargetX);
-        lastMoveTime = millis();
+      calculatePixelSizes();
+      slothCurrentX = width / 2;
+      slothTargetX = width / 2;
+      calculateLayoutParameters();
+      targetLetterIndex = findLetterIndex(slothTargetX);
+      lastMoveTime = millis();
     }
-
-
-    // ORIGINAL -- RGB Color Mode
-    // function setup() {
-    //   createCanvas(windowWidth, windowHeight);
-    //   colorMode(RGB);
-    //   textFont('sans-serif');
-    //   rectMode(CENTER); // Default, but drawPixelText uses CORNER
-    //   noStroke();
-
-    //   try { // Color initialization
-    //       furColor = color(furColorHex);  shadeColor = color(shadeColorHex);  faceColor = color(faceColorHex); 
-    //       patchColor = color(patchColorHex);  blackColor = color(blackHex);  whiteColor = color(whiteHex); 
-    //       brandColor = color(brandColorHex);  bgColor = color(bgColorHex); 
-    //       bubbleBorderColor = color(bubbleBorderColorHex);  bubbleFillColor = color(bubbleFillColorHex);  bubbleTextColor = color(bubbleTextColorHex); 
-    //   } catch (e) { /* Fallbacks */
-    //       console.error("Error initializing colors:", e); 
-    //       furColor = color(139, 69, 19);  shadeColor = color(101, 67, 33);  faceColor = color(245, 245, 220); 
-    //       patchColor = color(64, 64, 64);  blackColor = color(0);  whiteColor = color(255); 
-    //       brandColor = color(167, 139, 250);  bgColor = color(93, 92, 222); 
-    //       bubbleBorderColor = color(145, 120, 217);  bubbleFillColor = color(209, 198, 255);  bubbleTextColor = color(167, 139, 250); 
-    //    }
-
-    //   calculatePixelSizes();
-    //   slothCurrentX = width / 2;
-    //   slothTargetX = width / 2;
-    //   calculateLayoutParameters();
-    //   targetLetterIndex = findLetterIndex(slothTargetX);
-    //   lastMoveTime = millis();
-    // }
 
     function calculateLayoutParameters() { // Calculates brand text layout
         if (!brandColor || !whiteColor || !brandTextPixelSize) { return; }
@@ -309,21 +178,9 @@ class Particle {
         return constrain(index, 0, brandMessage.length - 1);
      }
 
-
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////
-
+// Start of draw()
 /////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-// Start of draw() @@@@@
-/////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
 
     function draw() {
         if (!bgColor || !brandColor || !pS || !pT) return;
@@ -387,6 +244,67 @@ class Particle {
         
 
 // NEW TIME TEXT /////////////////////////////////////////////////////////////////
+
+// 1. USING 24 HOUR TIME - Build and update the message
+// function updateMessage() {
+    //   const now = new Date();
+    //   // format "Thursday, May 2"
+    //   const dateOpts = { weekday: 'long', month: 'long', day: 'numeric' };
+    //   // get locale date and uppercase, drop the year
+//   const dateStr = now
+//   .toLocaleDateString('en-US', dateOpts)               // Thursday, May 2 :contentReference[oaicite:0]{index=0}
+//   .toUpperCase()
+//   .replace(/, \d{4}/, '');                             
+//   // zero‑pad HH, MM, SS
+//   const timeStr = [now.getHours(), now.getMinutes(), now.getSeconds()]
+//   .map(n => String(n).padStart(2, '0'))                 // padStart(2,'0') :contentReference[oaicite:1]{index=1}
+//   .join(':');
+//   // final
+//   const dynamicTime = `${dateStr} @${timeStr}`;
+//   message = `MIRANDA's MARKET!\n${dateStr}\n@${timeStr}`;
+// //   message = `HELLO, ${currentUser.userPhone}!\n${dynamicTime}`;
+//   console.log(message);
+// }
+
+// let message
+
+// // USING 12 HOUR TIME with AM/PM
+// function updateMessage() {
+//   const now = new Date();
+
+//   // Format "Thursday, May 2"
+//   const dateOpts = { weekday: 'long', month: 'long', day: 'numeric' };
+//   const dateStr = now
+//     .toLocaleDateString('en-US', dateOpts)
+//     .toUpperCase()
+//     .replace(/, \d{4}/, '');
+
+//   // Extract hours, minutes, seconds
+//   let hours = now.getHours();
+//   const minutes = now.getMinutes();
+//   const seconds = now.getSeconds();
+
+//   // Determine AM/PM
+//   const ampm = hours >= 12 ? 'PM' : 'AM';
+
+//   // Convert to 12-hour format
+//   hours = hours % 12;
+//   if (hours === 0) hours = 12;
+
+//   // Zero‑pad
+//   const timeStr = [hours, minutes, seconds]
+//     .map(n => String(n).padStart(2, '0'))
+//     .join(':');
+
+//   // Final formatted string
+//   const dynamicTime = `${dateStr} @${timeStr} ${ampm}`;
+// //   message = `Welcome To:\nThe MIRANDA MARKET\n────────────────────\n${dateStr}\n${timeStr} ${ampm}`;
+//   message = `Welcome To:\n------------------\nThe MIRANDA MARKET\n------------------\n${dateStr}\n${timeStr} ${ampm}`;
+// //   message = `HELLO, ${currentUser.userPhone}!\n${dynamicTime}`;
+//   console.log(message);
+   
+// }
+
 
 let message
 
@@ -579,12 +497,6 @@ let adjustedHeadTopY = slothHeadTopEdgeY - verticalShift - breakpointShiftAmount
         pop(); // Restore previous drawing state
 
 
-        // === End Text Block ===
-        
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // HOVER OVER - CURSOR Effect - April 30, 2025
-
     // --- CHANGE: Add Hover Effect ---
     if (isMouseOverSloth(mouseX, mouseY)) {
         cursor('pointer'); // Change cursor to pointer finger
@@ -594,41 +506,14 @@ let adjustedHeadTopY = slothHeadTopEdgeY - verticalShift - breakpointShiftAmount
     // --- END CHANGE ---
 
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // RESTORE DEFAULT DRAWING STATE
-
+        // === End Text Block ===
 
         rectMode(CENTER); // Ensure default rectMode is restored
         noStroke();
         
-
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // CONFETTI - Adding Confetti Logic - May 2, 2025
-
-    if (confettiActive) {
-      for (let i = confettiParticles.length - 1; i >= 0; i--) {
-        let p = confettiParticles[i];
-        p.update();
-        p.display();
-        if (p.isDead()) {
-          confettiParticles.splice(i, 1);
-        }
-      }
-    }
-
 /////////////////////////////////////////////////////////////////////////////////////////////////
-
+} // End of draw()
 /////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-} // End of draw() @@@@@
-/////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
 
     // --- Drawing Functions ---
     function drawPixelSloth(p) { /* ... unchanged ... */
@@ -756,39 +641,12 @@ function isMouseOverSloth(checkX, checkY) {
 }
 
 // --- Click/Tap Interaction ---
-
-// MODIFIED for Confetti logic
 function handleInteraction(px, py) {
-  if (!confettiActive && isMouseOverSloth(px, py)) {
-    console.log("Sloth clicked!");
-    confettiActive = true;
-
-    if (navigationTimer) clearTimeout(navigationTimer);
-
-    confettiParticles = [];
-    for (let i = 0; i < confettiCount; i++) {
-      confettiParticles.push(new Particle(px, py));
+    if (isMouseOverSloth(px, py)) { // Use the helper function
+        console.log("Sloth clicked!");
+        window.location.href = '/products.html'; // Navigate
     }
-
-    navigationTimer = setTimeout(() => {
-      window.location.href = '/products.html';
-      confettiActive = false;
-      confettiParticles = [];
-    }, navigationDelay);
-  }
-}
-
-
-// ORIGINAL logic as of May 1, 2025
-// function handleInteraction(px, py) {
-//     if (isMouseOverSloth(px, py)) { // Use the helper function
-//         console.log("Sloth clicked!");
-//         window.location.href = '/products.html'; // Navigate
-//     }
-//  }
-
-
-
+ }
 // mousePressed and touchStarted remain the same, calling handleInteraction
 function mousePressed() { handleInteraction(mouseX, mouseY); return false; }
 function touchStarted() { if (touches.length > 0) { handleInteraction(touches[0].x, touches[0].y); } return false; }

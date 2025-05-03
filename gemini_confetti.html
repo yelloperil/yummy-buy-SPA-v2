@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>p5.js template</title>
+  <script src="https://cdn.jsdelivr.net/npm/p5@0.10.2/lib/p5.min.js"></script>
+  <style>
+    html, body { margin: 0; padding: 0; overflow: hidden; height: 100%; width: 100%; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+
+  <script>
+
+    let currentUser = { userPhone: 'Guest User' };
+
+    // Colors (Hex - keep for non-confetti elements if needed)
+    const furColorHex = '#8B4513', shadeColorHex = '#654321', faceColorHex = '#F5F5DC';
+    const patchColorHex = '#404040', blackHex = '#000000', whiteHex = '#FFFFFF';
+    const brandColorHex = '#A78BFA', bgColorHex = '#5D5CDE';
+    const bubbleBorderColorHex = '#9178d9', bubbleFillColorHex = '#d1c6ff', bubbleTextColorHex = '#a78bfa';
+
+    // p5.Color objects
+    let furColor, shadeColor, faceColor, patchColor, blackColor, whiteColor, brandColor, bgColor;
+    let bubbleBorderColor, bubbleFillColor, bubbleTextColor; // Still used for tail/text
+
+    // Base Sizes and Constraints
+    const baseSlothSizeRel = 1 / 75;
+    const baseBubbleSizeRel = 1 / 220;
+    const baseBrandSizeRelAbove = 1 / 100;
+    const baseBrandSizeRelBelow = 1 / 70;
+    const minPixelSize = 1;
+    const breakpointWidth = 768;
+
+    // Dynamic Pixel Sizes
+    let slothPixelSize, bubbleTextPixelSize, brandTextPixelSize;
+    let pS, pT;
+
+    // Layout Parameters
+    const textCharWidth = 5, textCharHeight = 7;
+    const bubbleCharSpacing = 1, brandCharSpacing = 2;
+    const textLineSpacing = 2;
+    const bubbleVerticalPadding = 6;
+
+    // Animation State
+    let slothCurrentX, slothCurrentY, slothTargetX;
+    let slothDirection = 1, lastMoveTime = 0;
+    const moveInterval = 1000, pauseDuration = 500;
+    let canTriggerMove = true, pauseStartTime = 0;
+
+    // Brand Text Layout
+    let brandTextWidth = 0, brandTextMinX = 0, brandTextMaxX = 0, stepWidth = 0;
+    let targetLetterIndex = 0;
+    const brandMessage = "YUMMY BUY";
+    let letterScales = [], letterColors = [];
+    const highlightScaleTarget = 1.05, defaultScaleTarget = 1.0, lerpSpeed = 0.15;
+
+    // --- CHANGE: Confetti Variables ---
+    let confettiParticles = [];
+    let confettiActive = false;
+    let navigationTimer = null; // To hold the setTimeout ID
+    const confettiCount = 150; // Number of confetti pieces
+    const navigationDelay = 3000; // ms
+    // --- END CHANGE ---
+
+    // --- Particle Class ---
+    class Particle {
+      constructor(x, y) {
+        this.pos = createVector(x, y);
+        // Random outward velocity
+        this.vel = p5.Vector.random2D().mult(random(1.5, 5)); // Slower initial burst
+        // Simple gravity effect + slight upward drag initially
+        this.acc = createVector(0, 0.08);
+        // Rainbow color using HSB mode (Hue, Saturation, Brightness, Alpha)
+        this.colorHue = random(360);
+        this.colorSat = 90;
+        this.colorBri = 90;
+        // Lifespan in frames (adjust for desired fade duration)
+        // 180 frames = 3 seconds at 60fps
+        this.lifespan = random(120, 200);
+        this.age = 0;
+        this.initialSize = random(3, 8); // Base size of particle
+        this.angle = random(TWO_PI);
+        this.rotSpeed = random(-0.08, 0.08); // How fast it spins
+      }
+
+      update() {
+        this.vel.add(this.acc);
+        // Add some air resistance/damping
+        this.vel.mult(0.98);
+        this.pos.add(this.vel);
+        this.angle += this.rotSpeed;
+        this.age++;
+      }
+
+      display() {
+        // Calculate alpha based on age/lifespan for fade out
+        let alpha = map(this.age, 0, this.lifespan, 1, 0); // Map alpha from 1 (opaque) to 0 (transparent)
+        alpha = constrain(alpha, 0, 1); // Ensure alpha stays within 0-1
+
+        push(); // Isolate drawing state
+        translate(this.pos.x, this.pos.y);
+        rotate(this.angle);
+        noStroke();
+        // Use the stored HSB values and calculated alpha
+        fill(this.colorHue, this.colorSat, this.colorBri, alpha);
+        // Draw particle shape (rectangle looks like confetti)
+        // Use rectMode(CENTER) for rotation around the middle
+        rectMode(CENTER);
+        rect(0, 0, this.initialSize * alpha, this.initialSize * alpha * 1.5); // Size decreases slightly as it fades
+        pop(); // Restore drawing state
+      }
+
+      isDead() {
+        return this.age >= this.lifespan;
+      }
+    }
+    // --- End Particle Class ---
+
+
+    // --- Helper function for text block scaling ---
+    function getBubbleScaleFactor() {
+        return (width > breakpointWidth) ? 1.25 : 1.5; // Restored 1.25 factor
+    }
+
+    // calculatePixelSizes function (includes height constraint)
+    function calculatePixelSizes() {
+        let prelim_pS = max(minPixelSize, floor(width * baseSlothSizeRel));
+        let prelim_pT = max(minPixelSize, floor(width * baseBubbleSizeRel));
+        let currentBaseBrandSizeRel = (width > breakpointWidth) ? baseBrandSizeRelAbove : baseBrandSizeRelBelow;
+        let prelim_brandP = max(minPixelSize, floor(width * currentBaseBrandSizeRel));
+
+        let estBubbleScaleFactor = getBubbleScaleFactor();
+        let est_bubbleTextH_pixels = 2 * textCharHeight + (2 - 1) * textLineSpacing;
+        let est_bubbleBodyH_pixels = est_bubbleTextH_pixels + bubbleVerticalPadding * 2;
+        let est_visualTextBlockHeight = est_bubbleBodyH_pixels * prelim_pT * estBubbleScaleFactor;
+
+        let est_bounce = prelim_pS * 0.8;
+        let est_slothBaseY = height * 0.55;
+        let est_slothHeadCenterY = est_slothBaseY - prelim_pS * 5;
+        let est_slothHeadTopY = est_slothHeadCenterY - (prelim_pS * 7 / 2);
+        let est_bubbleBottomMargin = prelim_pS * 2;
+        let est_verticalShift = (prelim_pS * 7) / 3;
+        let est_adjustedHeadTopY = est_slothHeadTopY - est_verticalShift;
+        let est_textBlockTopY = est_adjustedHeadTopY - est_bounce - est_bubbleBottomMargin - est_visualTextBlockHeight;
+
+        let est_brandTextY = est_slothBaseY + est_bounce + prelim_pS * 10;
+        let est_brandTextBottomY = est_brandTextY + (textCharHeight * prelim_brandP);
+        let estimatedDrawingHeight = est_brandTextBottomY - est_textBlockTopY;
+
+        let targetMaxHeight = (width > breakpointWidth) ? height * 0.50 : height * 0.333;
+        let heightScaleFactor = 1.0;
+        if (estimatedDrawingHeight > targetMaxHeight && estimatedDrawingHeight > 0) {
+            heightScaleFactor = targetMaxHeight / estimatedDrawingHeight;
+        }
+
+        slothPixelSize = max(minPixelSize, floor(prelim_pS * heightScaleFactor));
+        bubbleTextPixelSize = max(minPixelSize, floor(prelim_pT * heightScaleFactor));
+        brandTextPixelSize = max(minPixelSize, floor(prelim_brandP * heightScaleFactor));
+
+        pS = slothPixelSize;
+        pT = bubbleTextPixelSize;
+    }
+
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      // --- CHANGE: Set HSB color mode globally for easier confetti colors ---
+      // Hue range 0-360, Saturation 0-100, Brightness 0-100, Alpha 0-1
+      colorMode(HSB, 360, 100, 100, 1);
+      textFont('sans-serif');
+      // Default rectMode is CENTER, drawPixelText uses CORNER
+      rectMode(CENTER);
+      noStroke();
+
+      try { // Color initialization - use color() which respects current colorMode
+          // Convert hex to p5.Color objects (will store RGB components internally)
+          furColor = color(furColorHex); shadeColor = color(shadeColorHex); faceColor = color(faceColorHex);
+          patchColor = color(patchColorHex); blackColor = color(blackHex); whiteColor = color(whiteHex);
+          brandColor = color(brandColorHex); bgColor = color(bgColorHex);
+          bubbleBorderColor = color(bubbleBorderColorHex); bubbleFillColor = color(bubbleFillColorHex); bubbleTextColor = color(bubbleTextColorHex);
+      } catch (e) { /* Fallbacks */
+          console.error("Error initializing colors:", e);
+          // Fallbacks using HSB values might be more consistent if mode fails, but RGB ok too
+          furColor = color(30, 70, 54); /*RGB:139,69,19*/ shadeColor = color(29, 67, 40); /*RGB:101,67,33*/
+          faceColor = color(60, 10, 96); /*RGB:245,245,220*/ patchColor = color(0, 0, 25); /*RGB:64,64,64*/
+          blackColor = color(0, 0, 0); whiteColor = color(0, 0, 100);
+          brandColor = color(258, 44, 98); /*RGB:167,139,250*/ bgColor = color(241, 59, 87); /*RGB:93,92,222*/
+          bubbleBorderColor = color(257, 43, 85); /*RGB:145,120,217*/ bubbleFillColor = color(250, 18, 100); /*RGB:209,198,255*/ bubbleTextColor = color(258, 44, 98);/*RGB:167,139,250*/
+       }
+
+      calculatePixelSizes();
+      slothCurrentX = width / 2;
+      slothTargetX = width / 2;
+      calculateLayoutParameters();
+      targetLetterIndex = findLetterIndex(slothTargetX);
+      lastMoveTime = millis();
+    }
+
+    function calculateLayoutParameters() { // Calculates brand text layout
+        if (!brandColor || !whiteColor || !brandTextPixelSize) { return; }
+        let numChars = brandMessage.length;
+        letterScales = []; letterColors = [];
+        let totalWidthPixels = numChars * textCharWidth + (numChars - 1) * brandCharSpacing;
+        brandTextWidth = totalWidthPixels * brandTextPixelSize;
+        brandTextMinX = width / 2 - brandTextWidth / 2;
+        brandTextMaxX = width / 2 + brandTextWidth / 2;
+        stepWidth = (textCharWidth + brandCharSpacing) * brandTextPixelSize;
+
+        for (let i = 0; i < numChars; i++) { letterScales.push(defaultScaleTarget); letterColors.push(brandColor); }
+        slothTargetX = constrain(slothTargetX !== undefined ? slothTargetX : width/2, brandTextMinX, brandTextMaxX);
+        targetLetterIndex = stepWidth > 0 ? findLetterIndex(slothTargetX) : 0;
+    }
+
+    function findLetterIndex(xPos) { /* ... unchanged ... */
+        if (stepWidth <= 0) return 0;
+        let relativePos = xPos - brandTextMinX;
+        let index = round(relativePos / stepWidth);
+        return constrain(index, 0, brandMessage.length - 1);
+     }
+
+    // Message update function (unchanged)
+    let message
+    function updateMessage() { /* ... unchanged ... */
+        const now = new Date();
+        const dateOpts = { weekday: 'long', month: 'long', day: 'numeric' };
+        const dateStr = now.toLocaleDateString('en-US', dateOpts).toUpperCase().replace(',', '');
+        let hours = now.getHours(); const minutes = now.getMinutes(); const seconds = now.getSeconds();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12; if (hours === 0) hours = 12;
+        const timeStr = `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        message = `Welcome To:\n------------------\nThe MIRANDA MARKET\n------------------\n${dateStr}\n${timeStr} ${ampm}`;
+    }
+    updateMessage();
+    setInterval(updateMessage, 1000);
+
+    function draw() {
+        // Check essential variables
+        if (!bgColor || !brandColor || !pS || !pT || !message) return; // Added check for message
+
+        // Set background using p5.Color object (works fine with HSB mode set)
+        background(bgColor);
+        let now = millis();
+
+        // --- Animation Timing & State --- (unchanged)
+        if (!canTriggerMove && now - pauseStartTime >= pauseDuration) canTriggerMove = true;
+        if (canTriggerMove && now - lastMoveTime >= moveInterval) {
+            lastMoveTime = now; let nextTargetX = slothTargetX + slothDirection * stepWidth;
+            if (stepWidth > 0) {
+                 if (slothDirection === 1 && targetLetterIndex >= brandMessage.length - 1) { slothDirection = -1; nextTargetX = slothTargetX + slothDirection * stepWidth; }
+                 else if (slothDirection === -1 && targetLetterIndex <= 0) { slothDirection = 1; nextTargetX = slothTargetX + slothDirection * stepWidth; }
+                 slothTargetX = constrain(nextTargetX, brandTextMinX, brandTextMaxX);
+                 targetLetterIndex = findLetterIndex(slothTargetX);
+             }
+             canTriggerMove = false; pauseStartTime = now;
+        }
+
+        // --- Sloth Movement & Positioning --- (unchanged)
+        slothCurrentX = lerp(slothCurrentX, slothTargetX, 0.1);
+        let bounceAmplitude = pS * 0.8; let bounceSpeed = 0.05;
+        let bounceOffset = sin(frameCount * bounceSpeed) * bounceAmplitude;
+        let slothBaseY = height * 0.55; slothCurrentY = slothBaseY + bounceOffset;
+        let slothHeadCenterY = slothCurrentY - pS * 5;
+        let slothHeadTopEdgeY = slothHeadCenterY - (pS * 7 / 2);
+
+        // --- Draw Sloth --- (unchanged)
+        push(); translate(slothCurrentX, slothCurrentY);
+        // Need to ensure sloth colors are applied correctly in current color mode
+        // Temporarily switch to RGB for hex-based colors OR use HSB equivalents
+        push(); // Isolate color mode change if needed, though color() objects handle it
+        colorMode(RGB); // Safest if drawPixelSloth expects RGB via hex
+        drawPixelSloth(pS);
+        pop(); // Restore HSB mode
+        pop(); // Restore position
+
+        // --- Update Brand Text Highlight --- (unchanged)
+        // Ensure lerpColor works correctly between p5.Color objects
+        for (let i = 0; i < brandMessage.length; i++) {
+             if (i >= letterColors.length || i >= letterScales.length) continue;
+             let isTarget = (i === targetLetterIndex);
+             // Target color is white (HSB: 0, 0, 100) or brandColor
+             let targetColor = isTarget ? whiteColor : brandColor;
+             let targetScale = isTarget ? highlightScaleTarget : defaultScaleTarget;
+             letterScales[i] = lerp(letterScales[i], targetScale, lerpSpeed);
+             if(letterColors[i] && targetColor) { // Check both exist
+                  letterColors[i] = lerpColor(letterColors[i], targetColor, lerpSpeed);
+              } else {
+                  letterColors[i] = targetColor;
+              }
+        }
+
+        // --- Draw Brand Text --- (unchanged)
+        let brandTextY = slothBaseY + bounceAmplitude + pS * 10;
+        // DrawPixelText uses fill(), which respects current colorMode (HSB)
+        // Need to make sure letterColors array has valid p5.Color objects
+        drawPixelText(brandMessage, width / 2, brandTextY, brandTextPixelSize, textCharWidth, textCharHeight, brandCharSpacing, letterColors, letterScales, false);
+
+        // === Text Block (Previously Bubble Text) ===
+
+        let finalBubbleScale = getBubbleScaleFactor();
+        let messageLines = message.split('\n');
+        let bubbleContentHeightPixels = messageLines.length * textCharHeight + (messageLines.length - 1) * textLineSpacing;
+        let longestLineWidthPixels = 0;
+        for (let line of messageLines) { let lineWidth = line.length * textCharWidth + (line.length > 0 ? line.length - 1 : 0) * bubbleCharSpacing; longestLineWidthPixels = max(lineWidth, longestLineWidthPixels); }
+        longestLineWidthPixels = max(15, longestLineWidthPixels);
+        let bubbleContentWidthPixels = longestLineWidthPixels;
+
+        let slothHeadHeight = pS * 7; let verticalShift = slothHeadHeight / 3;
+        let breakpointShiftAmount = 0; if (width < breakpointWidth) { breakpointShiftAmount = pS * 3; }
+        let adjustedHeadTopY = slothHeadTopEdgeY - verticalShift - breakpointShiftAmount;
+        let conceptualBubbleBodyHeightPixels = bubbleContentHeightPixels + 2 * bubbleVerticalPadding;
+        let bubbleBottomMargin = pS * 2;
+        let conceptualBubbleBottomY = adjustedHeadTopY - bounceAmplitude - bubbleBottomMargin;
+        let conceptualBubbleTopY = conceptualBubbleBottomY - (conceptualBubbleBodyHeightPixels * pT);
+        let textBlockHeightUnscaled = bubbleContentHeightPixels * pT;
+        let textBlockWidthUnscaled = bubbleContentWidthPixels * pT;
+        let textBlockCenterX = slothCurrentX + pS * 1;
+        let textStartX = textBlockCenterX - (textBlockWidthUnscaled / 2);
+        let conceptualTotalBubbleHeight = conceptualBubbleBodyHeightPixels * pT;
+        let verticalPaddingTotal = conceptualTotalBubbleHeight - textBlockHeightUnscaled;
+        let textStartY = conceptualBubbleTopY + verticalPaddingTotal / 2 ;
+        let textBlockVisualCenterX = textStartX + textBlockWidthUnscaled / 2;
+        let textBlockVisualCenterY = textStartY + textBlockHeightUnscaled / 2;
+
+        // --- Draw SCALED Text Block ---
+        let bubbleDefaultColors = []; let bubbleDefaultScales = [];
+        let drawableCharCount = message.replace(/\n/g, '').length;
+        for(let i = 0; i < drawableCharCount; i++) {
+             // Use the p5.Color object defined for text
+            bubbleDefaultColors.push(bubbleTextColor);
+            bubbleDefaultScales.push(1.0);
+         }
+
+        push(); // Isolate scale transformation
+        translate(textBlockVisualCenterX, textBlockVisualCenterY);
+        scale(finalBubbleScale);
+        translate(-textBlockVisualCenterX, -textBlockVisualCenterY);
+        // Draw text using base pT. Ensure bubbleTextColor is a valid p5.Color
+        drawPixelText(message, textStartX, textStartY, pT, textCharWidth, textCharHeight, bubbleCharSpacing, bubbleDefaultColors, bubbleDefaultScales, true);
+        pop(); // Restore drawing state
+
+        // --- Draw SCALED Tail ---
+        let tail_pT = max(1, floor(pT * 0.5));
+        let tailStartX = textStartX + textBlockWidthUnscaled / 2;
+        let tailStartY = textStartY + textBlockHeightUnscaled; // Tail starts below unscaled text block
+        let tailTargetX = slothCurrentX;
+        let tailTargetY = adjustedHeadTopY + pS * 2;
+
+        push(); // Isolate scale and drawing state for tail
+        translate(tailStartX, tailStartY);
+        scale(finalBubbleScale); // Apply visual scale
+        translate(-tailStartX, -tailStartY);
+        rectMode(CORNER); noStroke(); let steps = 4;
+        // Use p5.Color objects for fill
+        fill(bubbleBorderColor); // Use border color for tail border
+        for (let i = 1; i <= steps; i++) { /* ... tail border drawing loop ... */
+             let intermediateX = lerp(tailStartX, tailTargetX, i / (steps + 1)); let intermediateY = lerp(tailStartY, tailTargetY, i / (steps + 1)); let gridX = floor(intermediateX / tail_pT) * tail_pT; let gridY = floor(intermediateY / tail_pT) * tail_pT; rect(gridX - tail_pT * 1.5, gridY - tail_pT * 1.5, tail_pT * 4, tail_pT * 4);
+        }
+        fill(bubbleFillColor); // Use fill color for tail fill
+        for (let i = 1; i <= steps; i++) { /* ... tail fill drawing loop ... */
+             let intermediateX = lerp(tailStartX, tailTargetX, i / (steps + 1.5)); let intermediateY = lerp(tailStartY, tailTargetY, i / (steps + 1.5)); let gridX = floor(intermediateX / tail_pT) * tail_pT; let gridY = floor(intermediateY / tail_pT) * tail_pT; rect(gridX - tail_pT/2, gridY - tail_pT/2, tail_pT*2, tail_pT*2);
+        }
+        pop(); // Restore drawing state
+
+        // === End Text Block ===
+
+        // --- CHANGE: Update and Display Confetti ---
+        if (confettiActive) {
+            // Loop backwards for safe removal while iterating
+            for (let i = confettiParticles.length - 1; i >= 0; i--) {
+                let p = confettiParticles[i];
+                p.update();
+                // display() handles fill and drawing using HSB mode
+                p.display();
+                if (p.isDead()) {
+                    confettiParticles.splice(i, 1); // Remove dead particle
+                }
+            }
+            // Optional: If all particles fade maybe set confettiActive = false?
+             if (confettiParticles.length === 0) {
+             // This might get reset just before navigation anyway
+              // confettiActive = false;
+             }
+        }
+        // --- END CHANGE ---
+
+        // --- Hover Effect ---
+        // Ensure isMouseOverSloth uses RGB colors correctly if needed,
+        // or that pS/slothCurrentX/Y are calculated before potential color mode switch
+        if (isMouseOverSloth(mouseX, mouseY)) {
+            cursor('pointer');
+        } else {
+            cursor(ARROW);
+        }
+
+        // Restore default drawing modes if they were changed by particles/text
+        rectMode(CENTER);
+        noStroke();
+
+    } // End of draw()
+
+    // --- Drawing Functions ---
+    // Ensure drawPixelSloth uses color objects correctly or manages color mode
+    function drawPixelSloth(p) {
+        // This function uses fill(someColorObject). It should work fine if the
+        // color objects were created correctly, regardless of current colorMode.
+        // If it directly used fill(hexString), it would need colorMode(RGB).
+        rectMode(CENTER); noStroke();
+        fill(furColor); rect(0, p * 2, p * 10, p * 12); fill(faceColor); rect(0, p * 2, p * 6, p * 8); fill(shadeColor); rect(p * 4, p * 2, p * 2, p * 12); rect(-p * 4, p * 2, p * 2, p * 12); rect(0, p * 7, p * 10, p * 2);
+        let headY = -p * 5; fill(furColor); rect(0, headY, p * 9, p * 7); fill(faceColor); rect(0, headY, p * 7, p * 5); fill(patchColor); rect(-p * 2.5, headY, p * 3, p * 4); rect(p * 2.5, headY, p * 3, p * 4); fill(blackColor); rect(-p * 2.5, headY, p, p); rect(p * 2.5, headY, p, p); fill(blackColor); rect(0, headY + p * 2, p * 3, p);
+        let armY = -p * 1; let armW = p * 3; let armH = p * 9; let armOffsetX = p * 6.5; fill(furColor); rect(-armOffsetX, armY, armW, armH); fill(shadeColor); rect(-armOffsetX + p , armY, p, armH); fill(blackColor); let clawBaseYL = armY + armH / 2; rect(-armOffsetX - p * 0.5, clawBaseYL + p * 0.5, p, p*2); rect(-armOffsetX + p * 0.5, clawBaseYL + p * 1.5, p, p*2); rect(-armOffsetX + p * 1.5, clawBaseYL + p * 0.5, p, p*2); fill(furColor); rect(armOffsetX, armY, armW, armH); fill(shadeColor); rect(armOffsetX - p , armY, p, armH); fill(blackColor); let clawBaseYR = armY + armH / 2; rect(armOffsetX + p * 0.5, clawBaseYR + p * 0.5, p, p*2); rect(armOffsetX - p * 0.5, clawBaseYR + p * 1.5, p, p*2); rect(armOffsetX - p * 1.5, clawBaseYR + p * 0.5, p, p*2);
+        let legY = p * 8.5; let legW = p * 4; let legH = p * 5; let legOffsetX = p * 2.5; fill(furColor); rect(-legOffsetX, legY, legW, legH); fill(shadeColor); rect(-legOffsetX + p*1.5, legY, p, legH); fill(blackColor); rect(-legOffsetX - p * 1, legY + p * 2, p*3, p); rect(-legOffsetX - p * 1, legY + p * 2.5, p, p*2); rect(-legOffsetX + p * 0, legY + p * 2.5, p, p*2); rect(-legOffsetX + p * 1, legY + p * 2.5, p, p*2); fill(furColor); rect(legOffsetX, legY, legW, legH); fill(shadeColor); rect(legOffsetX - p*1.5, legY, p, legH); fill(blackColor); rect(legOffsetX + p * 1, legY + p * 2, p*3, p); rect(legOffsetX + p * 1, legY + p * 2.5, p, p*2); rect(legOffsetX + p * 0, legY + p * 2.5, p, p*2); rect(legOffsetX - p * 1, legY + p * 2.5, p, p*2);
+        rectMode(CENTER);
+    }
+    // DrawPixelText expects p5.Color objects in the colors array
+    function drawPixelText(message, startX, startY, p, charW, charH, spacingP, colors, scales, alignLeft = false) {
+        let currentX = startX; let currentY = startY; let lines = message.split('\n'); let charIndex = 0;
+        push(); noStroke(); rectMode(CORNER); // Use CORNER mode for character placement
+        for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+            let line = lines[lineIndex]; let lineRenderWidthPixels = line.length * charW + (line.length > 0 ? line.length - 1 : 0) * spacingP; let lineRenderWidth = lineRenderWidthPixels * p;
+            currentX = alignLeft ? startX : startX - lineRenderWidth / 2;
+            currentY = startY + lineIndex * (charH + textLineSpacing) * p;
+            for (let i = 0; i < line.length; i++) {
+                let char = line[i].toUpperCase();
+                // Ensure color is valid before filling
+                let charColor = (colors && charIndex < colors.length && colors[charIndex]) ? colors[charIndex] : blackColor; // Fallback to blackColor object
+                let charScale = (scales && charIndex < scales.length) ? scales[charIndex] : 1.0;
+                // Ensure scale doesn't affect placement logic here (handled outside if block scaled)
+                // let charCenterX = charW * p / 2; let charCenterY = charH * p / 2;
+                push();
+                translate(currentX, currentY); // Position for top-left of char
+                // Removed individual char scaling block: scale(charScale);
+                fill(charColor); // Use the p5.Color object
+                drawPixelChar(char, p, charW, charH);
+                pop();
+                currentX += (charW + spacingP) * p; charIndex++;
+            }
+        } pop(); // Restore previous drawing state (like rectMode)
+    }
+    function drawPixelChar(char, p, cW, cH) { /* ... unchanged character map ... */
+        // This function uses rect(), which uses CORNER mode from drawPixelText's push/pop
+        const px = (x, y) => rect(x * p, y * p, p, p);
+            switch (char) {
+            case 'A': px(2, 0); for(let i=0; i<3; i++) px(1+i, 1); for(let y=2; y<cH; y++) { px(0, y); px(4, y); } px(1, 3); px(2, 3); px(3, 3); break;
+            case 'B': for(let y=0; y<cH; y++) px(0, y); px(1, 0); px(2, 0); px(3, 0); px(4, 1); px(1, 3); px(2, 3); px(3, 3); px(4, 2); px(4, 4); px(1, cH-1); px(2, cH-1); px(3, cH-1); px(4, cH-2); break;
+            case 'C': for(let y=1; y<cH-1; y++) px(0, y); px(1, 0); px(2, 0); px(3, 0); px(4, 1); px(1, cH-1); px(2, cH-1); px(3, cH-1); px(4, cH-2); break;
+            case 'D': for(let y=0; y<cH; y++) px(0, y); px(1, 0); px(2, 0); px(3, 0); px(4, 1); px(4, cH-2); px(1, cH-1); px(2, cH-1); px(3, cH-1); for(let y=2; y<cH-2; y++) px(4,y); break;
+            case 'E': for(let y=0; y<cH; y++) px(0, y); for(let x=1; x<cW; x++) { px(x, 0); px(x, cH-1); px(x, floor(cH/2));} break;
+            case 'F': for (let y = 0; y < cH; y++) px(0, y); for (let x = 0; x < cW; x++) px(x, 0); for (let x = 0; x < cW; x++) px(x, floor(cH/2)); break;
+            case 'G': for(let y=1; y<cH-1; y++) px(0, y); px(1, 0); px(2, 0); px(3, 0); px(4, 1); px(1, cH-1); px(2, cH-1); px(3, cH-1); px(4, cH-2); for(let x=2; x<cW-1; x++) px(x, floor(cH/2)); px(4, floor(cH/2)); break;
+            case 'H': for(let y=0; y<cH; y++) { px(0, y); px(4, y); } for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); break;
+            case 'I': for(let x=0; x<cW; x++) { px(x, 0); px(x, cH-1); } for(let y=1; y<cH-1; y++) px(2, y); break;
+            case 'J': for (let x = 0; x < cW; x++) px(x, 0); for (let y = 1; y < cH; y++) px(cW - 2, y); for (let x = 0; x < 3; x++) px(x, cH - 1); break;
+            case 'K': for (let y = 0; y < cH; y++) px(0, y); for (let i = 0; i <= floor(cH/2); i++) px(1 + i, floor(cH/2) - i); for (let i = 0; i <= floor(cH/2); i++) px(1 + i, floor(cH/2) + 0 + i); break;
+            case 'L': for(let y=0; y<cH; y++) px(0, y); for(let x=1; x<cW; x++) px(x, cH-1); break;
+            case 'M': for(let y=0; y<cH; y++) { px(0, y); px(4, y); } px(1, 1); px(3, 1); px(2, 2); break;
+            case 'N': for(let y=0; y<cH; y++) { px(0, y); px(4, y); } px(1, 1); px(1, 2); px(2, 3); px(3, 4); px(3, 5); break; // Diagonal approx
+            case 'O': for(let y=1; y<cH-1; y++) { px(0, y); px(4, y); } for(let x=1; x<cW-1; x++) { px(x, 0); px(x, cH-1); } break;
+            case 'P': for(let y=0; y<cH; y++) px(0,y); for(let x=1; x<cW-1; x++) {px(x,0); px(x, floor(cH/2));} px(4,1); px(4,2); break; // Added P
+            case 'Q': for (let y = 1; y < cH - 1; y++) { px(0, y); px(cW - 1, y); } for (let x = 1; x < cW - 1; x++) { px(x, 0); px(x, cH - 2); } px(cW - 2, cH - 1); break;
+            case 'R': for(let y=0; y<cH; y++) px(0, y); px(1, 0); px(2, 0); px(3, 0); px(4, 1); px(1, 3); px(2, 3); px(3, 3); px(4, 2); px(3, 4); px(4, 5); px(4, 6); break; // Added R
+            case 'S': for(let x=1; x<cW-1; x++) { px(x, 0); px(x, cH-1); px(x, floor(cH/2)); } px(0, 1); px(0, 2); px(4, cH-3); px(4, cH-2); px(4, 0); px(0, cH-1); break; // Adjusted S
+            case 'T': for(let x=0; x<cW; x++) px(x, 0); for(let y=1; y<cH; y++) px(2, y); break;
+            case 'U': for(let y=0; y<cH-1; y++) { px(0, y); px(4, y); } for(let x=1; x<cW-1; x++) px(x, cH-1); break;
+            case 'V': for (let y = 0; y < cH - 1; y++) px(y < cW ? y : 0, y); for (let y = 0; y < cH - 1; y++) px(cW - 1 - (y < cW ? y : 0), y); break;
+            case 'W': for(let y=0; y<cH; y++) { px(0, y); px(4, y); } px(1, cH-2); px(2, cH-3); px(3, cH-2); break;
+            case 'X': for (let i = 0; i < min(cW, cH); i++) px(i, i); for (let i = 0; i < min(cW, cH); i++) px(cW - 1 - i, i); break;
+            case 'Y': px(0, 0); px(4, 0); px(1, 1); px(3, 1); px(2, 2); for(let y=3; y<cH; y++) px(2, y); break;
+            case 'Z': for (let x = 0; x < cW; x++) px(x, 0); for (let i = 0; i < cH; i++) px(cW - 1 - i * (cW-1)/(cH-1), i); for (let x = 0; x < cW; x++) px(x, cH - 1); break;
+            case '!': for(let y=0; y<cH-2; y++) px(2,y); px(2, cH-1); break;
+            case '?': for(let x=1; x<cW-1; x++) px(x, 0); px(3, 1); px(2, 2); px(2, floor(cH/2)); px(2, cH - 1); break;
+            case ':': px(2, floor(cH/3)); px(2, floor(2 * cH/3)); break;
+            case '@': for(let y=1; y<cH-1; y++){ px(1, y); px(cW-2, y); } for(let x=2; x<cW-2; x++){ px(x, 0); px(x, cH-2); } px(cW-3, floor(cH/2)); px(floor(cW/2), floor(cH/2)); px(cW-3, floor(cH/2 + 1)); break;
+            case '#': for(let x=0; x<cW; x++){ px(x, floor(cH/3)); px(x, floor(2 * cH/3)); } for(let y=0; y<cH; y+=2){ px(1, y); px(3, y); } break;
+            case '$': for(let y=1; y<cH-1; y++){ if(y < floor(cH/2)) { px(2, y); px(1, 1); px(2, 0); px(3, 1); } else { px(2, y); px(3, cH-2); px(2, cH-1); px(1, cH-2); } } for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); break;
+            case '%': px(0, 0); px(1, 0); px(0, 1); px(2, floor(cH/2)); px(cW-1, cH-1); px(cW-2, cH-1); px(cW-1, cH-2); break;
+            case '&': for(let y=1; y<floor(cH/2); y++){ px(1, y); px(3, y); } for(let x=2; x<4; x++){ px(x, 0); px(x, floor(cH/2) - 1); } px(2, floor(cH/2)); px(3, floor(cH/2) + 1); px(1, cH-1); break;
+            case '+': for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); for(let y=1; y<cH-1; y++) px(2, y); break;
+            case '=': for(let x=1; x<cW-1; x++){ px(x, floor(cH/3)); px(x, floor(2 * cH/3)); } break;
+            case '(': for(let y=1; y<cH-1; y++){ if (y < cH/3) { px(2, y); } else if (y > 2*cH/3) { px(2, y); } else { px(1, y); } } break;
+            case ')': for(let y=1; y<cH-1; y++){ if (y < cH/3) { px(2, y); } else if (y > 2*cH/3) { px(2, y); } else { px(3, y); } } break;
+            case '\'': px(3, 1); break;
+            case ',': px(2, cH-1); px(1, cH-1); px(1, cH-2); break; // Simplified comma
+            case '.': px(2, cH-1); break;
+            case '-': for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); break; // Dash
+            case '/': px(4, 0); px(4, 1); px(3, 2); px(2, 3); px(1, 4); px(0, 5); px(0, 6); break; // Forward slash approx
+            case '0': for(let y=1; y<cH-1; y++) { px(0, y); px(4, y); } for(let x=1; x<cW-1; x++) { px(x, 0); px(x, cH-1); } px(3, 1); px(2,2); px(1,3); px(1,4); break; // 0 with slash
+            case '1': for (let x=1; x<cW-1; x++) px(x,cH-1); for (let y=0; y<cH; y++) px(2,y); px(1,1); break;
+            case '2': for(let x=0; x<cW; x++) px(x, 0); px(4, 1); px(4, 2); for(let x=0; x<cW; x++) px(x, floor(cH/2)); px(0, floor(cH/2)+1); px(0, cH-2); for(let x=0; x<cW; x++) px(x, cH-1); break;
+            case '3': for(let x=0; x<cW-1; x++) { px(x,0); px(x, cH-1); } for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); for(let y=1; y<cH-1; y++) px(4,y); break;
+            case '4': for(let y=0; y<floor(cH/2)+1; y++) px(0,y); for(let y=0; y<cH; y++) px(4,y); for(let x=1; x<cW-1; x++) px(x, floor(cH/2)); break;
+            case '5': for(let x=0; x<cW; x++) px(x,0); px(0,1); px(0,2); px(1,3); px(2,3); px(3,3); px(4,4); px(4,5); px(3,6); px(2,6); px(1,6); break; // Complex 5
+            case '6': for(let x=1; x<cW; x++) px(x,0); for(let y=1; y<cH; y++) px(0,y); for(let y=floor(cH/2)+1; y<cH-1; y++) px(4,y); for(let x=1; x<cW-1; x++) { px(x, floor(cH/2)); px(x, cH-1); } break;
+            case '7': for(let x=0; x<cW; x++) px(x,0); px(4,1); px(4,2); px(3,3); px(2,4); px(2,5); px(2,6); break;
+            case '8': for(let x=1; x<cW-1; x++) { px(x,0); px(x,cH-1); px(x,floor(cH/2)); } for(let y=1; y<cH-1; y++) { px(0,y); px(4,y); } break;
+            case '9': for(let x=0; x<cW-1; x++) px(x,cH-1); for(let y=0; y<cH; y++) px(4,y); for(let y=1; y<floor(cH/2); y++) px(0,y); for(let x=1; x<cW-1; x++) { px(x,0); px(x, floor(cH/2)); } break;
+            case ' ': break; // Space
+            default: px(0, 0); px(cW - 1, 0); px(0, cH - 1); px(cW - 1, cH - 1); break; // Unknown char placeholder
+        }
+    }
+
+    // Responsive Canvas
+    function windowResized() { /* ... unchanged ... */
+      resizeCanvas(windowWidth, windowHeight);
+      calculatePixelSizes();
+      if (brandColor) { calculateLayoutParameters(); }
+      slothCurrentX = width / 2; slothTargetX = width / 2;
+      targetLetterIndex = stepWidth > 0 ? findLetterIndex(slothTargetX) : 0;
+      canTriggerMove = true; lastMoveTime = millis(); pauseStartTime = 0;
+    }
+
+    // --- Helper function to check hover/click bounds ---
+    function isMouseOverSloth(checkX, checkY) { /* ... unchanged ... */
+        if (!pS || slothCurrentX === undefined || slothCurrentY === undefined) { return false; }
+        let slothDrawWidth = 16 * pS; let slothTopOffset = -8.5 * pS; let slothBottomOffset = 11 * pS;
+        let slothLeft = slothCurrentX - slothDrawWidth / 2; let slothRight = slothCurrentX + slothDrawWidth / 2;
+        let slothTop = slothCurrentY + slothTopOffset; let slothBottom = slothCurrentY + slothBottomOffset;
+        return (checkX > slothLeft && checkX < slothRight && checkY > slothTop && checkY < slothBottom);
+    }
+
+    // --- Click/Tap Interaction ---
+    function handleInteraction(px, py) {
+        // --- CHANGE: Check confetti not active *before* sloth bounds ---
+        if (!confettiActive && isMouseOverSloth(px, py)) {
+            console.log("Sloth clicked!");
+            confettiActive = true; // Activate confetti
+
+            // Clear any previous timer if somehow one existed
+            if (navigationTimer) clearTimeout(navigationTimer);
+
+            // Create confetti burst at click location
+            confettiParticles = []; // Clear previous particles just in case
+            for(let i = 0; i < confettiCount; i++) {
+                confettiParticles.push(new Particle(px, py));
+            }
+
+            // Schedule navigation after delay
+            navigationTimer = setTimeout(() => {
+                window.location.href = '/products.html';
+                 // Optional: Reset confetti state after navigation attempt
+                 confettiActive = false;
+                 confettiParticles = []; // Clear particles
+            }, navigationDelay);
+        }
+     }
+    function mousePressed() { handleInteraction(mouseX, mouseY); return false; }
+    function touchStarted() { if (touches.length > 0) { handleInteraction(touches[0].x, touches[0].y); } return false; }
+
+  </script>
+
+</body>
+</html>
