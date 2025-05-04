@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Yummy Buy 😋</title>
+    <link rel="icon" type="image/png" href="assets/icons/favicon-1.png">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -1187,7 +1188,7 @@ async function loadProducts(filter = 'all') {
         
         // handle case if empty
         if (snapshot.empty) {
-            productsList.innerHTML = '<div class="col-span-full text-center py-8">No orders found<img src="assets/images/shake-wallet-penguin-1.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>';
+            productsList.innerHTML = '<div class="col-span-full text-center py-8">No orders found<img src="assets/images/gif-shaking-no-money-penguin.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>';
             return;
         }
         
@@ -1204,7 +1205,7 @@ async function loadProducts(filter = 'all') {
 
         // Render results
         if (products.length === 0) {
-            productsList.innerHTML = `<div class="col-span-full text-center py-8">No ${filter} products found<img src="assets/images/shake-wallet-penguin-1.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>`;
+            productsList.innerHTML = `<div class="col-span-full text-center py-8">No ${filter} products found<img src="assets/images/gif-shaking-no-money-penguin.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>`;
             return;
         }
 
