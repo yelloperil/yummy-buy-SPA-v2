@@ -23,17 +23,17 @@ let bubbleBorderColor, bubbleFillColor, bubbleTextColor;
 
 // Sizing constants
 const baseSlothSizeRel = 1 / 75;
-const baseBubbleSizeRel = 1 / 220; 
+const baseBubbleSizeRel = 1 / 200; 
 const minPixelSize = 1;
 const breakpointWidth = 768;
 const baseBrandSizeRelAbove = 1 / 100; 
-const baseBrandSizeRelBelow = 1 / 70;  
+const baseBrandSizeRelBelow = 1 / 80;  
 
 // Scaling factors
 const bubbleScaleFactorLarge = 1.0;
 const bubbleScaleFactorSmall = 1.0;
-const mobileHeightScaleFactor = 0.333;
-const desktopHeightScaleFactor = 0.50;
+const mobileHeightScaleFactor = 0.3;
+const desktopHeightScaleFactor = 0.4;
 
 // Text parameters
 let slothPixelSize, bubbleTextPixelSize, brandTextPixelSize;
@@ -48,7 +48,7 @@ let slothCurrentX;
 let slothCurrentY; 
 let slothTargetX;
 let slothDirection = 1, lastMoveTime = 0;
-const moveInterval = 1000, pauseDuration = 500;
+const moveInterval = 1000, pauseDuration = 1100;
 let canTriggerMove = true, pauseStartTime = 0;
 
 // Brand text variables
@@ -63,7 +63,7 @@ let confettiParticles = [];
 let confettiActive = false;
 let navigationTimer = null; 
 const confettiCount = 150; 
-const navigationDelay = 1200; 
+const navigationDelay = 1500; 
 
 // Get the bubble scale factor based on viewport width
 function getBubbleScaleFactor() {

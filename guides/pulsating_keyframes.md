@@ -43,7 +43,7 @@ You have a few ways to apply this animation using Tailwind or custom CSS. **Cruc
 
     ```html
           <img
-            src="./images-v2/YummyBuy_Customized_Logo_A_BG-Removed.png"
+            src="./images-v2/mascot-logo-1.png"
             alt="Yummy Buy Mascot"
             class="w-36 h-36 transition-transform duration-300 ease-in-out hover:scale-125 pulsating-glow"
             /> {/* Removed inline style, added pulsating-glow class */}
@@ -76,7 +76,7 @@ You have a few ways to apply this animation using Tailwind or custom CSS. **Cruc
 * Modify your HTML: Remove the inline `style` and add the Tailwind animation utility.
     ```html
           <img
-            src="./images-v2/YummyBuy_Customized_Logo_A_BG-Removed.png"
+            src="./images-v2/mascot-logo-1.png"
             alt="Yummy Buy Mascot"
             class="w-36 h-36 transition-transform duration-300 ease-in-out hover:scale-125 animate-pulse-glow"
             /> {/* Removed inline style, added animate-pulse-glow utility */}
@@ -88,7 +88,7 @@ You have a few ways to apply this animation using Tailwind or custom CSS. **Cruc
 * Modify your HTML: Remove the inline `style` and add the animation using arbitrary value syntax.
     ```html
           <img
-            src="./images-v2/YummyBuy_Customized_Logo_A_BG-Removed.png"
+            src="./images-v2/mascot-logo-1.png"
             alt="Yummy Buy Mascot"
             class="w-36 h-36 transition-transform duration-300 ease-in-out hover:scale-125 animate-[pulse-glow_4s_ease-in-out_infinite]"
             /> {/* Removed inline style, added arbitrary animation class */}
