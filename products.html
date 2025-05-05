@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yummy Buy 😋</title>
-    <link rel="icon" type="image/png" href="/assets/icons/favicon-1.png">
+    <link rel="icon" type="image/png" href="/assets/icons/mascot-head-purple-bg-favicon.io/favicon-16x16.png">
     <!-- Custom CSS -->
      <link rel="stylesheet" href="/styles/products.css">
     <!-- Firebase SDK -->
@@ -28,19 +28,31 @@
 
 </head>
 
-<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
+<body class="bg-[#6A47C4] dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
 
-<!-- START -->
-    <!-- LOADING Modal Elements -->
-    <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center bg-[#6A47C4] z-50 opacity-100 transition-opacity duration-500 pointer-events-auto" aria-label="Loading, please wait">
-      
-        <!-- MOBILE -->
-        <img src="/assets/images/GIF-mobile-loading-2.gif" alt="Loading screen" class="block sm:hidden object-cover w-auto h-full max-h-screen">
-
-        <!-- DESKTOP -->
-        <img src="/assets/images/desktop-loading_3D_pastel.gif" alt="Loading screen" class="hidden sm:block object-cover w-auto h-full">
-
+    <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center bg-[#6A47C4] z-50 opacity-0 transition-opacity duration-500 pointer-events-auto" aria-label="Loading, please wait">
+        <video id="loadingVideoMobile" src="/assets/videos/mobile-loading-mp4-v1.mp4" autoplay loop muted class="block sm:hidden object-cover w-full h-full max-h-screen"></video>
+        <video id="loadingVideoDesktop" src="/assets/videos/desktop-loading-mp4-v1.mp4" autoplay loop muted class="hidden sm:block object-cover w-full h-full max-h-screen"></video>
     </div>
+
+    
+    <!-- START -->
+    
+<!-- v1.0 PROGRESS LOADING BAR Modal Elements -->
+<!-- <body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300"> -->
+
+    <!-- <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center bg-[#6A47C4] z-50 opacity-0 transition-opacity duration-500 pointer-events-auto" aria-label="Loading, please wait">
+        MOBILE
+        <video id="loadingVideo" src="/assets/videos/mobile-loading-mp4-v1.mp4" autoplay loop muted class="block sm:hidden object-cover w-full h-full max-h-screen"></video>
+        DESKTOP
+        <video id="loadingVideo" src="/assets/videos/desktop-loading-mp4-v1.mp4" autoplay loop muted class="hidden sm:block object-cover w-full h-full max-h-screen"></video>
+    </div> -->
+
+    <!-- GIF Version - OLD -->
+    <!-- <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center bg-[#6A47C4] z-50 opacity-100 transition-opacity duration-500 pointer-events-auto" aria-label="Loading, please wait"> -->
+        <!-- <img src="/assets/images/GIF-mobile-loading-2.gif" alt="Loading screen" class="block sm:hidden object-cover w-auto h-full max-h-screen"> -->
+        <!-- <img src="/assets/images/desktop-loading_3D_pastel.gif" alt="Loading screen" class="hidden sm:block object-cover w-auto h-full"> -->
+    <!-- </div>       -->
 
     <!-- LOADING Logic -->
     <!-- <script>
@@ -61,6 +73,7 @@
           setTimeout(hideLoadingScreen, 3000); // Match GIF loop duration
         });
       </script> -->
+
 <!-- END -->
     
     <!-- Gallery Modal for enlarged images -->
@@ -85,10 +98,10 @@
     </div>
 
     <!-- @@@ FADE IN EFFECT -- OUTERMOST PARENT of VISIBLE PAGE CONTENT - 1 LVL BELOW BODY-->
-    <main class="content opacity-0 transition-opacity duration-500 ease-in">
+    <main class="content opacity-0 transition-opacity duration-500 ease-in px-4 py-2 sm:px-[2vw] sm:py-[2vh]">
 
         <!-- OUTER WRAPPER CONTAINER -->
-        <div class="px-4 py-2 sm:py-8">
+        <!-- <div class="px-4 py-2 sm:py-8"> -->
         
             <!-- <HEADER /> -->
             <header class="relative h-full w-auto flex flex-col justify-between sm:flex-row justify-between gap-y-6 my-2 mb-12">
@@ -111,10 +124,24 @@
                     <!-- TITLE TEXT: 呀蜜佰 -->
                     <div class="flex-1 absolute right-0 top-0 lg:-right-3 sm:hover:scale-125 transition-transform duration-300 ease-in-out">
                         <h1 class="min-w-[120px] sm:min-w-0">
-                            <a href="index.html" class="hidden sm:block font-zenMaru text-5xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold text-indigo-100 hover:text-secondary sm:hover:scale-115 transition-colors transition-transform duration-300 ease-in-out hover:scale-110 ml-auto">
+                            <a href="index.html" class="
+                                hidden sm:block 
+                                font-zenMaru 
+                                text-5xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl 
+                                font-bold text-indigo-100 hover:text-secondary 
+                                hover:scale-110 sm:hover:scale-125 
+                                transition-colors transition-transform duration-300 ease-in-out  
+                                ml-auto ">
                                 呀蜜佰 😋
                             </a>
-                            <a href="index.html" class="block sm:hidden text-end leading-tight font-zenMaru text-5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-indigo-100 hover:text-secondary sm:hover:scale-150 transition-colors transition-transform duration-300 ease-in-out hover:scale-110">
+                            <a href="index.html" class="
+                                block sm:hidden 
+                                text-end 
+                                leading-tight font-zenMaru 
+                                text-5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl 
+                                font-bold text-indigo-100 hover:text-secondary 
+                                hover:scale-110 sm:hover:scale-125 
+                                transition-colors transition-transform duration-300 ease-in-out ">
                                 呀蜜佰 <br> 😋
                             </a>
                         </h1>
@@ -126,23 +153,49 @@
                 <div class="w-2/3 sm:w-3/4 sm:mx-8 self-start flex-1 sm:flex sm:justify-center sm:self-end sm:mb-6 lg:px-24 2xl:px-32">
 
                     <!-- NAVIGATION LINKS -->
-                    <nav class="w-3/4 sm:w-3/4 flex sm:flex-1 gap-2 justify-around bg-[#292f3d] px-6 pb-2 pt-2 outline outline-1 outline-indigo-100 hover:outline-1 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-102 sm:px-8 sm:gap-3 sm:pb-2.5 sm:pt-2 sm:outline-3 sm:hover:outline-2 sm:hover:scale-105">
+                    <nav class="
+                        w-3/4 sm:w-3/4 
+                        flex sm:flex-1 gap-2 justify-around 
+                        bg-[#292f3d] 
+                        px-6 pb-2 pt-2 
+                        outline outline-1 hover:outline-2
+                        outline-indigo-100 hover:outline-indigo-200 rounded-full 
+                        transition-transform ease-in-out duration-300 
+                        sm:px-10 sm:gap-5 sm:pb-2.5 sm:pt-2
+                    ">
 
                         <!-- NAVIGATION LINKS: Home -->
-                        <span class="text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-sm sm:hover:text-md transition-colors duration-200">
+                        <span class="
+                            text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl 
+                            text-[#787fe7] hover:text-[#935cde] 
+                            font-semibold hover:font-bold">
                             <a href="index.html">Home</a>
                         </span>
 
                         <!-- NAVIGATION LINKS: Products -->
-                        <span class="text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl text-indigo-100 hover:text-primary font-black border-b sm:border-b-2 border-primary hover:border-b sm:hover:border-b-2 hover:border-indigo-100 px-1 transition-colors duration-200">Products</span>
+                        <span class="text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl 
+                            text-indigo-100 hover:text-secondary font-black 
+                            border-b hover:border-b-2 sm:border-b-2 sm:hover:border-b-3
+                            border-primary hover:border-indigo-100 
+                            px-1">
+                            Products
+                        </span>
                         
                         <!-- NAVIGATION LINKS: Orders -->
-                        <span class="hidden xl:block text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold sm:hover:text-md transition-colors duration-200">
+                        <span class="hidden xl:block 
+                            text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl 
+                            text-[#787fe7] hover:text-[#935cde] 
+                            font-semibold 
+                        ">
                             <a href="history.html">Your Orders</a>
                         </span>
                         
                         <!-- NAVIGATION LINKS: Orders -->
-                        <span class="xl:hidden block text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold sm:hover:text-md transition-colors duration-200">
+                        <span class="block xl:hidden 
+                            text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl 
+                            text-[#787fe7] hover:text-[#935cde] 
+                            font-semibold
+                        ">
                             <a href="history.html">Orders</a>
                         </span>
                         
@@ -169,7 +222,7 @@
                         <!-- USER NUMBER DISPLAY -->
                         <div class="absolute bottom-full -translate-y-3 sm:translate-y-3 sm:top-full right-0">
                             <!-- USER DISPLAY -->
-                            <span id="userPhoneDisplay" class="text-xs sm:text-sm font-semibold sm:font-bold text-indigo-100 border-b sm:border-b-2 border-[#f13dc3] ml-auto sm:pr-0.5 pb-0.5 sm:pb-1">
+                            <span id="userPhoneDisplay" class="text-xs sm:text-sm font-semibold sm:font-bold text-indigo-100 border-b sm:border-b-2 border-[#f13dc3] ml-auto sm:pr-0.5 pb-0.5 sm:pb-1 **no-underline**" style="text-decoration: none;">
                                 <!-- User's phone number will be displayed here -->
                             </span>
                         </div>
@@ -377,7 +430,9 @@
                     </button>
                 </div>
             </div>
-        </div>
+
+            <!-- Removed -- original outer wrap, replaced with <main> -->
+        <!-- </div> -->
 
     </main>
 <!-- END OF DOM ELEMENTS -->
@@ -387,8 +442,8 @@
 
 
 <!-- BEGIN JAVASCRIPT -->
+    <!-- v1.0 -->
     <!-- <script>
-        // Show loading screen on page load
         // document.addEventListener("DOMContentLoaded", function() {
         //     const progressBar = document.getElementById("progressBar");
         //     progressBar.classList.remove("hidden");
@@ -398,7 +453,8 @@
         // });
     </script> -->
 
-    <script>
+    <!-- v2.0 -->
+    <!-- <script>
         function hideLoadingScreen() {
             const loadingScreen = document.getElementById('loadingScreen');
             // Start fade-out transition
@@ -415,8 +471,77 @@
             // Loading screen is visible by default
             setTimeout(hideLoadingScreen, 2500); // Match GIF loop duration
         });
+    </script> -->
+
+    <!-- v3.0 -->
+    <!-- <script>
+        const loadingScreen = document.getElementById('loadingScreen');
+        const content = document.querySelector('.content');
+
+        // Function to show the loading screen with a fade-in
+        function showLoadingScreen() {
+            // Briefly delay adding opacity-100 to trigger the transition
+            setTimeout(() => {
+                loadingScreen.classList.add('opacity-100');
+            }, 0); // A small delay is usually sufficient
+        }
+
+        function hideLoadingScreen() {
+            // Start fade-out transition
+            loadingScreen.classList.remove('opacity-100');
+            loadingScreen.classList.add('opacity-0');
+            // Hide after transition completes
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                // Fade in content
+                content.classList.add('opacity-100');
+            }, 1500); // Match the CSS transition duration
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Immediately show the loading screen with fade-in
+            showLoadingScreen();
+            // Simulate loading time before hiding (adjust as needed)
+            setTimeout(hideLoadingScreen, 3000); // Match your video duration
+        });
+    </script> -->
+
+    <!-- v3.1 -->
+    <script>
+        const loadingScreen = document.getElementById('loadingScreen');
+        const content = document.querySelector('.content');
+        const loadingVideoMobile = document.getElementById('loadingVideoMobile');
+        const loadingVideoDesktop = document.getElementById('loadingVideoDesktop');
+        const startTime = 0.55; 
+
+        function showLoadingScreen() {
+            loadingScreen.classList.add('opacity-100');
+            if (loadingVideoMobile) {
+                loadingVideoMobile.currentTime = startTime;
+            }
+            if (loadingVideoDesktop) {
+                loadingVideoDesktop.currentTime = startTime;
+            }
+        }
+
+        function hideLoadingScreen() {
+            loadingScreen.classList.remove('opacity-100');
+            loadingScreen.classList.add('opacity-0');
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                content.classList.add('opacity-100');
+            }, 500);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            showLoadingScreen();
+            setTimeout(hideLoadingScreen, 3000);
+        });
     </script>
 
+    <!-- ////////////////////////////////////////////////////////////////////////////////// -->
+
+    <!-- START - MAIN SCRIPT -->
     <script>
         // Firebase Configuration
         const firebaseConfig = {
