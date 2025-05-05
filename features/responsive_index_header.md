@@ -8,7 +8,7 @@ Here's an improved responsive version of your header with mobile-first considera
         <!-- LOGO -->
         <a href="index.html" class="shrink-0">
             <img
-                src="./images-v2/mascot-logo-1.png"
+                src="/assets/placeholder/mascot-logo-1.png"
                 alt="Yummy Buy Mascot"
                 class="w-16 sm:w-24 md:w-32 h-auto transition-transform duration-300 ease-in-out hover:scale-125 animate-pulse-glow"
             /> 

@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- UPDATED MAY 2, 2025 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -80,14 +79,7 @@
         });
     </script>
 
-
-<!-- /* /////////////////////////////////////////////////////////////////////////////////////////////////// */ -->
-
-
     <style>
-
-    /* /////////////////////////////////////////////////////////////////////////////////////////////////// */
-
         .order-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
@@ -106,10 +98,6 @@
             opacity: 1;
             transform: translateY(0);
         }
-
-
-/* /////////////////////////////////////////////////////////////////////////////////////////////////// */
-
         
     /* IMAGE CAROUSEL - PRODUCTS CAROUSEL & GALLERY MODAL */
 
@@ -236,39 +224,6 @@
             max-height: 90vh;
             object-fit: contain;
         }
-
-
-
-    /* /////////////////////////////////////////////////////////////////////////////////////////////////// */
-
-
-        .verification-code-input {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            caret-color: #5D5CDE; /* Match primary color */
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .verification-code-input:focus {
-            border-color: #5D5CDE;
-            box-shadow: 0 0 0 3px rgba(93, 92, 222, 0.2);
-        }
-
-        /* Ensure inputs are large enough for touch */
-        @media (max-width: 640px) {
-            .verification-code-input {
-                width: 2.5rem;
-                height: 2.5rem;
-                font-size: 1.25rem;
-            }
-        }
-
-
-    /* /////////////////////////////////////////////////////////////////////////////////////////////////// */
-
-
-
     </style>
 
 </head>
@@ -303,31 +258,30 @@
     <!-- <HEADER /> -->
 
         <!-- Version 7.0 - HYBRID - structure of old, responsiveness of new -->
-        <header class="relative h-full w-auto flex flex-col justify-between sm:flex-row justify-between gap-y-6 my-2 mb-12">
+        <header class="relative flex flex-col justify-between sm:grid sm:grid-cols-12 items-center gap-y-6 my-2 pb-6 sm:pb-12">
 
             <!-- Logo + Title Container -->
-            <div class="w-auto h-1/3 sm:w-1/4 flex items-start justify-between gap-4 px-1 sm:items-center sm:px-0">
-                <!-- <div class="flex flex-row items-start sm:items-center justify-between gap-4 px-1 sm:px-0 w-full sm:col-start-1 sm:col-span-6"> -->
-                <!-- <div class="flex flex-row items-center justify-around gap-4 w-full sm:col-start-1 sm:col-span-5"> -->
-                <!-- <div class="flex flex-row items-center justify-center w-full sm:col-start-1 sm:col-span-5"> -->
+            <div class="flex flex-row items-start sm:items-center justify-between gap-4 px-1 sm:px-0 w-full sm:col-start-1 sm:col-span-5">
+            <!-- <div class="flex flex-row items-center justify-around gap-4 w-full sm:col-start-1 sm:col-span-5"> -->
+            <!-- <div class="flex flex-row items-center justify-center w-full sm:col-start-1 sm:col-span-5"> -->
                 
                 <!-- LOGO -- Pulsating Glow Effect + Expand on Hover -->
-                <a href="index.html" class="flex-1">
+                <a href="index.html" class="shrink-0">
                     <img
-                        src="assets/images/mascot-logo-1.png"
+                        src="/assets/placeholder/mascot-logo-1.png"
                         alt="Yummy Buy Mascot"
                         class="w-36 sm:w-32 md:w-48 lg:w-56 h-auto transition-transform duration-300 ease-in-out hover:scale-125 animate-pulse-glow"
                     /> 
                 </a>
 
                 <!-- TITLE TEXT: 呀蜜佰 -->
-                <div class="flex-1 absolute right-0 top-0 lg:-right-3 sm:hover:scale-125 transition-transform duration-300 ease-in-out">
+                <div class="flex flex-col gap-3 pt-2 sm:pt-0 sm:hover:scale-125 transition-transform duration-300 ease-in-out">
                     <h1 class="min-w-[120px] sm:min-w-0">
-                        <a href="index.html" class="hidden sm:block font-zenMaru text-5xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold text-indigo-100 hover:text-secondary sm:hover:scale-115 transition-colors transition-transform duration-300 ease-in-out hover:scale-110 ml-auto">
+                        <a href="index.html" class="hidden sm:block font-zenMaru text-5xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-indigo-100 hover:text-secondary sm:hover:scale-125 transition-colors">
                             呀蜜佰 😋
                         </a>
-                        <a href="index.html" class="block sm:hidden text-end leading-tight font-zenMaru text-5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-indigo-100 hover:text-secondary sm:hover:scale-150 transition-colors transition-transform duration-300 ease-in-out hover:scale-110">
-                            呀蜜佰 <br> 😋
+                        <a href="index.html" class="block sm:hidden font-zenMaru text-6xl font-bold text-indigo-100 hover:text-secondary sm:hover:scale-150 transition-colors transition-transform duration-300 ease-in-out hover:scale-110">
+                            呀蜜佰
                         </a>
                     </h1>
                 </div>
@@ -335,63 +289,63 @@
             </div>
             
             <!-- CONTAINER: NAVIGATION LINKS -->
-            <div class="w-2/3 sm:w-3/4 sm:mx-8 self-start flex-1 sm:flex sm:justify-center sm:self-end sm:mb-6 lg:px-24 2xl:px-32">
-            <!-- <div class="w-2/3 sm:w-1/2 self-start flex-1 sm:self-center sm:block sm:flex sm:justify-center sm:items-center sm:col-start-7 sm:col-span-4"> -->
+            <div class="w-full grid grid-cols-12 sm:block sm:flex sm:justify-center sm:items-center sm:col-start-6 sm:col-span-6">
 
                 <!-- NAVIGATION LINKS -->
-                <nav class="w-3/4 sm:w-3/4 flex sm:flex-1 gap-2 justify-around bg-[#292f3d] px-6 pb-2 pt-2 outline outline-1 outline-indigo-100 hover:outline-1 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-102 sm:px-8 sm:gap-3 sm:pb-2.5 sm:pt-2 sm:outline-3 sm:hover:outline-2 sm:hover:scale-105">
+                <nav class="w-full sm:w-1/2 flex justify-around col-start-1 col-span-7 ml-2 bg-[#292f3d] sm:gap-2 px-3 sm:px-9 py-1 pb-2 pt-2 sm:pb-3 sm:pt-2 outline outline-1 sm:outline-3 outline-indigo-100 hover:outline-1 sm:hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-102 sm:hover:scale-105">
 
                     <!-- NAVIGATION LINKS: Home -->
-                    <span class="text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-sm sm:hover:text-md transition-colors duration-200">
+                    <span class="text-xs sm:text-base text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-sm sm:hover:text-md transition-colors duration-200">
                         <a href="index.html">Home</a>
                     </span>
 
                     <!-- NAVIGATION LINKS: Products -->
-                    <span class="text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl text-indigo-100 hover:text-primary font-black border-b sm:border-b-2 border-primary hover:border-b sm:hover:border-b-2 hover:border-indigo-100 px-1 transition-colors duration-200">Products</span>
+                    <span class="text-xs sm:text-base text-indigo-100 hover:text-primary font-black border-b sm:border-b-2 border-primary hover:border-b sm:hover:border-b-2 hover:border-indigo-100 px-1 transition-colors duration-200">Products</span>
                     
                     <!-- NAVIGATION LINKS: Orders -->
-                    <span class="hidden xl:block text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold sm:hover:text-md transition-colors duration-200">
+                    <span class="text-xs sm:text-base text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold sm:hover:text-md transition-colors duration-200">
                         <a href="history.html">Your Orders</a>
                     </span>
-                    
-                    <!-- NAVIGATION LINKS: Orders -->
-                    <span class="xl:hidden block text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold sm:hover:text-md transition-colors duration-200">
-                        <a href="history.html">Orders</a>
-                    </span>
-                    
                 </nav>
+
+                <div class="col-start-10 col-span-3 mr-2">
+                    <!-- LOGIN BUTTON -->
+                    <button id="loginBtnMobile" class="block sm:hidden flex items-center justify-center h-full px-4 py-2 text-xs text-indigo-100 font-black bg-[#4a427f] hover:text-[#f13dc3] hover:bg-primary ml-auto rounded-lg transition-all duration-200 border-invisible hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        <p>Log In</p>
+                    </button>
+                </div>
 
             </div>
             
             <!-- CONTAINER: HIDDEN ADMIN LINK, HIDDEN USER PHONE DISPLAY, LOGIN BUTTON -->
-            <div class="w-1/4 sm:w-1/4 absolute right-0 bottom-0 sm:relative sm:flex sm:justify-end sm:items-end sm:mb-6">
-                <div class="relative">
+            <div class="items-end gap-4 sm:col-start-12 sm:col-span-1">
+
+                <div class="flex items-end gap-2">
                                 
                     <!-- HIDDEN ADMIN LINK -->
-                    <h3 id="adminLink" class="hidden absolute right-full -translate-x-1/4">
-                        <a href="admin.html" class="sm:block hover:text-[#f13dc3] text-white bg-transparent hover:bg-primary px-3 pt-1.5 pb-2 mr-2 text-xs sm:text-base sm:px-8 sm:pt-2 sm:pb-3 sm:m-0 sm:ml-1 rounded-md font-semibold transition-all duration-200 border border-[#f13dc3] hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-secondary">
+                    <h3 id="adminLink" class="hidden">
+                        <a href="admin.html" class="block hover:text-[#f13dc3] text-white bg-transparent hover:bg-primary px-8 pt-2 pb-3 pb-2.5 ml-1 rounded-md font-semibold transition-all duration-200 border border-[#f13dc3] hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-secondary">
                             Admin
                         </a>
                     </h3>
                     
                     <!-- LOGIN BUTTON -->
-                    <button id="loginBtn" class="flex items-center justify-center h-full sm:h-auto px-6 pt-2 pb-2.5 mb-0.5 text-xs font-bold ml-auto text-indigo-100 sm:font-semibold sm:text-base sm:pb-3 sm:pt-2 sm:px-8 rounded-lg bg-[#4a427f] hover:text-[#f13dc3] hover:bg-primary transition-all duration-200 border-invisible hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    <button id="loginBtn" class="hidden sm:block flex items-center justify-center bg-[#4a427f] hover:text-[#f13dc3] hover:bg-primary ml-auto text-white pt-2 pb-3 px-8 rounded-lg font-semibold transition-all duration-200 border-invisible hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                         <p>Log In</p>
                     </button>
-                    
-                    <!-- USER NUMBER DISPLAY -->
-                    <div class="absolute bottom-full -translate-y-3 sm:translate-y-3 sm:top-full right-0">
-                        <!-- USER DISPLAY -->
-                        <span id="userPhoneDisplay" class="text-xs sm:text-sm font-semibold sm:font-bold text-indigo-100 border-b sm:border-b-2 border-[#f13dc3] ml-auto sm:pr-0.5 pb-0.5 sm:pb-1">
-                            <!-- User's phone number will be displayed here -->
-                        </span>
-                    </div>
-                    
+    
                 </div>
+    
+            </div>
+
+            <!-- ABSOLUTE POSITIONED HIDDEN -->
+            <div class="absolute flex items-end top-4 right-0">
+                <span id="userPhoneDisplay" class="text-sm font-bold text-indigo-100 border-b-2 border-[#f13dc3] ml-auto pr-0.5 pb-1">
+                    <!-- User's phone number will be displayed here -->
+                </span>
             </div>
 
         </header>
-
 
 
     <!-- @@@ MAIN BODY SECTION -->
@@ -429,7 +383,7 @@
                     <div id="cartItemsContainer" class="mb-4 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 min-h-[33.33vh] flex flex-col items-center justify-center">
 
                         <!-- Empty Cart Image -->   
-                        <img id="emptyCartImage" src="assets/images/cart-placeholder-1.gif" alt="Empty Cart" class="w-1/2 h-auto mb-4 mr-10 hidden">
+                        <img id="emptyCartImage" src="/assets/placeholder/cart-placeholder-1.gif" alt="Empty Cart" class="w-1/2 h-auto mb-4 mr-10 hidden">
 
                         <!-- Empty Cart Message -->
                         <p id="emptyCartMessage" class="text-gray-500 dark:text-gray-400 hidden">Wow, so empty!</p>
@@ -502,8 +456,8 @@
                                 class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base"></textarea>
                         </div>
 
-                        <button type="submit" id="submitOrderBtn"
-                            class="w-full bg-[#44b34e] hover:bg-white text-white hover:text-[#44b34e] py-3 px-2 my-3 rounded-md font-bold transition duration-200 ease-in-out">
+                        <button type="submit" id="submitOrderBtn" disabled
+                            class="w-full bg-[#44b34e] hover:bg-white text-white hover:text-[#44b34e] py-3 px-2 my-3 rounded-md font-bold transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
                             Place Order
                         </button>
 
@@ -513,7 +467,7 @@
                 <!-- Centered Image Logo v2 -->
                 <!-- <div class="h-full flex items-center justify-center w-full mb-10"> -->
                 <div class="flex items-center justify-center p-10">
-                    <img src="assets/images/slogan-logo-1.png" 
+                    <img src="/assets/placeholder/slogan-logo-1.png" 
                          alt="Yummy Buy Mascot" 
                          class="w-full h-auto aspect-square object-contain md:h-auto lg:h-auto">
                          <!-- class="w-3/4 h-auto aspect-square object-contain md:w-1/3 lg:w-2/3"> -->
@@ -548,13 +502,13 @@
             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
                 <h3 class="text-xl font-bold mb-4 text-primary">Authentication</h3>
                 
-                <!-- @@@@@@@ Phone Number Input -->
+                <!-- Phone Number Input -->
                 <div id="phoneInputContainer" class="space-y-4">
                     <p class="mb-4">Please enter your phone number to authenticate. We'll send you a verification code via SMS.</p>
                     <div class="relative">
                         <div id="recaptcha-container" class="mb-4"></div>
                         <label for="phoneNumber" class="block mb-1">Phone Number</label>
-                        <input type="tel" id="phoneNumber" placeholder="+1 (604) 969-3855" 
+                        <input type="tel" id="phoneNumber" placeholder="+1 123-456-7890" 
                             class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
                         <p id="phoneError" class="text-red-500 text-sm mt-1 hidden"></p>
                     </div>
@@ -567,33 +521,18 @@
                 <div id="codeInputContainer" class="space-y-4 hidden">
                     <p class="mb-4">Enter the 6-digit verification code sent to your phone.</p>
                     <div class="flex justify-between gap-2 mb-4">
-                        <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary">
-                        <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary">
-                        <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary">
-                        <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary">
-                        <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary">
-                        <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary">
+                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
+                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
+                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
+                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
+                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
+                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
                     </div>
                     <p id="codeError" class="text-red-500 text-sm mt-1 hidden"></p>
                     <button id="verifyCodeBtn" class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium">
                         Verify Code
                     </button>
                 </div>
-                <!-- <div id="codeInputContainer" class="space-y-4 hidden">
-                    <p class="mb-4">Enter the 6-digit verification code sent to your phone.</p>
-                    <div class="flex justify-between gap-2 mb-4">
-                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
-                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
-                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
-                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
-                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
-                        <input type="text" maxlength="1" class="verification-code-input w-12 h-12 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-xl font-bold">
-                    </div>
-                    <p id="codeError" class="text-red-500 text-sm mt-1 hidden"></p>
-                    <button id="verifyCodeBtn" class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium">
-                        Verify Code
-                    </button>
-                </div> -->
                 
                 <!-- Success Message -->
                 <div id="authSuccessContainer" class="hidden text-center py-6">
@@ -619,7 +558,7 @@
           apiKey: "AIzaSyCTUZbw1qSdFEBG2SGo7smQgqXEKZZWCaw",
           authDomain: "mei-wen-ti.firebaseapp.com",
           projectId: "mei-wen-ti",
-          storageBucket: "mei-wen-ti.firebasestorage.app", // Fixed storage bucket URL -- It's NOT appspot.app, but firebasestorage.app
+          storageBucket: "mei-wen-ti.firebasestorage.app",
           messagingSenderId: "103509830524",
           appId: "1:103509830524:web:5ddef022db357ce99152f9",
         };
@@ -735,6 +674,7 @@
         
         // Authentication Elements
         const loginBtn = document.getElementById('loginBtn');
+        const loginBtnMobile = document.getElementById('loginBtnMobile');
         const authModal = document.getElementById('authModal');
         const phoneInputContainer = document.getElementById('phoneInputContainer');
         const codeInputContainer = document.getElementById('codeInputContainer');
@@ -747,39 +687,33 @@
         const phoneError = document.getElementById('phoneError');
         const codeError = document.getElementById('codeError');
         const userPhoneDisplay = document.getElementById('userPhoneDisplay');
-
-        // Create modal overlay -- May 1, 2025
-        const modalOverlay = document.createElement('div');
-        modalOverlay.className = 'fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-40 hidden';
-        document.body.appendChild(modalOverlay);
         
         // Open auth modal when login button is clicked
         loginBtn.addEventListener('click', () => {
             if (isLoggedIn) {
                 // Show logout confirmation or account management options
-                // if (confirm('Do you want to log out?')) {
+                if (confirm('Do you want to log out?')) {
                     logoutUser();
-                // }
+                }
             } else {
                 showAuthModal();
             }
         });
 
-        // loginBtnMobile.addEventListener('click', () => {
-        //     if (isLoggedIn) {
-        //         // Show logout confirmation or account management options
-        //         if (confirm('Do you want to log out?')) {
-        //             logoutUser();
-        //         }
-        //     } else {
-        //         showAuthModal();
-        //     }
-        // });
+        loginBtnMobile.addEventListener('click', () => {
+            if (isLoggedIn) {
+                // Show logout confirmation or account management options
+                if (confirm('Do you want to log out?')) {
+                    logoutUser();
+                }
+            } else {
+                showAuthModal();
+            }
+        });
         
         // Close auth modal
         closeAuthModalBtn.addEventListener('click', () => {
             authModal.classList.add('hidden');
-            modalOverlay.classList.add('hidden');
             resetAuthModal();
         });
         
@@ -809,8 +743,6 @@
         // Show auth modal
         function showAuthModal() {
             authModal.classList.remove('hidden');
-            modalOverlay.classList.remove('hidden');
-            sendCodeBtn.classList.remove('scale-105', 'ring-4', 'ring-[#8790ec]', 'transition-transform', 'duration-300', 'ease-in-out', 'animate-pulse-glow');
             resetAuthModal();
             initRecaptcha();
         }
@@ -823,440 +755,121 @@
             phoneNumberInput.value = '';
             phoneError.classList.add('hidden');
             codeError.classList.add('hidden');
-          
+            
             // Reset verification code inputs
             verificationInputs.forEach(input => {
                 input.value = '';
                 input.classList.remove('border-red-500');
             });
         }
-
-        // Phone Number Input Blur/Focus Logic
-        phoneNumberInput.addEventListener('focus', () => {
-            phoneNumberInput.placeholder = "+1 ";
-        });
-
-        phoneNumberInput.addEventListener('blur', () => {
-            phoneNumberInput.placeholder = "+1 (604) 969-3855";
-        });
-
-
-////////////////////////////////////////////////////////////////////////////////////
-// Phone Number Input Validation
-////////////////////////////////////////////////////////////////////////////////////
-
-        // Phone number validation and formatting
-        phoneNumberInput.addEventListener('input', function(e) {
-            // Store cursor position before formatting
-            const cursorPosition = e.target.selectionStart;
-            const rawValue = e.target.value;
+        
+        // Send verification code
+        sendCodeBtn.addEventListener('click', async () => {
+            const phoneNumber = phoneNumberInput.value.trim();
             
-            // Check if backspace was used (current length is less than previous)
-            const isDeleting = e.inputType === 'deleteContentBackward' || e.inputType === 'deleteContentForward';
+            if (!phoneNumber) {
+                phoneError.textContent = 'Please enter a valid phone number';
+                phoneError.classList.remove('hidden');
+                return;
+            }
             
-            // Remove all non-digit characters for processing
-            let cleanedValue = '';
-            if (rawValue.includes('+')) {
-                cleanedValue = rawValue.replace(/\D/g, '').slice(1);
+            try {
+                sendCodeBtn.disabled = true;
+                sendCodeBtn.textContent = 'Sending...';
+                
+                // Send verification code
+                const appVerifier = window.recaptchaVerifier;
+                const confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier);
+                verificationId = confirmationResult.verificationId;
+                
+                // Show verification code input
+                phoneInputContainer.classList.add('hidden');
+                codeInputContainer.classList.remove('hidden');
+                
+                // Focus on the first verification code input
+                verificationInputs[0].focus();
+                
+                // Handle verification code inputs
+                setupVerificationInputs();
+            } catch (error) {
+                console.error('Error sending verification code:', error);
+                phoneError.textContent = error.message || 'Error sending verification code. Please try again.';
+                phoneError.classList.remove('hidden');
+                sendCodeBtn.disabled = false;
+                sendCodeBtn.textContent = 'Send Verification Code';
+                
+                // Reset reCAPTCHA
+                window.recaptchaVerifier.reset(window.recaptchaWidgetId);
+                initRecaptcha();
+            }
+        });
+        
+        // Set up verification code inputs
+        function setupVerificationInputs() {
+            verificationInputs.forEach((input, index) => {
+                // Clear existing event listeners
+                input.removeEventListener('input', handleVerificationInput);
+                input.removeEventListener('keydown', handleVerificationKeyDown);
+                
+                // Add new event listeners
+                input.addEventListener('input', handleVerificationInput);
+                input.addEventListener('keydown', handleVerificationKeyDown);
+            });
+        }
+        
+        // Handle verification input
+        function handleVerificationInput(e) {
+            const input = e.target;
+            const value = input.value;
+            
+            // Only allow numbers
+            if (/^\d*$/.test(value)) {
+                // If value is a digit, move to the next input
+                if (value.length === 1) {
+                    const nextInput = input.nextElementSibling;
+                    if (nextInput && nextInput.classList.contains('verification-code-input')) {
+                        nextInput.focus();
+                    } else {
+                        // If it's the last input, check if all fields are filled
+                        checkVerificationCompletion();
+                    }
+                }
             } else {
-                cleanedValue = rawValue.replace(/\D/g, '');
+                // If not a digit, clear the input
+                input.value = '';
             }
+        }
+        
+        // Handle verification keydown
+        function handleVerificationKeyDown(e) {
+            const input = e.target;
             
-            // Special handling for deletion
-            if (isDeleting && cleanedValue.length <= 3) {
-                // When deleting and we have 3 or fewer digits, allow removal of last digit
-                cleanedValue = cleanedValue.slice(0, -1);
-            }
-            
-            // Format the phone number
-            let countryCode = '';
-            let areaCode = '';
-            let middleDigits = '';
-            let lastDigits = '';
-            let spacer = '';
-            
-            // Format based on length
-            if (cleanedValue.length > 0) {
-                countryCode = '+1';
-                spacer = ' '.repeat(Math.max(0, 3 - cleanedValue.length));
-                
-                if (cleanedValue.length <= 3) {
-                    areaCode = ' (' + cleanedValue + spacer + ')';
-                }
-                
-                if (cleanedValue.length > 3) {
-                    areaCode = ' (' + cleanedValue.slice(0, 3) + ')';
-                    middleDigits = ' ' + cleanedValue.slice(3, Math.min(6, cleanedValue.length));
-                }
-                
-                if (cleanedValue.length > 6) {
-                    areaCode = ' (' + cleanedValue.slice(0, 3) + ')';
-                    middleDigits = ' ' + cleanedValue.slice(3, 6);
-                    lastDigits = '-' + cleanedValue.slice(6, Math.min(10, cleanedValue.length));
+            // If backspace and the input is empty, focus on the previous input
+            if (e.key === 'Backspace' && input.value === '') {
+                const prevInput = input.previousElementSibling;
+                if (prevInput && prevInput.classList.contains('verification-code-input')) {
+                    prevInput.focus();
+                    prevInput.value = '';
                 }
             }
-            
-            // Update the input value with the formatted version
-            e.target.value = countryCode + areaCode + middleDigits + lastDigits;
-            
-            // Auto-focus to send code button after complete entry (10 digits)
-            if (cleanedValue.length === 10) {
-            setTimeout(() => {
-                sendCodeBtn.focus();
-                // Add visual cue for focus
-                sendCodeBtn.classList.add('scale-105', 'ring-4', 'ring-[#8790ec]', 'transition-transform', 'duration-300', 'ease-in-out', 'animate-pulse-glow');
-                // sendCodeBtn.classList.add('scale-105', 'transition-transform', 'duration-300', 'ease-in-out', 'animate-pulse-glow');
-                // sendCodeBtn.classList.add('scale-105', 'ring-4', 'ring-blue-400', 'transition-transform', 'duration-300', 'ease-in-out', 'animate-pulse-glow');
-                // sendCodeBtn.classList.add('scale-105', 'ring-4', 'ring-blue-400', 'transition', 'duration-300');
-            }, 200);
         }
-        });
-
-
-////////////////////////////////////////////////////////////////////////////////////
-// Send Verification Code
-////////////////////////////////////////////////////////////////////////////////////
-        
-        // Remove visual cue when button loses focus
-        sendCodeBtn.addEventListener('blur', () => {
-            sendCodeBtn.classList.remove('scale-105', 'ring-4', 'ring-[#8790ec]', 'transition-transform', 'duration-300', 'ease-in-out', 'animate-pulse-glow');
-        });
-
-        // Send verification code -- APRIL 30, 2025
-        // sendCodeBtn.addEventListener('click', async () => {
-        //     const phoneNumber = phoneNumberInput.value.trim();
-            
-        //     if (!phoneNumber) {
-        //         phoneError.textContent = 'Please enter a valid phone number';
-        //         phoneError.classList.remove('hidden');
-        //         return;
-        //     }
-            
-        //     try {
-        //         sendCodeBtn.disabled = true;
-        //         sendCodeBtn.textContent = 'Sending...';
-                
-        //         // Send verification code
-        //         const appVerifier = window.recaptchaVerifier;
-        //         const confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier);
-        //         verificationId = confirmationResult.verificationId;
-                
-        //         // Show verification code input
-        //         phoneInputContainer.classList.add('hidden');
-        //         codeInputContainer.classList.remove('hidden');
-                
-        //         // Focus on the first verification code input
-        //         verificationInputs[0].focus();
-                
-        //         // Handle verification code inputs
-        //         setupVerificationInputs();
-        //     } catch (error) {
-        //         console.error('Error sending verification code:', error);
-        //         phoneError.textContent = error.message || 'Error sending verification code. Please try again.';
-        //         phoneError.classList.remove('hidden');
-        //         sendCodeBtn.disabled = false;
-        //         sendCodeBtn.textContent = 'Send Verification Code';
-                
-        //         // Reset reCAPTCHA
-        //         window.recaptchaVerifier.reset(window.recaptchaWidgetId);
-        //         initRecaptcha();
-        //     }
-        // });
-
-
-// MAY 2, 2025
-sendCodeBtn.addEventListener('click', async () => {
-    const phoneNumber = phoneNumberInput.value.trim();
-    
-    if (!phoneNumber || !/^\+1 \(\d{3}\) \d{3}-\d{4}$/.test(phoneNumber)) {
-        phoneError.textContent = 'Please enter a valid phone number (e.g., +1 (604) 969-3855)';
-        phoneError.classList.remove('hidden');
-        return;
-    }
-    
-    try {
-        sendCodeBtn.disabled = true;
-        sendCodeBtn.textContent = 'Sending...';
-        
-        const appVerifier = window.recaptchaVerifier;
-        const confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier);
-        verificationId = confirmationResult.verificationId;
-        
-        phoneInputContainer.classList.add('hidden');
-        codeInputContainer.classList.remove('hidden');
-        
-        // Focus the first verification input
-        const firstInput = document.querySelector('.verification-code-input');
-        firstInput.focus();
-        firstInput.select();
-        
-        setupVerificationInputs();
-    } catch (error) {
-        console.error('Error sending verification code:', error);
-        phoneError.textContent = error.message || 'Error sending verification code. Please try again.';
-        phoneError.classList.remove('hidden');
-        sendCodeBtn.disabled = false;
-        sendCodeBtn.textContent = 'Send Verification Code';
-        
-        window.recaptchaVerifier.reset(window.recaptchaWidgetId);
-        initRecaptcha();
-    }
-});
-
-        
-////////////////////////////////////////////////////////////////////////////////////
-// Set up verification code inputs
-////////////////////////////////////////////////////////////////////////////////////
-        
-        // Set up verification Inputs -- May 1, 2025
-        // function setupVerificationInputs() {
-        //     verificationInputs.forEach((input, index) => {
-        //         // Clear existing event listeners
-        //         input.removeEventListener('input', handleVerificationInput);
-        //         input.removeEventListener('keydown', handleVerificationKeyDown);
-        //         input.removeEventListener('focus', handleVerificationFocus);
-                
-        //         // Add new event listeners
-        //         input.addEventListener('input', handleVerificationInput);
-        //         input.addEventListener('keydown', handleVerificationKeyDown);
-        //         input.addEventListener('focus', handleVerificationFocus);
-                
-        //         // Clear inputs
-        //         input.value = '';
-        //         input.classList.remove('border-red-500');
-        //     });
-        // }
-
-
-// MAY 2, 2025
-// Set up verification inputs 
-function setupVerificationInputs() {
-    const verificationInputs = document.querySelectorAll('.verification-code-input');
-    
-    verificationInputs.forEach((input, index) => {
-        // Clear existing event listeners to prevent duplicates
-        input.removeEventListener('input', handleVerificationInput);
-        input.removeEventListener('keydown', handleVerificationKeyDown);
-        input.removeEventListener('paste', handleVerificationPaste);
-        input.removeEventListener('focus', handleVerificationFocus);
-        
-        // Add new event listeners
-        input.addEventListener('input', handleVerificationInput);
-        input.addEventListener('keydown', handleVerificationKeyDown);
-        input.addEventListener('paste', handleVerificationPaste);
-        input.addEventListener('focus', handleVerificationFocus);
-        
-        // Clear inputs
-        input.value = '';
-        input.classList.remove('border-red-500');
-    });
-    
-    // Focus on the first input
-    verificationInputs[0].focus();
-}
-
-        // Handle verification input -- May 1, 2025
-        // function handleVerificationInput(e) {
-        //     const input = e.target;
-        //     const value = input.value;
-            
-        //     // Only allow numbers
-        //     if (/^\d*$/.test(value)) {
-        //         // If value is a digit, move to the next input
-        //         if (value.length === 1) {
-        //             const nextInput = input.nextElementSibling;
-        //             if (nextInput && nextInput.classList.contains('verification-code-input')) {
-        //                 nextInput.focus();
-                        
-        //                 // For mobile: Force focus programmatically
-        //                 setTimeout(() => {
-        //                     nextInput.focus();
-                            
-        //                     // For iOS specifically
-        //                     if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        //                         nextInput.setSelectionRange(0, nextInput.value.length);
-        //                     }
-        //                 }, 0);
-        //             } else {
-        //                 // If it's the last input, check if all fields are filled
-        //                 checkVerificationCompletion();
-        //             }
-        //         }
-        //     } else {
-        //         // If not a digit, clear the input
-        //         input.value = '';
-        //     }
-        // }
-
-// MAY 2, 2025
-// Handle input event
-function handleVerificationInput(e) {
-    const input = e.target;
-    const value = input.value;
-    
-    // Only allow single digits
-    if (/^\d$/.test(value)) {
-        input.value = value; // Ensure only the latest digit is kept
-        const nextInput = input.nextElementSibling;
-        if (nextInput && nextInput.classList.contains('verification-code-input')) {
-            // Move focus to next input
-            nextInput.focus();
-            nextInput.select();
-        } else {
-            // Last input filled, check verification
-            checkVerificationCompletion();
-        }
-    } else {
-        // Clear invalid input
-        input.value = '';
-    }
-}
-
-        // Handle verification keydown -- May 1, 2025
-        // function handleVerificationKeyDown(e) {
-        //     const input = e.target;
-            
-        //     // If backspace and the input is empty, focus on the previous input
-        //     if (e.key === 'Backspace' && input.value === '') {
-        //         const prevInput = input.previousElementSibling;
-        //         if (prevInput && prevInput.classList.contains('verification-code-input')) {
-        //             prevInput.focus();
-        //             prevInput.value = '';
-                    
-        //             // For mobile: Force focus programmatically
-        //             setTimeout(() => {
-        //                 prevInput.focus();
-                        
-        //                 // For iOS specifically
-        //                 if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        //                     prevInput.setSelectionRange(0, prevInput.value.length);
-        //                 }
-        //             }, 0);
-        //         }
-        //     }
-        // }
-
-// MAY 2, 2025
-// Handle keydown event
-function handleVerificationKeyDown(e) {
-    const input = e.target;
-    
-    if (e.key === 'Backspace' && input.value === '') {
-        const prevInput = input.previousElementSibling;
-        if (prevInput && prevInput.classList.contains('verification-code-input')) {
-            prevInput.focus();
-            prevInput.value = '';
-            prevInput.select();
-        }
-    } else if (e.key === 'Enter' && input.value !== '') {
-        // Allow Enter to trigger verification on the last input
-        if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('verification-code-input')) {
-            checkVerificationCompletion();
-        }
-    }
-}
-
-
-        // Handle focus event - select text on focus -- May 1, 2025
-        // function handleVerificationFocus(e) {
-        //     e.target.select();
-        // }
-
-// MAY 2, 2025
-// Handle focus event
-function handleVerificationFocus(e) {
-    e.target.select();
-}
-
-
-        // // REMOVED GLOBAL PASTE -- see new function below
-        // Ensure paste works properly across inputs -- May 1, 2025
-        // document.addEventListener('paste', function(e) {
-        //     // Check if the target is a verification input
-        //     if (e.target.classList.contains('verification-code-input')) {
-        //         e.preventDefault();
-                
-        //         // Get pasted data
-        //         const pastedData = (e.clipboardData || window.clipboardData).getData('text');
-                
-        //         // If pasted data contains exactly 6 digits
-        //         if (/^\d{6}$/.test(pastedData)) {
-        //             // Fill in all inputs
-        //             verificationInputs.forEach((input, index) => {
-        //                 input.value = pastedData[index] || '';
-        //             });
-                    
-        //             // Focus on the last input
-        //             verificationInputs[5].focus();
-                    
-        //             // Check if verification is complete
-        //             checkVerificationCompletion();
-        //         }
-        //     }
-        // });
-
-
-// MAY 2, 2025
-// Handle paste event
-function handleVerificationPaste(e) {
-    e.preventDefault();
-    const pastedData = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
-    
-    if (/^\d{1,6}$/.test(pastedData)) {
-        const inputs = document.querySelectorAll('.verification-code-input');
-        for (let i = 0; i < Math.min(pastedData.length, inputs.length); i++) {
-            inputs[i].value = pastedData[i];
-        }
-        
-        // Focus on the last filled input or the next empty one
-        const nextFocusIndex = Math.min(pastedData.length, inputs.length - 1);
-        inputs[nextFocusIndex].focus();
-        inputs[nextFocusIndex].select();
-        
-        // If all inputs are filled, trigger verification
-        if (pastedData.length === 6) {
-            checkVerificationCompletion();
-        }
-    }
-}
         
         // Check if all verification inputs are filled
-        // function checkVerificationCompletion() {
-        //     let isComplete = true;
-        //     let code = '';
+        function checkVerificationCompletion() {
+            let isComplete = true;
+            let code = '';
             
-        //     verificationInputs.forEach(input => {
-        //         if (input.value === '') {
-        //             isComplete = false;
-        //         }
-        //         code += input.value;
-        //     });
+            verificationInputs.forEach(input => {
+                if (input.value === '') {
+                    isComplete = false;
+                }
+                code += input.value;
+            });
             
-        //     if (isComplete && code.length === 6) {
-        //         verifyCode(code);
-        //     }
-        // }
-
-// MAY 2, 2025
-// Check if all inputs are filled and trigger verification
-function checkVerificationCompletion() {
-    const verificationInputs = document.querySelectorAll('.verification-code-input');
-    let code = '';
-    let isComplete = true;
-    
-    verificationInputs.forEach(input => {
-        if (input.value === '') {
-            isComplete = false;
+            if (isComplete && code.length === 6) {
+                verifyCode(code);
+            }
         }
-        code += input.value;
-    });
-    
-    if (isComplete && code.length === 6) {
-        // Blur the last input to hide the keyboard
-        verificationInputs[verificationInputs.length - 1].blur();
-        verifyCode(code);
-    }
-}
         
         // Verify code manually with button
         verifyCodeBtn.addEventListener('click', () => {
@@ -1267,7 +880,7 @@ function checkVerificationCompletion() {
                 if (input.value === '') {
                     isComplete = false;
                     input.classList.add('border-red-500');
-            } else {
+                } else {
                     input.classList.remove('border-red-500');
                     code += input.value;
                 }
@@ -1281,115 +894,61 @@ function checkVerificationCompletion() {
             }
         });
         
-        // Verify the code -- APRIL 30, 2025
-        // async function verifyCode(code) {
-        //     if (!verificationId) {
-        //         codeError.textContent = 'Verification failed. Please try again.';
-        //         codeError.classList.remove('hidden');
-        //         return;
-        //     }
+        // Verify the code
+        async function verifyCode(code) {
+            if (!verificationId) {
+                codeError.textContent = 'Verification failed. Please try again.';
+                codeError.classList.remove('hidden');
+                return;
+            }
             
-        //     try {
-        //         // Disable verify button and show loading state
-        //         verifyCodeBtn.disabled = true;
-        //         verifyCodeBtn.textContent = 'Verifying...';
-        //         codeError.classList.add('hidden');
+            try {
+                // Disable verify button and show loading state
+                verifyCodeBtn.disabled = true;
+                verifyCodeBtn.textContent = 'Verifying...';
+                codeError.classList.add('hidden');
                 
-        //         // Create credential
-        //         const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, code);
+                // Create credential
+                const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, code);
                 
-        //         // Sign in with credential
-        //         const result = await firebase.auth().signInWithCredential(credential);
+                // Sign in with credential
+                const result = await firebase.auth().signInWithCredential(credential);
                 
-        //         // User signed in successfully
-        //         currentUser = result.user;
-        //         isLoggedIn = true;
+                // User signed in successfully
+                currentUser = result.user;
+                isLoggedIn = true;
                 
-        //         // Show success message
-        //         codeInputContainer.classList.add('hidden');
-        //         authSuccessContainer.classList.remove('hidden');
+                // Show success message
+                codeInputContainer.classList.add('hidden');
+                authSuccessContainer.classList.remove('hidden');
                 
-        //         // Update login button and display user phone
-        //         loginBtn.textContent = 'Log Out';
-        //         const formattedPhoneNumber = formatPhoneNumber(user.phoneNumber);
-        //         userPhoneDisplay.textContent = formattedPhoneNumber;
-        //         userPhoneDisplay.classList.remove('hidden');
+                // Update login button and display user phone
+                loginBtn.textContent = 'Log Out';
+                loginBtnMobile.textContent = 'Log Out';
+                userPhoneDisplay.textContent = phoneNumberInput.value;
+                userPhoneDisplay.classList.remove('hidden');
                 
-        //         // Fetch and populate user data after successful login
-        //         fetchAndPopulateUserData(phoneNumberInput.value);
+                // Fetch and populate user data after successful login
+                fetchAndPopulateUserData(phoneNumberInput.value);
 
-        //         // Close modal after a delay
-        //         setTimeout(() => {
-        //             authModal.classList.add('hidden');
-        //             resetAuthModal();
-        //         }, 2000);
-        //     } catch (error) {
-        //         console.error('Error verifying code:', error);
-        //         codeError.textContent = 'Invalid verification code. Please try again.';
-        //         codeError.classList.remove('hidden');
-        //         verifyCodeBtn.disabled = false;
-        //         verifyCodeBtn.textContent = 'Verify Code';
+                // Close modal after a delay
+                setTimeout(() => {
+                    authModal.classList.add('hidden');
+                    resetAuthModal();
+                }, 2000);
+            } catch (error) {
+                console.error('Error verifying code:', error);
+                codeError.textContent = 'Invalid verification code. Please try again.';
+                codeError.classList.remove('hidden');
+                verifyCodeBtn.disabled = false;
+                verifyCodeBtn.textContent = 'Verify Code';
                 
-        //         // Highlight input fields in red
-        //         verificationInputs.forEach(input => {
-        //             input.classList.add('border-red-500');
-        //         });
-        //     }
-        // }
-
-
-// MAY 2, 2025
-async function verifyCode(code) {
-    if (!verificationId) {
-        codeError.textContent = 'Verification session expired. Please try again.';
-        codeError.classList.remove('hidden');
-        resetAuthModal();
-        initRecaptcha();
-        return;
-    }
-    
-    try {
-        verifyCodeBtn.disabled = true;
-        verifyCodeBtn.textContent = 'Verifying...';
-        codeError.classList.add('hidden');
-        
-        const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, code);
-        const result = await firebase.auth().signInWithCredential(credential);
-        
-        currentUser = result.user;
-        isLoggedIn = true;
-        
-        codeInputContainer.classList.add('hidden');
-        authSuccessContainer.classList.remove('hidden');
-        
-        loginBtn.textContent = 'Log Out';
-        const formattedPhoneNumber = formatPhoneNumber(currentUser.phoneNumber);
-        userPhoneDisplay.textContent = formattedPhoneNumber;
-        userPhoneDisplay.classList.remove('hidden');
-        
-        fetchAndPopulateUserData(phoneNumberInput.value);
-        
-        setTimeout(() => {
-            authModal.classList.add('hidden');
-            modalOverlay.classList.add('hidden');
-            resetAuthModal();
-        }, 2000);
-    } catch (error) {
-        console.error('Error verifying code:', error);
-        codeError.textContent = error.code === 'auth/invalid-verification-code' 
-            ? 'Invalid verification code. Please try again.'
-            : 'Error verifying code. Please try again.';
-        codeError.classList.remove('hidden');
-        verifyCodeBtn.disabled = false;
-        verifyCodeBtn.textContent = 'Verify Code';
-        
-        document.querySelectorAll('.verification-code-input').forEach(input => {
-            input.classList.add('border-red-500');
-        });
-    }
-}
-
-        
+                // Highlight input fields in red
+                verificationInputs.forEach(input => {
+                    input.classList.add('border-red-500');
+                });
+            }
+        }
         
         // Logout user
         function logoutUser() {
@@ -1400,7 +959,7 @@ async function verifyCode(code) {
                 
                 // Reset UI
                 loginBtn.textContent = 'Log In';
-                // loginBtnMobile.textContent = 'Log In';
+                loginBtnMobile.textContent = 'Log In';
                 userPhoneDisplay.classList.add('hidden');
                 userPhoneDisplay.textContent = '';
             }).catch((error) => {
@@ -1413,16 +972,13 @@ async function verifyCode(code) {
             const websiteAdmins = ['+17789569063', '+16049778798', '+15054443986', '+17788929401', '+1-778-956-9063', '+1-604-977-8798', '+1-505-444-3986', '+1-778-892-9401' ]
             if (user && websiteAdmins.includes(user.phoneNumber)) {
                 // User is signed in and is an admin
-                currentUser = {
-                    uid: user.uid,
-                    phoneNumber: user.phoneNumber // Correct property name
-                };
+                currentUser = user;
                 isLoggedIn = true;
                 
                 // Update UI
                 loginBtn.textContent = 'Log Out';
-                const formattedPhoneNumber = formatPhoneNumber(user.phoneNumber);
-                userPhoneDisplay.textContent = formattedPhoneNumber;
+                loginBtnMobile.textContent = 'Log Out';
+                userPhoneDisplay.textContent = user.phoneNumber || 'Authenticated User';
                 userPhoneDisplay.classList.remove('hidden');
                 document.getElementById('adminLink').classList.remove('hidden');
                 
@@ -1430,15 +986,12 @@ async function verifyCode(code) {
                 fetchAndPopulateUserData(user.phoneNumber);
             } else if (user) {
                 // User is signed in but not an admin
-                currentUser = {
-                    uid: user.uid,
-                    phoneNumber: user.phoneNumber // Correct property name
-                };
+                currentUser = user;
                 isLoggedIn = true;
                 
                 // Update UI
                 loginBtn.textContent = 'Log Out';
-                // loginBtnMobile.textContent = 'Log Out';
+                loginBtnMobile.textContent = 'Log Out';
                 const formattedPhoneNumber = formatPhoneNumber(user.phoneNumber);
                 userPhoneDisplay.textContent = formattedPhoneNumber;
                 userPhoneDisplay.classList.remove('hidden');
@@ -1453,6 +1006,7 @@ async function verifyCode(code) {
                 
                 // Update UI
                 loginBtn.textContent = 'Log In';
+                loginBtnMobile.textContent = 'Log In';
                 userPhoneDisplay.classList.add('hidden');
                 document.getElementById('adminLink').classList.add('hidden');
             }
@@ -1550,7 +1104,7 @@ async function verifyCode(code) {
             });
         }
 
-        // // Display products - VERSION 1.0
+        // // Display products
         // async function displayProducts() {
         //     productList.innerHTML = '<div class="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">Loading...</div>';
             
@@ -1645,273 +1199,131 @@ async function verifyCode(code) {
         // }
 
 
-        // Display products - VERION 2.0
-        // async function displayProducts() {
-        //     productList.innerHTML = '<div class="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">Loading...</div>';
+        // Display products
+        async function displayProducts() {
+            productList.innerHTML = '<div class="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">Loading...</div>';
             
-        //     try {
-        //         const snapshot = await db.collection('products').orderBy('name').get();
+            try {
+                const snapshot = await db.collection('products').orderBy('name').get();
                 
-        //         if (snapshot.empty) {
-        //             productList.innerHTML = '<div class="col-span-full text-center py-8">No products available</div>';
-        //             return;
-        //         }
-                
-        //         // Clear existing cache
-        //         productCache.clear();
-        //         productSwipers = {};
-                
-        //         productList.innerHTML = '';
-        //         snapshot.forEach((doc) => {
-        //             const product = {
-        //                 id: doc.id,
-        //                 ...doc.data()
-        //             };
-                    
-        //             // Cache the product
-        //             productCache.set(doc.id, product);
-                    
-        //             const productCard = document.createElement('div');
-        //             productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
-                    
-        //             // Determine what images to display
-        //             let carouselHTML = '';
-                    
-        //             if (product.images && product.images.length > 0) {
-        //                 // Create swiper carousel with images
-        //                 carouselHTML = `
-        //                     <div class="product-carousel h-[calc(100vh/3)] sm:h-[calc(100vh/5)] bg-gray-100 dark:bg-gray-700 p-1.5 pb-0 overflow-hidden">
-        //                         <div class="swiper swiper-${doc.id}">
-        //                             <div class="swiper-wrapper">
-        //                                 ${product.images.map(image => `
-        //                                     <div class="swiper-slide">
-        //                                         <img src="${image.url}" alt="${product.name}" class="w-full h-full rounded-t-lg">
-        //                                     </div>
-        //                                 `).join('')}
-        //                             </div>
-        //                             <div class="swiper-pagination swiper-pagination-${doc.id}"></div>
-        //                             <div class="swiper-button-prev swiper-button-prev-${doc.id}"></div>
-        //                             <div class="swiper-button-next swiper-button-next-${doc.id}"></div>
-        //                             ${product.images.length > 1 ? `<div class="image-count absolute top-1.5 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">${product.images.length} images</div>` : ''}
-        //                         </div>
-        //                     </div>
-        //                 `;
-        //             } else if (product.imageUrl) {
-        //                 // Fallback to legacy imageUrl
-        //                 carouselHTML = `
-        //                     <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden">
-        //                         <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover rounded-t-lg">
-        //                     </div>
-        //                 `;
-        //             } else {
-        //                 // No image
-        //                 carouselHTML = `
-        //                     <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden flex items-center justify-center">
-        //                         <div class="text-gray-400">No Image</div>
-        //                     </div>
-        //                 `;
-        //             }
-
-        //             productCard.innerHTML = `
-        //                 ${carouselHTML}
-
-        //                 <div class="p-4 flex flex-col flex-grow justify-between">
-        //                     <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
-        //                     <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
-        //                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
-        //                     <div class="flex justify-between items-center mt-auto">
-        //                         <!-- Quantity Controls -->
-        //                         <div class="flex items-center">
-        //                             <button data-product-id="${doc.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
-        //                             <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${doc.id}">
-        //                             <button data-product-id="${doc.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
-        //                         </div>
-        //                         <!-- Cart Button -->
-        //                         <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
-        //                             Add to Cart
-        //                         </button>
-        //                     </div>
-        //                 </div>
-        //             `;
-        
-        //             productList.appendChild(productCard);
-                    
-        //             // Initialize swiper for this product if it has multiple images
-        //             if (product.images && product.images.length > 0) {
-        //                 setTimeout(() => initProductCarousel(doc.id), 0);
-        //             }
-        //         });
-
-        //         // Add event listeners for product cards
-        //         document.querySelectorAll('.add-to-cart').forEach(button => {
-        //             button.addEventListener('click', addToCart);
-        //         });
-
-        //         document.querySelectorAll('.increase-qty').forEach(button => {
-        //             button.addEventListener('click', (e) => {
-        //                 const id = e.target.dataset.productId;
-        //                 const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
-        //                 input.value = parseInt(input.value) + 1;
-        //             });
-        //         });
-
-        //         document.querySelectorAll('.decrease-qty').forEach(button => {
-        //             button.addEventListener('click', (e) => {
-        //                 const id = e.target.dataset.productId;
-        //                 const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
-        //                 if (parseInt(input.value) > 1) {
-        //                     input.value = parseInt(input.value) - 1;
-        //                 }
-        //             });
-        //         });
-                
-        //     } catch (error) {
-        //         console.error("Error loading products:", error);
-        //         productList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading products: ${error.message}</div>`;
-        //     }
-        // }
-
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-
-// VERSION 3.0 -- April 29, 2025
-
-// Modified displayProducts function to filter out "unreleased" products
-async function displayProducts() {
-    productList.innerHTML = '<div class="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">Loading...</div>';
-    
-    try {
-        const snapshot = await db.collection('products').orderBy('name').get();
-        
-        if (snapshot.empty) {
-            productList.innerHTML = '<div class="col-span-full text-center py-8">No products available</div>';
-            return;
-        }
-        
-        // Clear existing cache
-        productCache.clear();
-        productSwipers = {};
-        
-        productList.innerHTML = '';
-        
-        // Filter and display only released products
-        snapshot.forEach((doc) => {
-            const product = {
-                id: doc.id,
-                ...doc.data()
-            };
-            
-            // Skip unreleased products
-            if (product.status === 'unreleased') {
-                return;
-            }
-            
-            // Cache the product
-            productCache.set(doc.id, product);
-            
-            const productCard = document.createElement('div');
-            productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
-            
-            // Determine what images to display
-            let carouselHTML = '';
-            
-            if (product.images && product.images.length > 0) {
-                // Create swiper carousel with images
-                carouselHTML = `
-                    <div class="product-carousel h-[calc(100vh/3)] sm:h-[calc(100vh/5)] bg-gray-100 dark:bg-gray-700 p-1.5 pb-0 overflow-hidden">
-                        <div class="swiper swiper-${doc.id}">
-                            <div class="swiper-wrapper">
-                                ${product.images.map(image => `
-                                    <div class="swiper-slide">
-                                        <img src="${image.url}" alt="${product.name}" class="w-full h-full rounded-t-lg">
-                                    </div>
-                                `).join('')}
-                            </div>
-                            <div class="swiper-pagination swiper-pagination-${doc.id}"></div>
-                            <div class="swiper-button-prev swiper-button-prev-${doc.id}"></div>
-                            <div class="swiper-button-next swiper-button-next-${doc.id}"></div>
-                            ${product.images.length > 1 ? `<div class="image-count absolute top-1.5 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">${product.images.length} images</div>` : ''}
-                        </div>
-                    </div>
-                `;
-            } else if (product.imageUrl) {
-                // Fallback to legacy imageUrl
-                carouselHTML = `
-                    <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden">
-                        <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover rounded-t-lg">
-                    </div>
-                `;
-            } else {
-                // No image
-                carouselHTML = `
-                    <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden flex items-center justify-center">
-                        <div class="text-gray-400">No Image</div>
-                    </div>
-                `;
-            }
-
-            productCard.innerHTML = `
-                ${carouselHTML}
-
-                <div class="p-4 flex flex-col flex-grow justify-between">
-                    <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
-                    <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
-                    <div class="flex justify-between items-center mt-auto">
-                        <!-- Quantity Controls -->
-                        <div class="flex items-center">
-                            <button data-product-id="${doc.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
-                            <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${doc.id}">
-                            <button data-product-id="${doc.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
-                        </div>
-                        <!-- Cart Button -->
-                        <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
-                            Add to Cart
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            productList.appendChild(productCard);
-            
-            // Initialize swiper for this product if it has multiple images
-            if (product.images && product.images.length > 0) {
-                setTimeout(() => initProductCarousel(doc.id), 0);
-            }
-        });
-
-        // Add event listeners for product cards
-        document.querySelectorAll('.add-to-cart').forEach(button => {
-            button.addEventListener('click', addToCart);
-        });
-
-        document.querySelectorAll('.increase-qty').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const id = e.target.dataset.productId;
-                const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
-                input.value = parseInt(input.value) + 1;
-            });
-        });
-
-        document.querySelectorAll('.decrease-qty').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const id = e.target.dataset.productId;
-                const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
-                if (parseInt(input.value) > 1) {
-                    input.value = parseInt(input.value) - 1;
+                if (snapshot.empty) {
+                    productList.innerHTML = '<div class="col-span-full text-center py-8">No products available</div>';
+                    return;
                 }
-            });
-        });
+                
+                // Clear existing cache
+                productCache.clear();
+                productSwipers = {};
+                
+                productList.innerHTML = '';
+                snapshot.forEach((doc) => {
+                    const product = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    
+                    // Cache the product
+                    productCache.set(doc.id, product);
+                    
+                    const productCard = document.createElement('div');
+                    productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
+                    
+                    // Determine what images to display
+                    let carouselHTML = '';
+                    
+                    if (product.images && product.images.length > 0) {
+                        // Create swiper carousel with images
+                        carouselHTML = `
+                            <div class="product-carousel h-[calc(100vh/3)] sm:h-[calc(100vh/5)] bg-gray-100 dark:bg-gray-700 p-1.5 pb-0 overflow-hidden">
+                                <div class="swiper swiper-${doc.id}">
+                                    <div class="swiper-wrapper">
+                                        ${product.images.map(image => `
+                                            <div class="swiper-slide">
+                                                <img src="${image.url}" alt="${product.name}" class="w-full h-full rounded-t-lg">
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    <div class="swiper-pagination swiper-pagination-${doc.id}"></div>
+                                    <div class="swiper-button-prev swiper-button-prev-${doc.id}"></div>
+                                    <div class="swiper-button-next swiper-button-next-${doc.id}"></div>
+                                    ${product.images.length > 1 ? `<div class="image-count absolute top-1.5 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">${product.images.length} images</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    } else if (product.imageUrl) {
+                        // Fallback to legacy imageUrl
+                        carouselHTML = `
+                            <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden">
+                                <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover rounded-t-lg">
+                            </div>
+                        `;
+                    } else {
+                        // No image
+                        carouselHTML = `
+                            <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden flex items-center justify-center">
+                                <div class="text-gray-400">No Image</div>
+                            </div>
+                        `;
+                    }
+
+                    productCard.innerHTML = `
+                        ${carouselHTML}
+
+                        <div class="p-4 flex flex-col flex-grow justify-between">
+                            <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
+                            <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+                            <div class="flex justify-between items-center mt-auto">
+                                <!-- Quantity Controls -->
+                                <div class="flex items-center">
+                                    <button data-product-id="${doc.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
+                                    <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${doc.id}">
+                                    <button data-product-id="${doc.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
+                                </div>
+                                <!-- Cart Button -->
+                                <button data-product-id="${doc.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    `;
         
-    } catch (error) {
-        console.error("Error loading products:", error);
-        productList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading products: ${error.message}</div>`;
-    }
-}
+                    productList.appendChild(productCard);
+                    
+                    // Initialize swiper for this product if it has multiple images
+                    if (product.images && product.images.length > 0) {
+                        setTimeout(() => initProductCarousel(doc.id), 0);
+                    }
+                });
 
+                // Add event listeners for product cards
+                document.querySelectorAll('.add-to-cart').forEach(button => {
+                    button.addEventListener('click', addToCart);
+                });
 
-//////////////////////////////////////////////////////////////////////////// 
-//////////////////////////////////////////////////////////////////////////// 
+                document.querySelectorAll('.increase-qty').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.target.dataset.productId;
+                        const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+                        input.value = parseInt(input.value) + 1;
+                    });
+                });
+
+                document.querySelectorAll('.decrease-qty').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.target.dataset.productId;
+                        const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+                        if (parseInt(input.value) > 1) {
+                            input.value = parseInt(input.value) - 1;
+                        }
+                    });
+                });
+                
+            } catch (error) {
+                console.error("Error loading products:", error);
+                productList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading products: ${error.message}</div>`;
+            }
+        }
 
 
         // Add product to cart
@@ -1934,7 +1346,7 @@ async function displayProducts() {
                 
                 if (existingItem) {
                     existingItem.quantity += quantity;
-            } else {
+                } else {
                     cart.push({
                         product,
                         quantity
@@ -1973,6 +1385,8 @@ async function displayProducts() {
                 emptyCartMessage.style.display = 'block';
                 cartItems.innerHTML = '';
                 cartTotal.textContent = 'Total: $0.00';
+                clearCartBtn.disabled = true;
+                submitOrderBtn.disabled = true;
             } else {
                 emptyCartImage.classList.add('hidden');
                 emptyCartMessage.style.display = 'none';
@@ -2011,6 +1425,8 @@ async function displayProducts() {
                 
                 cartItems.innerHTML = cartHTML;
                 cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+                clearCartBtn.disabled = false;
+                submitOrderBtn.disabled = false;
                 
                 // Add event listeners for remove buttons
                 document.querySelectorAll('.remove-item').forEach(button => {
@@ -2062,7 +1478,7 @@ async function displayProducts() {
                             filteredProducts.push(product);
                         }
                     });
-            } else {
+                } else {
                     // Fallback to Firestore if cache is empty
                     const snapshot = await db.collection('products').orderBy('name').get();
                     snapshot.forEach((doc) => {
@@ -2117,7 +1533,7 @@ async function displayProducts() {
                                 <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover">
                             </div>
                         `;
-            } else {
+                    } else {
                         // No image
                         carouselHTML = `
                             <div class="product-carousel bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
@@ -2193,13 +1609,13 @@ async function displayProducts() {
             img.onerror = null; // Prevent infinite loops if fallback also fails
         }
 
-        // // Event listeners
-        // if (clearCartBtn) clearCartBtn.addEventListener('click', clearCart);
-        // if (orderForm) orderForm.addEventListener('submit', submitOrder);
-        // if (closeModalBtn) closeModalBtn.addEventListener('click', () => {
-        //     confirmationModal.classList.add('hidden');
-        // });
-        // searchInput.addEventListener('input', searchProducts);
+        // Event listeners
+        if (clearCartBtn) clearCartBtn.addEventListener('click', clearCart);
+        if (orderForm) orderForm.addEventListener('submit', submitOrder);
+        if (closeModalBtn) closeModalBtn.addEventListener('click', () => {
+            confirmationModal.classList.add('hidden');
+        });
+        searchInput.addEventListener('input', searchProducts);
 
         // Handle browser back button for modal
         window.addEventListener('popstate', function(e) {
@@ -2253,227 +1669,201 @@ async function displayProducts() {
         }
 
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    // Modified submitOrder function
-    async function submitOrder(e) {
-        e.preventDefault();
-
-        // --- Move validation checks here from deprecated submitOrderBtn ---
-        if (typeof isLoggedIn !== 'undefined' && !isLoggedIn) {
-            document.getElementById('customAlert')?.classList.remove('hidden');
-            return; // Stop execution if not logged in
-        }
-
-        const requiredFields = [
-            document.getElementById('name'), 
-            document.getElementById('wechat'), 
-            document.getElementById('deliveryType')
-        ].filter(el => el !== null);
+    // // Modified submitOrder function
+    // async function submitOrder(e) {
+    //     e.preventDefault();
         
-        const allFilled = requiredFields.every(field => field.value.trim() !== '');
-        if (!allFilled) {
-            showToast("Please fill out all required fields.", 'error');
-            return; // Stop execution if validation fails
-        }
-        
-        // Show loading overlay
-        loadingOverlay.classList.remove('hidden');
+    //     // Show loading overlay
+    //     loadingOverlay.classList.remove('hidden');
 
-        // Get form data
-        const customerData = {
-            name: document.getElementById('name').value,
-            wechat: document.getElementById('wechat').value,
-            address: document.getElementById('address').value,
-            notes: document.getElementById('notes').value,
-            userId: currentUser ? currentUser.uid : null, // Add user ID if logged in
-            phone: currentUser.phoneNumber, // Changed for consistency from "phone: currentUser ? currentUser.phoneNumber : null"
-            deliveryType: document.getElementById('deliveryType').value
-        };
+    //     // Get form data
+    //     const customerData = {
+    //         name: document.getElementById('name').value,
+    //         wechat: document.getElementById('wechat').value,
+    //         address: document.getElementById('address').value,
+    //         notes: document.getElementById('notes').value,
+    //         userId: currentUser ? currentUser.uid : null, // Add user ID if logged in
+    //         phone: currentUser ? currentUser.phoneNumber : null, // Add phone number if available
+    //         deliveryType: document.getElementById('deliveryType').value
+    //     };
         
-        // Format order items
-        const orderItems = cart.map(item => ({
-            productId: item.product.id,
-            productName: item.product.name,
-            price: item.product.price,
-            quantity: item.quantity,
-            subtotal: (item.product.price * item.quantity).toFixed(2)
-        }));
+    //     // Format order items
+    //     const orderItems = cart.map(item => ({
+    //         productId: item.product.id,
+    //         productName: item.product.name,
+    //         price: item.product.price,
+    //         quantity: item.quantity,
+    //         subtotal: (item.product.price * item.quantity).toFixed(2)
+    //     }));
         
-        // Calculate total
-        let total = 0;
-        cart.forEach(item => {
-            total += item.product.price * item.quantity;
-        });
+    //     // Calculate total
+    //     let total = 0;
+    //     cart.forEach(item => {
+    //         total += item.product.price * item.quantity;
+    //     });
         
-        // Create order document
-        const orderData = {
-            customer: customerData,
-            items: orderItems,
-            total: total.toFixed(2),
-            orderDate: new Date().toISOString(),
-            status: 'order placed',
-            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-        };
+    //     // Create order document
+    //     const orderData = {
+    //         customer: customerData,
+    //         items: orderItems,
+    //         total: total.toFixed(2),
+    //         orderDate: new Date().toISOString(),
+    //         status: 'order placed',
+    //         lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+    //     };
 
-        try {
-            // Add order to Firestore
-            const docRef = await db.collection('orders').add(orderData);
+    //     try {
+    //         // Add order to Firestore
+    //         const docRef = await db.collection('orders').add(orderData);
             
-            // Hide loading overlay
-            loadingOverlay.classList.add('hidden');
+    //         // Hide loading overlay
+    //         loadingOverlay.classList.add('hidden');
             
-            // Show confirmation modal
-            confirmationMessage.textContent = `Thank you ${customerData.name}! Your order #${docRef.id} has been received.`;
-            orderReference.textContent = `Order Reference: ${docRef.id}`;
-            confirmationModal.classList.remove('hidden');
+    //         // Show confirmation modal
+    //         confirmationMessage.textContent = `Thank you ${customerData.name}! Your order #${docRef.id} has been received.`;
+    //         orderReference.textContent = `Order Reference: ${docRef.id}`;
+    //         confirmationModal.classList.remove('hidden');
             
-            // Reset form and cart
-            orderForm.reset();
-            clearCart();
+    //         // Reset form and cart
+    //         orderForm.reset();
+    //         clearCart();
             
-        } catch (error) {
-            console.error("Error submitting order:", error);
-            loadingOverlay.classList.add('hidden');
-            alert("There was an error processing your order. Please try again.");
-        }
-    }
+    //     } catch (error) {
+    //         console.error("Error submitting order:", error);
+    //         loadingOverlay.classList.add('hidden');
+    //         alert("There was an error processing your order. Please try again.");
+    //     }
+    // }
 
 
 //////////////////////////////////////////////////////////////////////////// 
 //////////////////////////////////////////////////////////////////////////// 
 
 
-        // Function for submitting orders
-        // function submitOrder(e) {
-        //     e.preventDefault();
+// Function for submitting orders
+function submitOrder(e) {
+            e.preventDefault();
             
-        //     // Get order details from form
-        //     const name = document.getElementById('name').value.trim();
-        //     const wechat = document.getElementById('wechat').value.trim();
-        //     const address = document.getElementById('address') ? document.getElementById('address').value.trim() : '';
-        //     const deliveryType = document.getElementById('deliveryType').value;
+            // Get order details from form
+            const name = document.getElementById('name').value.trim();
+            const wechat = document.getElementById('wechat').value.trim();
+            const address = document.getElementById('address') ? document.getElementById('address').value.trim() : '';
+            const deliveryType = document.getElementById('deliveryType').value;
             
-        //     if (!name || !wechat) {
-        //         showToast('Please fill out all required fields', 'error');
-        //         return;
-        //     }
+            if (!name || !wechat) {
+                showToast('Please fill out all required fields', 'error');
+                return;
+            }
             
-        //     if (cart.length === 0) {
-        //         showToast('Your cart is empty', 'error');
-        //         return;
-        //     }
+            if (cart.length === 0) {
+                showToast('Your cart is empty', 'error');
+                return;
+            }
             
-        //     // Show loading overlay
-        //     if (loadingOverlay) loadingOverlay.classList.remove('hidden');
+            // Show loading overlay
+            if (loadingOverlay) loadingOverlay.classList.remove('hidden');
             
-        //     // Prepare order items
-        //     const orderItems = cart.map(item => ({
-        //         productId: item.product.id,
-        //         productName: item.product.name,
-        //         quantity: item.quantity,
-        //         price: item.product.price,
-        //         subtotal: item.product.price * item.quantity
-        //     }));
+            // Prepare order items
+            const orderItems = cart.map(item => ({
+                productId: item.product.id,
+                productName: item.product.name,
+                quantity: item.quantity,
+                price: item.product.price,
+                subtotal: item.product.price * item.quantity
+            }));
             
-        //     // Calculate total
-        //     const total = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
+            // Calculate total
+            const total = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
             
-        //     // Create order in Firestore
-        //     db.collection('orders').add({
-        //         customerName: name,
-        //         wechat: wechat,
-        //         address: address,
-        //         deliveryType: deliveryType,
-        //         items: orderItems,
-        //         total: total,
-        //         status: 'New',
-        //         createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        //     })
-        //     .then((docRef) => {
-        //         // Hide loading overlay
-        //         if (loadingOverlay) loadingOverlay.classList.add('hidden');
+            // Create order in Firestore
+            db.collection('orders').add({
+                customerName: name,
+                wechat: wechat,
+                address: address,
+                deliveryType: deliveryType,
+                items: orderItems,
+                total: total,
+                status: 'New',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then((docRef) => {
+                // Hide loading overlay
+                if (loadingOverlay) loadingOverlay.classList.add('hidden');
                 
-        //         // Show confirmation
-        //         if (orderReference) orderReference.textContent = docRef.id;
-        //         if (confirmationMessage) confirmationMessage.textContent = `Thank you ${name}! Your order has been placed.`;
-        //         if (confirmationModal) confirmationModal.classList.remove('hidden');
+                // Show confirmation
+                if (orderReference) orderReference.textContent = docRef.id;
+                if (confirmationMessage) confirmationMessage.textContent = `Thank you ${name}! Your order has been placed.`;
+                if (confirmationModal) confirmationModal.classList.remove('hidden');
                 
-        //         // Clear cart
-        //         clearCart();
+                // Clear cart
+                clearCart();
                 
-        //         // Reset form
-        //         orderForm.reset();
-        //     })
-        //     .catch((error) => {
-        //         // Hide loading overlay
-        //         if (loadingOverlay) loadingOverlay.classList.add('hidden');
+                // Reset form
+                orderForm.reset();
+            })
+            .catch((error) => {
+                // Hide loading overlay
+                if (loadingOverlay) loadingOverlay.classList.add('hidden');
                 
-        //         console.error("Error placing order:", error);
-        //         showToast('Error placing order: ' + error.message, 'error');
-        //     });
-        // }
+                console.error("Error placing order:", error);
+                showToast('Error placing order: ' + error.message, 'error');
+            });
+        }
+
+
+//////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////// 
+
 
         // Initialize
-        // displayProducts();
-        // if (cartItems) updateCartDisplay();
+        displayProducts();
+        if (cartItems) updateCartDisplay();
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////        
-///////////////////////////////////////////////////////////////////////////////////////////////////////        
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Updated submitOrderBtn click event if element exists
+        if (submitOrderBtn) {
+            submitOrderBtn.addEventListener('click', (e) => {
+                // Prevent default form submission
+                e.preventDefault();
 
-        // REMOVED- APRIL 29, 2025 -- redundant, clashes with orderForm.submit()
-//         // Updated submitOrderBtn click event if element exists
-//         submitOrderBtn.addEventListener('click', (e) => {
-//             // Prevent default form submission
-//             e.preventDefault();
+                // Check if the user is logged in
+                if (typeof isLoggedIn !== 'undefined' && !isLoggedIn) {
+                    // Show custom alert modal
+                    const customAlert = document.getElementById('customAlert');
+                    if (customAlert) customAlert.classList.remove('hidden');
+                    return;
+                }
 
-//             // Check if the user is logged in
-//             if (typeof isLoggedIn !== 'undefined' && !isLoggedIn) {
-//                 // Show custom alert modal
-//                 const customAlert = document.getElementById('customAlert');
-//                 if (customAlert) customAlert.classList.remove('hidden');
-//                 return;
-//             }
-// 
-//             // Check if required fields are filled
-//             const requiredFields = [
-//                 document.getElementById('name'), 
-//                 document.getElementById('wechat'), 
-//                 document.getElementById('deliveryType')
-//             ].filter(el => el !== null);
-            
-//             const allFilled = requiredFields.every(field => field.value.trim() !== '');
-            
-//             if (!allFilled) {
-//                 showToast("Please fill out all required fields.", 'error');
-//                 return;
-//             }
+                // Check if required fields are filled
+                const requiredFields = [
+                    document.getElementById('name'), 
+                    document.getElementById('wechat'), 
+                    document.getElementById('deliveryType')
+                ].filter(el => el !== null);
+                
+                const allFilled = requiredFields.every(field => field.value.trim() !== '');
+                
+                if (!allFilled) {
+                    showToast("Please fill out all required fields.", 'error');
+                    return;
+                }
 
-//             // If all checks pass, proceed with form submission
-//             if (orderForm) orderForm.submit();
-//         });
+                // If all checks pass, proceed with form submission
+                if (orderForm) orderForm.submit();
+            });
+        }
 
-//         // Handle device orientation changes to update swipers
-//         window.addEventListener('orientationchange', function() {
-//             setTimeout(() => {
-//                 // Update all swipers on orientation change
-//                 Object.values(productSwipers).forEach(swiper => {
-//                     if (swiper && typeof swiper.update === 'function') {
-//                         swiper.update();
-//                     }
-//                 });
-//                 if (modalSwiper) modalSwiper.update();
-//             }, 300);
-//         });
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////        
-///////////////////////////////////////////////////////////////////////////////////////////////////////        
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        // Handle device orientation changes to update swipers
+        window.addEventListener('orientationchange', function() {
+            setTimeout(() => {
+                // Update all swipers on orientation change
+                Object.values(productSwipers).forEach(swiper => {
+                    if (swiper && typeof swiper.update === 'function') {
+                        swiper.update();
+                    }
+                });
+                if (modalSwiper) modalSwiper.update();
+            }, 300);
+        });
 
         // Ensure proper image dimensions
         function processProductImages() {
@@ -2504,92 +1894,92 @@ async function displayProducts() {
 
 
         // Search functionality
-        // async function searchProducts() {
-        //     const searchTerm = searchInput.value.toLowerCase();
-        //     try {
-        //         const snapshot = await db.collection('products').orderBy('name').get();
-        //         const filteredProducts = [];
+        async function searchProducts() {
+            const searchTerm = searchInput.value.toLowerCase();
+            try {
+                const snapshot = await db.collection('products').orderBy('name').get();
+                const filteredProducts = [];
                 
-        //         snapshot.forEach((doc) => {
-        //             const product = doc.data();
-        //             if (product.name.toLowerCase().includes(searchTerm) || 
-        //                 (product.description && product.description.toLowerCase().includes(searchTerm))) {
-        //                 filteredProducts.push({
-        //                     id: doc.id,
-        //                     ...product
-        //                 });
-        //             }
-        //         });
+                snapshot.forEach((doc) => {
+                    const product = doc.data();
+                    if (product.name.toLowerCase().includes(searchTerm) || 
+                        (product.description && product.description.toLowerCase().includes(searchTerm))) {
+                        filteredProducts.push({
+                            id: doc.id,
+                            ...product
+                        });
+                    }
+                });
                 
-        //         // Update the product list display with filtered results
-        //         productList.innerHTML = '';
-        //         filteredProducts.forEach(product => {
-        //             const productCard = document.createElement('div');
-        //             productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
+                // Update the product list display with filtered results
+                productList.innerHTML = '';
+                filteredProducts.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
 
-        //             productCard.innerHTML = `
-        //                 <div class="bg-gray-100 dark:bg-gray-700 h-[250px] p-2 pb-0 overflow-hidden">
-        //                     ${product.imageUrl ? `
-        //                         <img 
-        //                             src="${product.imageUrl}" 
-        //                             alt="${product.name}" 
-        //                             class="w-full h-full object-cover rounded-t-lg"
-        //                         >
-        //                     ` : `
-        //                         <div class="h-full flex items-center justify-center text-gray-400">No Image</div>
-        //                     `}
-        //                 </div>
+                    productCard.innerHTML = `
+                        <div class="bg-gray-100 dark:bg-gray-700 h-[250px] p-2 pb-0 overflow-hidden">
+                            ${product.imageUrl ? `
+                                <img 
+                                    src="${product.imageUrl}" 
+                                    alt="${product.name}" 
+                                    class="w-full h-full object-cover rounded-t-lg"
+                                >
+                            ` : `
+                                <div class="h-full flex items-center justify-center text-gray-400">No Image</div>
+                            `}
+                        </div>
 
-        //                 <div class="p-4 flex flex-col flex-grow justify-between">
-        //                     <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
-        //                     <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
-        //                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
-        //                     <div class="flex justify-between items-center mt-auto">
-        //                         <!-- Quantity Controls -->
-        //                         <div class="flex items-center">
-        //                             <button data-product-id="${product.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
-        //                             <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${product.id}">
-        //                             <button data-product-id="${product.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
-        //                         </div>
-        //                         <!-- Cart Button -->
-        //                         <button data-product-id="${product.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
-        //                             Add to Cart
-        //                         </button>
-        //                     </div>
-        //                 </div>
-        //             `;
+                        <div class="p-4 flex flex-col flex-grow justify-between">
+                            <h3 class="text-white text-lg font-semibold mr-auto border-b border-[#f13dc3] pr-0.5 pb-1.5">${product.name}</h3>
+                            <p class="text-base font-semibold my-2 pt-2 mb-1">$${product.price.toFixed(2)}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${product.description}</p>
+                            <div class="flex justify-between items-center mt-auto">
+                                <!-- Quantity Controls -->
+                                <div class="flex items-center">
+                                    <button data-product-id="${product.id}" class="decrease-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-l-md">-</button>
+                                    <input type="number" min="1" value="1" class="qty-input w-12 h-8 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-base" data-product-id="${product.id}">
+                                    <button data-product-id="${product.id}" class="increase-qty bg-gray-200 dark:bg-gray-700 w-8 h-8 flex items-center justify-center rounded-r-md">+</button>
+                                </div>
+                                <!-- Cart Button -->
+                                <button data-product-id="${product.id}" class="add-to-cart bg-primary hover:bg-secondary text-white py-1 px-3 rounded-md text-sm">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    `;
                     
-        //             productList.appendChild(productCard);
-        //         });
+                    productList.appendChild(productCard);
+                });
 
-        //         // Add event listeners for the new product cards
-        //         document.querySelectorAll('.add-to-cart').forEach(button => {
-        //             button.addEventListener('click', addToCart);
-        //         });
+                // Add event listeners for the new product cards
+                document.querySelectorAll('.add-to-cart').forEach(button => {
+                    button.addEventListener('click', addToCart);
+                });
 
-        //         document.querySelectorAll('.increase-qty').forEach(button => {
-        //             button.addEventListener('click', (e) => {
-        //                 const id = e.target.dataset.productId;
-        //                 const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
-        //                 input.value = parseInt(input.value) + 1;
-        //             });
-        //         });
+                document.querySelectorAll('.increase-qty').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.target.dataset.productId;
+                        const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+                        input.value = parseInt(input.value) + 1;
+                    });
+                });
 
-        //         document.querySelectorAll('.decrease-qty').forEach(button => {
-        //             button.addEventListener('click', (e) => {
-        //                 const id = e.target.dataset.productId;
-        //                 const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
-        //                 if (parseInt(input.value) > 1) {
-        //                     input.value = parseInt(input.value) - 1;
-        //                 }
-        //             });
-        //         });
+                document.querySelectorAll('.decrease-qty').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.target.dataset.productId;
+                        const input = document.querySelector(`.qty-input[data-product-id="${id}"]`);
+                        if (parseInt(input.value) > 1) {
+                            input.value = parseInt(input.value) - 1;
+                        }
+                    });
+                });
 
-        //     } catch (error) {
-        //         console.error("Error searching products:", error);
-        //         productList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error searching products: ${error.message}</div>`;
-        //     }
-        // }
+            } catch (error) {
+                console.error("Error searching products:", error);
+                productList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error searching products: ${error.message}</div>`;
+            }
+        }
 
 
 //////////////////////////////////////////////////////////////////////////// 
@@ -2650,42 +2040,34 @@ async function displayProducts() {
         // Add event listener to the toggle button
         document.getElementById('toggleOrderFormBtn').addEventListener('click', toggleOrderForm);
 
+        // Updated submitOrderBtn click event
+        submitOrderBtn.addEventListener('click', (e) => {
+            // Prevent default form submission
+            e.preventDefault();
 
-        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Check if the user is logged in
+            if (!isLoggedIn) {
 
-        // // OLD VERSION - NOT ROBUST - submitOrderBtn click event
-        // submitOrderBtn.addEventListener('click', (e) => {
-        //     // Prevent default form submission
-        //     e.preventDefault();
+                // Show custom alert modal
+                document.getElementById('customAlert').classList.remove('hidden');
 
-        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-        //     // Check if the user is logged in
-        //     if (!isLoggedIn) {
+                return;
+            }
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //         // Show custom alert modal
-        //         document.getElementById('customAlert').classList.remove('hidden');
-
-        //         return;
-        //     }
-        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        //     // Check if required fields are filled
-        //     const requiredFields = [document.getElementById('name'), document.getElementById('wechat'), document.getElementById('deliveryType')];
-        //     const allFilled = requiredFields.every(field => field.value.trim() !== '');
+            // Check if required fields are filled
+            const requiredFields = [document.getElementById('name'), document.getElementById('wechat'), document.getElementById('deliveryType')];
+            const allFilled = requiredFields.every(field => field.value.trim() !== '');
             
-        //     if (!allFilled) {
-        //         alert("&excl; Please fill out all required fields.");
-        //         return;
-        //     }
+            if (!allFilled) {
+                alert("&excl; Please fill out all required fields.");
+                return;
+            }
 
-        //     // If all checks pass, proceed with form submission
-        //     orderForm.submit();
-        // });
-        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        
+            // If all checks pass, proceed with form submission
+            orderForm.submit();
+        });
 
         function formatPhoneNumber(phoneNumber) {
             // Remove the leading '+' and country code
@@ -2809,5 +2191,3 @@ async function displayProducts() {
     </body>
     
 </html>
-
-<!-- END -->

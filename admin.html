@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yummy Buy 😋</title>
-    <link rel="icon" type="image/png" href="assets/icons/favicon-1.png">
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-1.png">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/styles/products.css">
+    <!-- Firebase Imports -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -12,157 +15,18 @@
     
     <!-- Add Sortable.js for drag-and-drop functionality -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    
-    <!-- Tailwind CDN import -->
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Google Fonts -->
-    <link
-    href="https://fonts.googleapis.com/css2?family=Roboto&family=Lora&family=DM+Mono&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Zen+Old+Mincho&family=IBM+Plex+Sans+JP&family=Iansui&family=Klee+One&family=Dela+Gothic+One&family=Yusei+Magic&family=Noto+Sans+SC&family=Zen+Kaku+Gothic+Antique&family=Noto+Sans+JP&family=DotGothic16&family=Noto+Sans+TC&display=swap"
-    rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Lora&family=DM+Mono&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Zen+Old+Mincho&family=IBM+Plex+Sans+JP&family=Iansui&family=Klee+One&family=Dela+Gothic+One&family=Yusei+Magic&family=Noto+Sans+SC&family=Zen+Kaku+Gothic+Antique&family=Noto+Sans+JP&family=DotGothic16&family=Noto+Sans+TC&display=swap" rel="stylesheet" >
 
-    <!-- styles for tailwind -->
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-                theme: {
-                    extend: {
-                        colors: {
-                            primary: '#5D5CDE',
-                            secondary: '#A5A4FF',
-                        },
-                        fontFamily: {
-                            roboto: ['Roboto', 'sans-serif'],
-                            lora: ['Lora', 'serif'],
-                            dmMono: ['DM Mono', 'monospace'],
-                            zenMaru: ['"Zen Maru Gothic"', 'sans-serif'],
-                            zenMincho: ['Zen Old Mincho', 'serif'],
-                            'ibm-plex-sans-jp': ['IBM Plex Sans JP', 'sans-serif'],
-                            iansui: ['Iansui', 'sans-serif'],
-                            'klee-one': ['Klee One', 'cursive'],
-                            'dela-gothic-one': ['Dela Gothic One', 'sans-serif'],
-                            'yusei-magic': ['Yusei Magic', 'sans-serif'],
-                            'noto-sans-sc': ['Noto Sans SC', 'sans-serif'],
-                            'zen-kaku-gothic-antique': ['Zen Kaku Gothic Antique', 'sans-serif'],
-                            'noto-sans-jp': ['Noto Sans JP', 'sans-serif'],
-                            dotgothic16: ['DotGothic16', 'sans-serif'],
-                            'noto-sans-tc': ['Noto Sans TC', 'sans-serif'],
-                        },
-                        keyframes: {
-                            'pulse-glow': {
-                            '0%, 100%': { filter: 'drop-shadow(0 0 10px rgba(173, 216, 230, 0.7))' },
-                            '50%': { filter: 'drop-shadow(0 0 15px rgba(173, 216, 230, 0.9))' },
-                            }
-                        },
-                        animation: {
-                            // name: keyframes   duration   timing   iterations
-                            'pulse-glow': 'pulse-glow 3s   ease-in-out infinite',
-                        }                                                
-                    },
-                },
-        };
-
-        // Check for dark mode preference
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-        }
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            document.documentElement.classList.toggle('dark', event.matches);
-        });
-    </script>
-
-    <style>
-        /* styles for modals and other features*/
-        .order-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        .tab-active {
-            border-bottom: 3px solid #5D5CDE;
-            font-weight: 600;
-        }
-        /* Add toast styles here */
-        .toast {
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
-
-    <style>
-        /* Add styles for image gallery */
-        .image-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .image-item {
-            position: relative;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 5px;
-            height: 120px;
-            cursor: grab;
-        }
-        .image-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        .delete-image {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        .main-image-badge {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            background: rgba(0, 123, 255, 0.7);
-            border-radius: 3px;
-            padding: 2px 4px;
-            font-size: 10px;
-            color: white;
-        }
-        .add-image-btn {
-            height: 120px;
-            border: 2px dashed #ddd;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        .add-image-btn:hover {
-            border-color: #aaa;
-        }
-    </style>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Configuration -->
+    <script src="/tailwind.config.js"></script>
 
 </head>
 
 
-<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
- 
-    <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-    
-        <!-- // this divides head and body -->
-    
-    <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
- 
 <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
 
@@ -180,7 +44,7 @@
                 <!-- *** GRID vs FLEX *** -->
                 <!-- <span class="grid-start-1 grid-span-2 sm:flex sm:gap-2 sm:items-center text-primary text-base sm:text-lg sm:font-bold hover:text-secondary"> -->
             <span class="flex gap-2 items-center text-primary text-base sm:text-lg sm:font-bold hover:text-secondary">
-                <img src="assets/icons/left_arrow_001.png" alt="link back to home" class="w-8 h-8">
+                <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-8 h-8">
                 <a href="index.html" class="text-primary text-base font-semibold hover:text-secondary pb-1 pl-2">home</a>
             </span>
 
@@ -190,7 +54,7 @@
             <div class="flex justify-center items-start sm:gap-2 sm:pr-24">
                 
                 <!-- TITLE IMAGE -->
-                <img src="assets/icons/radar-0_no_bg.gif" alt="link back to home" class="w-auto h-10 sm:h-24 sm:m-0">
+                <img src="/assets/icons/radar-0_no_bg.gif" alt="link back to home" class="w-auto h-10 sm:h-24 sm:m-0">
                 
                 <!-- TITLE TEXT -->
                 <h1 class="self-end font-zenMaru text-3xl sm:text-6xl font-bold text-primary pb-6">瞭望塔</h1>
@@ -1188,7 +1052,7 @@ async function loadProducts(filter = 'all') {
         
         // handle case if empty
         if (snapshot.empty) {
-            productsList.innerHTML = '<div class="col-span-full text-center py-8">No orders found<img src="assets/images/gif-shaking-no-money-penguin.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>';
+            productsList.innerHTML = '<div class="col-span-full text-center py-8">No orders found<img src="/assets/images/gif-shaking-no-money-penguin.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>';
             return;
         }
         
@@ -1205,7 +1069,7 @@ async function loadProducts(filter = 'all') {
 
         // Render results
         if (products.length === 0) {
-            productsList.innerHTML = `<div class="col-span-full text-center py-8">No ${filter} products found<img src="assets/images/gif-shaking-no-money-penguin.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>`;
+            productsList.innerHTML = `<div class="col-span-full text-center py-8">No ${filter} products found<img src="/assets/images/gif-shaking-no-money-penguin.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>`;
             return;
         }
 
@@ -1314,7 +1178,7 @@ async function loadProducts(filter = 'all') {
     } catch (error) {
         console.error("Error loading products:", error);
         if (productsList) {
-            productsList.innerHTML = `<div class="col-span-full text-center py-8 text-red-300">Error loading products: ${error.message}<img src="assets/images/gif-surprised-corgi-detective.gif" alt="" class="w-48 h-auto mx-auto"></div>`;
+            productsList.innerHTML = `<div class="col-span-full text-center py-8 text-red-300">Error loading products: ${error.message}<img src="/assets/images/gif-surprised-corgi-detective.gif" alt="" class="w-48 h-auto mx-auto"></div>`;
         }
     }
 }

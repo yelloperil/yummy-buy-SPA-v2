@@ -15,9 +15,9 @@ This gives you full control over how effects like glow apply around visible part
 #### Example:
 ```html
 <div 
-    class="w-24 h-24 bg-[url('/images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png')] bg-contain bg-no-repeat bg-center transition-transform duration-300 ease-in-out hover:scale-125 hover:shadow-[0_0_20px_rgba(173,216,230,0.8)]"
-    style="mask-image: url('/images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png'); mask-repeat: no-repeat; mask-size: contain; mask-position: center;
-           -webkit-mask-image: url('/images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png'); -webkit-mask-repeat: no-repeat; -webkit-mask-size: contain; -webkit-mask-position: center;"
+    class="w-24 h-24 bg-[url('/assets/placeholder/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png')] bg-contain bg-no-repeat bg-center transition-transform duration-300 ease-in-out hover:scale-125 hover:shadow-[0_0_20px_rgba(173,216,230,0.8)]"
+    style="mask-image: url('/assets/placeholder/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png'); mask-repeat: no-repeat; mask-size: contain; mask-position: center;
+           -webkit-mask-image: url('/assets/placeholder/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png'); -webkit-mask-repeat: no-repeat; -webkit-mask-size: contain; -webkit-mask-position: center;"
 >
 </div>
 ```
@@ -34,7 +34,7 @@ If you **don’t need hover scaling**, you can use `filter: drop-shadow(...)` in
 
 ```html
 <img 
-    src="./images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png" 
+    src="/assets/placeholder/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png" 
     alt="Yummy Buy Mascot" 
     class="w-24 h-24 transition-transform duration-300 ease-in-out hover:scale-125" 
     style="filter: drop-shadow(0 0 10px rgba(173,216,230,0.8));"
@@ -63,10 +63,10 @@ Great! Since you want to **keep the hover scale effect**, we’ll go with the **
 
 ```html
 <div 
-  class="w-24 h-24 transition-transform duration-300 ease-in-out hover:scale-125 hover:shadow-[0_0_20px_rgba(173,216,230,0.8)] bg-[url('/images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png')] bg-contain bg-no-repeat bg-center"
+  class="w-24 h-24 transition-transform duration-300 ease-in-out hover:scale-125 hover:shadow-[0_0_20px_rgba(173,216,230,0.8)] bg-[url('/assets/placeholder/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png')] bg-contain bg-no-repeat bg-center"
   style="
-    mask-image: url('/images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png');
-    -webkit-mask-image: url('/images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png');
+    mask-image: url('/assets/placeholder/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png');
+    -webkit-mask-image: url('/assets/placeholder/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png');
     mask-repeat: no-repeat;
     -webkit-mask-repeat: no-repeat;
     mask-size: contain;

@@ -4,272 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yummy Buy 😋</title>
-    <link rel="icon" type="image/png" href="assets/icons/favicon-1.png">
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-1.png">
+    <!-- Custom CSS -->
+     <link rel="stylesheet" href="/styles/products.css">
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
-    <!-- Tailwind CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
     <!-- Swiper.js for carousel -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/9.3.2/swiper-bundle.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/9.3.2/swiper-bundle.min.js"></script>
 
     <!-- Google Fonts -->
-    <link
-    href="https://fonts.googleapis.com/css2?family=Roboto&family=Lora&family=DM+Mono&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Zen+Old+Mincho&family=IBM+Plex+Sans+JP&family=Iansui&family=Klee+One&family=Dela+Gothic+One&family=Yusei+Magic&family=Noto+Sans+SC&family=Zen+Kaku+Gothic+Antique&family=Noto+Sans+JP&family=DotGothic16&family=Noto+Sans+TC&display=swap"
-    rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Lora&family=DM+Mono&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Zen+Old+Mincho&family=IBM+Plex+Sans+JP&family=Iansui&family=Klee+One&family=Dela+Gothic+One&family=Yusei+Magic&family=Noto+Sans+SC&family=Zen+Kaku+Gothic+Antique&family=Noto+Sans+JP&family=DotGothic16&family=Noto+Sans+TC&display=swap" rel="stylesheet" >
 
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-                theme: {
-                    extend: {
-                        colors: {
-                            primary: '#5D5CDE',
-                            secondary: '#A5A4FF',
-                        },
-                        fontFamily: {
-                            roboto: ['Roboto', 'sans-serif'],
-                            lora: ['Lora', 'serif'],
-                            dmMono: ['DM Mono', 'monospace'],
-                            zenMaru: ['"Zen Maru Gothic"', 'sans-serif'],
-                            zenMincho: ['Zen Old Mincho', 'serif'],
-                            'ibm-plex-sans-jp': ['IBM Plex Sans JP', 'sans-serif'],
-                            iansui: ['Iansui', 'sans-serif'],
-                            'klee-one': ['Klee One', 'cursive'],
-                            'dela-gothic-one': ['Dela Gothic One', 'sans-serif'],
-                            'yusei-magic': ['Yusei Magic', 'sans-serif'],
-                            'noto-sans-sc': ['Noto Sans SC', 'sans-serif'],
-                            'zen-kaku-gothic-antique': ['Zen Kaku Gothic Antique', 'sans-serif'],
-                            'noto-sans-jp': ['Noto Sans JP', 'sans-serif'],
-                            dotgothic16: ['DotGothic16', 'sans-serif'],
-                            'noto-sans-tc': ['Noto Sans TC', 'sans-serif'],
-                        },
-                        keyframes: {
-                            'pulse-glow': {
-                            '0%, 100%': { filter: 'drop-shadow(0 0 10px rgba(173, 216, 230, 0.7))' },
-                            '50%': { filter: 'drop-shadow(0 0 15px rgba(173, 216, 230, 0.9))' },
-                            }
-                        },
-                        animation: {
-                            // name: keyframes   duration   timing   iterations
-                            'pulse-glow': 'pulse-glow 3s   ease-in-out infinite',
-                        },
-                        display: ['responsive'],
-                        flexDirection: ['responsive']                                                
-                    },
-                },
-                variants: {
-                    extend: {
-                        display: ['responsive'],
-                        flexDirection: ['responsive']
-                    }
-                }
-        };
-
-        // Check for dark mode preference
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-        }
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            document.documentElement.classList.toggle('dark', event.matches);
-        });
-    </script>
-
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Configuration -->
+    <script src="/tailwind.config.js"></script>
 
 <!-- /* /////////////////////////////////////////////////////////////////////////////////////////////////// */ -->
-
-
-    <style>
-
-    /* /////////////////////////////////////////////////////////////////////////////////////////////////// */
-
-        .order-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        .tab-active {
-            border-bottom: 3px solid #5D5CDE;
-            font-weight: 600;
-        }
-        /* Add toast styles here */
-        .toast {
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-
-/* /////////////////////////////////////////////////////////////////////////////////////////////////// */
-
-        
-    /* IMAGE CAROUSEL - PRODUCTS CAROUSEL & GALLERY MODAL */
-
-        /* Image carousel container styles */
-        /* .product-carousel {
-            width: 100%;
-            height: 250px;
-            overflow: hidden;
-            position: relative;
-            background-color: #f0f0f0;
-        }
-
-        .product-carousel .swiper-slide {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-        }
-
-        .product-carousel img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-        } */
-
-
-        /* VERSION 2.0 -- Perfect VERTICAL and SWIPER alignment BUT Centered Between Slides*/
-        /* Image carousel container styles */
-        .product-carousel {
-            width: 100%;
-            /* height: calc(100vh/3); */
-            /* height: 250px; */
-            overflow: hidden;
-            position: relative;
-            background-color: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .product-carousel .swiper,
-        .product-carousel .swiper-wrapper,
-        .product-carousel .swiper-slide {
-            width: 100%;
-            height: 100%;
-            /* display: flex;
-            align-items: center;
-            justify-content: center; */
-        }
-
-        .product-carousel img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-        }
-
-        /* Gallery modal */
-        .gallery-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 50;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.3s ease;
-        }
-
-        .gallery-modal.active {
-            display: flex;
-        }
-
-        /* Swiper customization */
-        .swiper-pagination-bullet {
-            background: #5D5CDE;
-            opacity: 0.7;
-        }
-
-        .swiper-pagination-bullet-active {
-            background: #A5A4FF;
-            opacity: 1;
-        }
-
-        /* Product card swipers */
-        .product-carousel .swiper-button-next,
-        .product-carousel .swiper-button-prev {
-            color: white;
-            background: rgba(0, 0, 0, 0.3);
-            width: 30px;
-            height: 30px;   
-            border-radius: 50%;
-            --swiper-navigation-size: 18px;
-        }
-
-        .product-carousel .swiper-button-next:hover,
-        .product-carousel .swiper-button-prev:hover {
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        /* Make sure pagination is visible on product cards */
-        .product-carousel .swiper-pagination {
-            bottom: 5px;
-        }
-
-        /* Image count badge */
-        .image-count {
-            z-index: 10;
-        }
-
-        /* Zoom effect for modal */
-        .modal-img-container {
-            max-width: 90vw;
-            max-height: 90vh;
-        }
-
-        .modal-img-container img {
-            max-width: 100%;
-            max-height: 90vh;
-            object-fit: contain;
-        }
-
-
-
-    /* /////////////////////////////////////////////////////////////////////////////////////////////////// */
-
-
-        .verification-code-input {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            caret-color: #5D5CDE; /* Match primary color */
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .verification-code-input:focus {
-            border-color: #5D5CDE;
-            box-shadow: 0 0 0 3px rgba(93, 92, 222, 0.2);
-        }
-
-        /* Ensure inputs are large enough for touch */
-        @media (max-width: 640px) {
-            .verification-code-input {
-                width: 2.5rem;
-                height: 2.5rem;
-                font-size: 1.25rem;
-            }
-        }
-
-
-    /* /////////////////////////////////////////////////////////////////////////////////////////////////// */
-
-
-
-    </style>
 
 </head>
 
@@ -280,13 +35,10 @@
     <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center bg-[#6A47C4] z-50 opacity-100 transition-opacity duration-500 pointer-events-auto" aria-label="Loading, please wait">
       
         <!-- MOBILE -->
-        <img src="assets\images\mobile-loading-3D-pastel.gif" alt="Loading screen" class="block sm:hidden w-auto h-full max-h-screen">
-
-        <!-- MOBILE v2 -->
-        <!-- <img src="assets/images/loading-screen-1b.gif" alt="Loading screen" class="w-auto h-full max-h-screen"> -->
+        <img src="/assets/images/GIF-mobile-loading-2.gif" alt="Loading screen" class="block sm:hidden object-cover w-auto h-full max-h-screen">
 
         <!-- DESKTOP -->
-        <img src="assets\images\desktop-loading_3D_pastel.gif" alt="Loading screen" class="hidden sm:block w-auto h-full">
+        <img src="/assets/images/desktop-loading_3D_pastel.gif" alt="Loading screen" class="hidden sm:block object-cover w-auto h-full">
 
     </div>
 
@@ -350,7 +102,7 @@
                     <!-- LOGO -- Pulsating Glow Effect + Expand on Hover -->
                     <a href="index.html" class="flex-1">
                         <img
-                            src="assets/images/mascot-logo-1.png"
+                            src="/assets/images/mascot-logo-1.png"
                             alt="Yummy Buy Mascot"
                             class="w-36 sm:w-32 md:w-48 lg:w-56 h-auto transition-transform duration-300 ease-in-out hover:scale-125 animate-pulse-glow"
                         /> 
@@ -460,7 +212,7 @@
                         <div id="cartItemsContainer" class="mb-4 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 min-h-[33.33vh] flex flex-col items-center justify-center">
 
                             <!-- Empty Cart Image -->   
-                            <img id="emptyCartImage" src="assets/images/cart-placeholder-1.gif" alt="Empty Cart" class="w-1/2 h-auto mb-4 mr-10 hidden">
+                            <img id="emptyCartImage" src="/assets/images/cart-placeholder-1.gif" alt="Empty Cart" class="w-1/2 h-auto mb-4 mr-10 hidden">
 
                             <!-- Empty Cart Message -->
                             <p id="emptyCartMessage" class="text-gray-500 dark:text-gray-400 hidden">Wow, so empty!</p>
@@ -542,7 +294,7 @@
                     <!-- Centered Image Logo v2 -->
                     <!-- <div class="h-full flex items-center justify-center w-full mb-10"> -->
                     <div class="flex items-center justify-center p-10">
-                        <img src="assets/images/slogan-logo-1.png" 
+                        <img src="/assets/images/slogan-logo-1.png" 
                             alt="Yummy Buy Mascot" 
                             class="w-full h-auto aspect-square object-contain md:h-auto lg:h-auto">
                             <!-- class="w-3/4 h-auto aspect-square object-contain md:w-1/3 lg:w-2/3"> -->
@@ -648,22 +400,22 @@
 
     <script>
         function hideLoadingScreen() {
-          const loadingScreen = document.getElementById('loadingScreen');
-          // Start fade-out transition
-          loadingScreen.classList.add('opacity-0');
-          // Hide after transition completes
-          setTimeout(() => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            // Start fade-out transition
+            loadingScreen.classList.add('opacity-0');
+            // Hide after transition completes
+            setTimeout(() => {
             loadingScreen.classList.add('hidden');
             // Fade in content
             document.querySelector('.content').classList.add('opacity-100');
-          }, 500); // Match the CSS transition duration
+            }, 500); // Match the CSS transition duration
         }
-    
+
         document.addEventListener('DOMContentLoaded', () => {
-          // Loading screen is visible by default
-          setTimeout(hideLoadingScreen, 2500); // Match GIF loop duration
+            // Loading screen is visible by default
+            setTimeout(hideLoadingScreen, 2500); // Match GIF loop duration
         });
-      </script>
+    </script>
 
     <script>
         // Firebase Configuration

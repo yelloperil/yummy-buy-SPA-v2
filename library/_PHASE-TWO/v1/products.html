@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yummy Buy 😋</title>
-    <link rel="icon" type="image/png" href="assets/icons/favicon-1.png">
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-1.png">
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -278,19 +278,17 @@
 <!-- START -->
     <!-- LOADING Modal Elements -->
     <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center bg-[#6A47C4] z-50 opacity-100 transition-opacity duration-500 pointer-events-auto" aria-label="Loading, please wait">
-        <!-- MOBILE v1-->
-        <img src="assets/images/mobile-loading-3-uncompressed.gif" alt="Loading screen" class="block sm:hidden w-auto h-full max-h-screen">
+      
+        <!-- MOBILE -->
+        <img src="/assets/images/GIF-mobile-loading-2.gif" alt="Loading screen" class="block sm:hidden object-cover w-auto h-full max-h-screen">
+        <!-- <img src="/assets/images/mobile-loading-3D-pastel.gif" alt="Loading screen" class="block sm:hidden object-cover w-auto h-full max-h-screen"> -->
+
         <!-- MOBILE v2 -->
-        <!-- <img src="assets/images/loading-screen-1b.gif" alt="Loading screen" class="w-auto h-full max-h-screen"> -->
+        <!-- <img src="/assets/images/loading-screen-1b.gif" alt="Loading screen" class="w-auto h-full max-h-screen"> -->
+
         <!-- DESKTOP -->
-        <img src="assets\images\mobile-loading-3-uncompressed.gif" alt="loading screen" 
-            class="hidden sm:block w-auto h-full">
-        <img src="assets\images\mobile-loading-3-uncompressed.gif" alt="loading screen" 
-            class="hidden sm:block w-auto h-full">
-        <img src="assets\images\mobile-loading-3-uncompressed.gif" alt="loading screen" 
-            class="hidden sm:block w-auto h-full">
-        <img src="assets\images\mobile-loading-3-uncompressed.gif" alt="loading screen" 
-            class="hidden sm:block w-auto h-full">
+        <img src="/assets/images/desktop-loading_3D_pastel.gif" alt="Loading screen" class="hidden sm:block object-cover w-auto h-full">
+
     </div>
 
     <!-- LOADING Logic -->
@@ -353,7 +351,7 @@
                     <!-- LOGO -- Pulsating Glow Effect + Expand on Hover -->
                     <a href="index.html" class="flex-1">
                         <img
-                            src="assets/images/mascot-logo-1.png"
+                            src="/assets/images/mascot-logo-1.png"
                             alt="Yummy Buy Mascot"
                             class="w-36 sm:w-32 md:w-48 lg:w-56 h-auto transition-transform duration-300 ease-in-out hover:scale-125 animate-pulse-glow"
                         /> 
@@ -463,7 +461,7 @@
                         <div id="cartItemsContainer" class="mb-4 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 min-h-[33.33vh] flex flex-col items-center justify-center">
 
                             <!-- Empty Cart Image -->   
-                            <img id="emptyCartImage" src="assets/images/cart-placeholder-1.gif" alt="Empty Cart" class="w-1/2 h-auto mb-4 mr-10 hidden">
+                            <img id="emptyCartImage" src="/assets/images/cart-placeholder-1.gif" alt="Empty Cart" class="w-1/2 h-auto mb-4 mr-10 hidden">
 
                             <!-- Empty Cart Message -->
                             <p id="emptyCartMessage" class="text-gray-500 dark:text-gray-400 hidden">Wow, so empty!</p>
@@ -545,7 +543,7 @@
                     <!-- Centered Image Logo v2 -->
                     <!-- <div class="h-full flex items-center justify-center w-full mb-10"> -->
                     <div class="flex items-center justify-center p-10">
-                        <img src="assets/images/slogan-logo-1.png" 
+                        <img src="/assets/images/slogan-logo-1.png" 
                             alt="Yummy Buy Mascot" 
                             class="w-full h-auto aspect-square object-contain md:h-auto lg:h-auto">
                             <!-- class="w-3/4 h-auto aspect-square object-contain md:w-1/3 lg:w-2/3"> -->

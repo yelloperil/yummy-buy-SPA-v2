@@ -54,7 +54,7 @@ Here’s your **refactored header with AOS**:
 <header class="my-8 pb-16 flex flex-col sm:grid sm:grid-cols-14 items-center gap-y-6">
   <!-- Div 1: Drop in from the left -->
   <div data-aos="fade-right" class="flex items-center gap-4 w-full sm:col-start-1 sm:col-span-4">
-    <img src="./images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png" alt="Yummy Buy Mascot" class="w-24 h-24" />
+    <img src="/assets/placeholder/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png" alt="Yummy Buy Mascot" class="w-24 h-24" />
     <div class="flex flex-col gap-3">
       <h1 class="text-3xl sm:text-4xl font-bold text-primary">
         <a href="index.html" class="hover:text-secondary transition-colors duration-200">Yummy Buy 😋</a>

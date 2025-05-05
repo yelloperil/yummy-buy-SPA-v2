@@ -56,7 +56,7 @@ Here’s your updated code with **simple load-time animations**:
   
   <!-- Div 1: Slide in from left -->
   <div class="flex items-center gap-4 w-full sm:col-start-1 sm:col-span-2 animate-slideInLeft">
-    <img src="./images-v2/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png" alt="Yummy Buy Mascot" class="w-24 h-24" />
+    <img src="/assets/placeholder/cute-sloth-emblem-logo-cartoon-free-vector-removebg-preview.png" alt="Yummy Buy Mascot" class="w-24 h-24" />
     <div class="flex flex-col gap-3">
       <h1 class="text-3xl sm:text-4xl font-bold text-primary">
         <a href="index.html" class="hover:text-secondary transition-colors duration-200">Yummy Buy 😋</a>

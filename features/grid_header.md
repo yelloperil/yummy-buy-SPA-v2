@@ -11,7 +11,7 @@
                 <!-- LOGO -- Pulsating Glow Effect + Expand on Hover -->
                 <a href="index.html" class="shrink-0">
                     <img
-                        src="./images-v2/mascot-logo-1.png"
+                        src="/assets/placeholder/mascot-logo-1.png"
                         alt="Yummy Buy Mascot"
                         class="w-36 sm:w-32 md:w-48 lg:w-56 h-auto transition-transform duration-300 ease-in-out hover:scale-125 animate-pulse-glow"
                     /> 

@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yummy Buy 😋</title>
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-1.png">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <!-- Add Sortable.js for drag-and-drop functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    
+    <!-- Tailwind CDN import -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link
+    href="https://fonts.googleapis.com/css2?family=Roboto&family=Lora&family=DM+Mono&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Zen+Old+Mincho&family=IBM+Plex+Sans+JP&family=Iansui&family=Klee+One&family=Dela+Gothic+One&family=Yusei+Magic&family=Noto+Sans+SC&family=Zen+Kaku+Gothic+Antique&family=Noto+Sans+JP&family=DotGothic16&family=Noto+Sans+TC&display=swap"
+    rel="stylesheet"
+    >
+
+    <!-- styles for tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#5D5CDE',
+                            secondary: '#A5A4FF',
+                        },
+                        fontFamily: {
+                            roboto: ['Roboto', 'sans-serif'],
+                            lora: ['Lora', 'serif'],
+                            dmMono: ['DM Mono', 'monospace'],
+                            zenMaru: ['"Zen Maru Gothic"', 'sans-serif'],
+                            zenMincho: ['Zen Old Mincho', 'serif'],
+                            'ibm-plex-sans-jp': ['IBM Plex Sans JP', 'sans-serif'],
+                            iansui: ['Iansui', 'sans-serif'],
+                            'klee-one': ['Klee One', 'cursive'],
+                            'dela-gothic-one': ['Dela Gothic One', 'sans-serif'],
+                            'yusei-magic': ['Yusei Magic', 'sans-serif'],
+                            'noto-sans-sc': ['Noto Sans SC', 'sans-serif'],
+                            'zen-kaku-gothic-antique': ['Zen Kaku Gothic Antique', 'sans-serif'],
+                            'noto-sans-jp': ['Noto Sans JP', 'sans-serif'],
+                            dotgothic16: ['DotGothic16', 'sans-serif'],
+                            'noto-sans-tc': ['Noto Sans TC', 'sans-serif'],
+                        },
+                        keyframes: {
+                            'pulse-glow': {
+                            '0%, 100%': { filter: 'drop-shadow(0 0 10px rgba(173, 216, 230, 0.7))' },
+                            '50%': { filter: 'drop-shadow(0 0 15px rgba(173, 216, 230, 0.9))' },
+                            }
+                        },
+                        animation: {
+                            // name: keyframes   duration   timing   iterations
+                            'pulse-glow': 'pulse-glow 3s   ease-in-out infinite',
+                        }                                                
+                    },
+                },
+        };
+
+        // Check for dark mode preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            document.documentElement.classList.toggle('dark', event.matches);
+        });
+    </script>
+
+    <style>
+        /* styles for modals and other features*/
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .tab-active {
+            border-bottom: 3px solid #5D5CDE;
+            font-weight: 600;
+        }
+        /* Add toast styles here */
+        .toast {
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+
+    <style>
+        /* Add styles for image gallery */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .image-item {
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            height: 120px;
+            cursor: grab;
+        }
+        .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .delete-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .main-image-badge {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: rgba(0, 123, 255, 0.7);
+            border-radius: 3px;
+            padding: 2px 4px;
+            font-size: 10px;
+            color: white;
+        }
+        .add-image-btn {
+            height: 120px;
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .add-image-btn:hover {
+            border-color: #aaa;
+        }
+    </style>
+
+</head>
+
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+ 
+    <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+    
+        <!-- // this divides head and body -->
+    
+    <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+ 
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+<body class="bg-gray-100 min-h-screen">
+
+    <div class="container mx-auto px-4 py-8">
+
+        <!-- Admin Header -->
+            <!-- *** GRID vs FLEX *** -->
+            <!-- <header class="grid-cols-12 mb-2 py-4 sm:flex sm:justify-between sm:items-center sm:mb-8 sm:py-8"> -->
+                <!-- SNIPPET TWO -->
+        <header class="flex justify-between items-center mb-2 py-4 sm:mb-8 sm:py-8">
+
+            <!-- BACK TO HOME -->
+                <!-- *** GRID vs FLEX *** -->
+                <!-- <span class="grid-start-1 grid-span-2 sm:flex sm:gap-2 sm:items-center text-primary text-base sm:text-lg sm:font-bold hover:text-secondary"> -->
+            <span class="flex gap-2 items-center text-primary text-base sm:text-lg sm:font-bold hover:text-secondary">
+                <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-8 h-8">
+                <a href="index.html" class="text-primary text-base font-semibold hover:text-secondary pb-1 pl-2">home</a>
+            </span>
+
+            <!-- TITLE CONTAINER -->
+                <!-- *** GRID vs FLEX *** -->
+                <!-- <div class="grid-start-4 grid-span-4 sm:flex sm:justify-center sm:gap-2 sm:pr-24"> -->
+            <div class="flex justify-center items-start sm:gap-2 sm:pr-24">
+                
+                <!-- TITLE IMAGE -->
+                <img src="/assets/icons/radar-0_no_bg.gif" alt="link back to home" class="w-auto h-10 sm:h-24 sm:m-0">
+                
+                <!-- TITLE TEXT -->
+                <h1 class="self-end font-zenMaru text-3xl sm:text-6xl font-bold text-primary pb-6">瞭望塔</h1>
+
+            </div>
+
+            <!-- logout -->
+                <!-- *** GRID vs FLEX *** -->
+                <!-- <button id="logoutBtn" class="grid-start-9 grid-span-2 sm:col-start-auto sm:col-span-auto hover:bg-red-300 bg-red-500 sm:bg-red-500 text-white py-2 px-4 rounded-md"> -->
+            <button id="logoutBtn" class="hover:bg-red-300 bg-red-500 text-sm sm:text-base text-white pt-1 pb-1.5 sm:py-2 px-2 sm:px-4 mb-1 sm:mb-0 rounded-md">
+                Log Out
+            </button>
+
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b mb-6">
+            <button id="ordersTab" class="tab-active text-lg sm:text-xl font-semibold px-4 sm:px-5 py-0.5 sm:py-1 mr-1 ">Orders</button>
+            <button id="productsTab" class="text-lg sm:text-xl font-semibold px-4 sm:px-5 py-0.5 sm:py-1 mr-1 ">Products</button>
+        </div>
+
+        <!-- Orders Section -->
+        <div id="ordersSection">
+            <!-- View Selector -->
+            <div class="flex mb-4 space-x-2">
+                <button id="chronologicalView" class="bg-primary text-white px-4 py-2 rounded-md">By Order Time</button>
+                <button id="userView" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md">By User</button>
+                <button id="productView" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md">By Product</button>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="mb-6 flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
+                <input type="text" id="orderSearch" placeholder="Search orders..." class="p-2 border rounded-md flex-grow">
+                <select id="statusFilter" class="p-2 border rounded-md">
+                    <option value="all">All Statuses</option>
+                    <option value="order placed">Order Placed</option>
+                    <option value="order on-hold">Order On-Hold</option>
+                    <option value="order completed">Order Completed</option>
+                    <option value="order cancelled">Order Cancelled</option>
+                </select>
+                <input type="date" id="dateFilter" class="p-2 border rounded-md">
+            </div>
+
+            <!-- Orders Container -->
+            <div id="ordersContainer" class="grid grid-cols-1 gap-4">
+                <!-- Orders will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Products Section (Hidden by default) -->
+        <div id="productsSection" class="hidden">
+            <!-- Product management UI will go here -->
+            <div class="mb-6 flex gap-4 justify-between items-center">
+                <h2 class="text-lg sm:text-2xl font-semibold">Product Management</h2>
+                <div class="flex justify-end gap-2">
+                    <div class="mb-4 flex items-center">
+                        <label for="productFilter" class="mr-2 text-sm sm:text-base font-semibold">Filter by:</label>
+                        <select id="productFilter" class="bg-[#dedcdd] mr-2 rounded-lg px-3 py-1 sm:px-5 sm:py-2 text-sm sm:text-base">
+                            <option value="all">All Products</option>
+                            <option value="released">Released</option>
+                            <option value="unreleased">Unreleased</option>
+                        </select>
+                    </div>
+                    <button id="addProductBtn" class="bg-primary hover:bg-secondary text-white text-sm sm:text-base font-semibold px-4 sm:px-6 py-1 sm:py-2 rounded-lg">
+                        Add New
+                    </button>
+                </div>
+            </div>
+            
+            <div id="productsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Toast Container -->
+        <div id="toastContainer" class="fixed bottom-4 right-4 z-50"></div>
+    </div>
+
+      <!-- Order Detail Modal -->
+      <div id="orderDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 max-w-4xl w-full max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Order Details</h3>
+                <button id="closeOrderModal" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="orderDetailContent"></div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold" id="productModalTitle">Add New Product</h3>
+                <button id="closeProductModal" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <!-- Updated product form with multiple image upload -->
+            <form id="productForm" class="space-y-4">
+                <input type="hidden" id="productId">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="productName" class="block mb-1">Product Name</label>
+                        <input type="text" id="productName" required class="w-full p-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="productPrice" class="block mb-1">Price</label>
+                        <input type="number" id="productPrice" step="0.01" required class="w-full p-2 border rounded-md">
+                    </div>
+                </div>
+                <div>
+                    <label for="productStatus" class="block mb-1">Status</label>
+                    <select id="productStatus" class="w-full p-2 border rounded-md">
+                        <option value="unreleased">Unreleased</option>
+                        <option value="released">Released</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="productDescription" class="block mb-1">Description</label>
+                    <textarea id="productDescription" rows="3" class="w-full p-2 border rounded-md"></textarea>
+                </div>
+                <div>
+                    <label class="block mb-1">Images</label>
+                    <p class="text-sm text-gray-500 mb-2">Drag images to reorder. First image will be used as the main product image.</p>
+                    
+                    <!-- Hidden file input -->
+                    <input type="file" id="productImageInput" accept="image/*" class="hidden">
+                    
+                    <!-- Image Gallery -->
+                    <div id="imageGallery" class="image-gallery">
+                        <!-- Add Image Button -->
+                        <div id="addImageBtn" class="add-image-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- alternate image upload method -->
+                    <!-- <div class="form-group">
+                        <label>Images</label>
+                        <div id="imageGallery" class="image-gallery"></div>
+                        <input type="file" id="productImageInput" accept="image/*" style="display: none;">
+                    </div> -->
+
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelProductBtn" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md">
+                        Cancel
+                    </button>
+                    <button type="submit" id="saveProductBtn" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyCTUZbw1qSdFEBG2SGo7smQgqXEKZZWCaw",
+          authDomain: "mei-wen-ti.firebaseapp.com",
+          projectId: "mei-wen-ti",
+            storageBucket: "mei-wen-ti.firebasestorage.app", // Fixed storage bucket URL -- It's NOT appspot.app, but firebasestorage.app
+          messagingSenderId: "103509830524",
+          appId: "1:103509830524:web:5ddef022db357ce99152f9",
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        const storage = firebase.storage();
+
+        // // Add error handling for Firebase
+        // firebase.firestore().enablePersistence()
+        //   .catch(err => {
+        //     if (err.code === 'failed-precondition') {
+        //       console.warn('Firestore persistence could not be enabled');
+        //     } else if (err.code === 'unimplemented') {
+        //       console.warn('Firestore persistence is not available in this browser');
+        //     }
+        //   });
+
+        // Updated persistence code with proper error handling
+        try {
+            firebase.firestore().enablePersistence({
+                synchronizeTabs: true
+            }).catch(err => {
+                if (err.code === 'failed-precondition') {
+                console.warn('Firestore persistence could not be enabled: Multiple tabs open');
+                } else if (err.code === 'unimplemented') {
+                console.warn('Firestore persistence is not available in this browser');
+                }
+            });
+            } catch (e) {
+            console.warn('Error enabling persistence:', e);
+        }
+
+////////////////////////////////////////////////////////////////////////
+
+        // Check authentication state
+        auth.onAuthStateChanged(user => {
+            if (!user) {
+                // For local testing, create a mock user instead of redirecting
+                console.log('No user logged in. Using mock user for local testing.');
+                // Load orders by default
+                loadOrders('chronological');
+            } else {
+                // Load orders by default
+                loadOrders('chronological');
+            }
+        });
+
+////////////////////////////////////////////////////////////////////////
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        });
+
+        // Tab switching
+        document.getElementById('ordersTab').addEventListener('click', () => {
+            document.getElementById('ordersSection').classList.remove('hidden');
+            document.getElementById('productsSection').classList.add('hidden');
+            document.getElementById('ordersTab').classList.add('tab-active');
+            document.getElementById('productsTab').classList.remove('tab-active');
+        });
+
+        document.getElementById('productsTab').addEventListener('click', () => {
+            document.getElementById('ordersSection').classList.add('hidden');
+            document.getElementById('productsSection').classList.remove('hidden');
+            document.getElementById('ordersTab').classList.remove('tab-active');
+            document.getElementById('productsTab').classList.add('tab-active');
+            
+            // Load all products sorted by lastUpdated (default)
+            loadProducts('all');
+        });
+
+        // View switching
+        document.getElementById('chronologicalView').addEventListener('click', () => {
+            loadOrders('chronological');
+            updateActiveViewButton('chronologicalView');
+        });
+
+        document.getElementById('userView').addEventListener('click', () => {
+            loadOrders('user');
+            updateActiveViewButton('userView');
+        });
+
+        document.getElementById('productView').addEventListener('click', () => {
+            loadOrders('product');
+            updateActiveViewButton('productView');
+        });
+
+        function updateActiveViewButton(activeId) {
+            ['chronologicalView', 'userView', 'productView'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (id === activeId) {
+                    btn.classList.add('bg-primary', 'text-white');
+                    btn.classList.remove('bg-gray-300', 'hover:bg-gray-400');
+                } else {
+                    btn.classList.remove('bg-primary', 'text-white');
+                    btn.classList.add('bg-gray-300', 'hover:bg-gray-400');
+                }
+            });
+        }
+
+        // Helper for Group by User View component
+        function getStatusColor(status) {
+            const statusColors = {
+                'order placed': 'text-blue-600',
+                'order on-hold': 'text-yellow-600',
+                'order completed': 'text-green-600',
+                'order cancelled': 'text-red-600',
+            };
+            return statusColors[status] || 'text-gray-600';
+        }
+
+        // Helper for Order Details Modal component
+        function getStatusBgColor(status) {
+            const statusColors = {
+                'order placed': 'bg-blue-100 text-blue-800',
+                'order on-hold': 'bg-yellow-100 text-yellow-800',
+                'order completed': 'bg-green-100 text-green-800',
+                'order cancelled': 'bg-gray-100 text-red-800'
+            };
+            return statusColors[status] || 'bg-gray-100 text-gray-800';
+        }
+
+        // [Continued in next message...]
+
+// [Add this code after the existing JavaScript in admin.html]
+
+        // Order Loading Functions
+        async function loadOrders(viewType) {
+            const ordersContainer = document.getElementById('ordersContainer');
+            ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">Loading orders...</div>';
+            
+            try {
+                // Check if we're in offline mode or local testing
+                let orders = [];
+                
+                try {
+                    let query = db.collection('orders').orderBy('orderDate', 'desc');
+                    const statusFilter = document.getElementById('statusFilter').value;
+                    const dateFilter = document.getElementById('dateFilter').value;
+                    
+                    // Apply filters
+                    if (statusFilter !== 'all') {
+                        query = query.where('status', '==', statusFilter);
+                    }
+                    if (dateFilter) {
+                        const startDate = new Date(dateFilter);
+                        const endDate = new Date(startDate);
+                        endDate.setDate(endDate.getDate() + 1);
+                        query = query.where('orderDate', '>=', startDate.toISOString())
+                                    .where('orderDate', '<', endDate.toISOString());
+                    }
+                    
+                    const snapshot = await query.get();
+                    
+                    if (snapshot.empty) {
+                        ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">No orders found</div>';
+                        return;
+                    }
+                    
+                    snapshot.forEach(doc => {
+                        orders.push({ id: doc.id, ...doc.data() });
+                    });
+                } catch (error) {
+                    console.warn("Error fetching orders from Firestore, using sample data:", error);
+                    
+                    // Use sample data for local testing
+                    orders = [
+                        {
+                            id: "sample1",
+                            orderDate: new Date().toISOString(),
+                            status: "order placed",
+                            total: "45.99",
+                            customer: {
+                                name: "John Doe",
+                                phone: "555-123-4567",
+                                email: "john@example.com",
+                                address: "123 Main St\nAnytown, CA 12345",
+                                notes: "Please leave at the door"
+                            },
+                            items: [
+                                {
+                                    productName: "Fresh Vegetables",
+                                    quantity: 2,
+                                    price: 12.99,
+                                    subtotal: "25.98"
+                                },
+                                {
+                                    productName: "Premium Meat",
+                                    quantity: 1,
+                                    price: 19.99,
+                                    subtotal: "19.99"
+                                }
+                            ]
+                        },
+                        {
+                            id: "sample2",
+                            orderDate: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+                            status: "order completed",
+                            total: "32.50",
+                            customer: {
+                                name: "Jane Smith",
+                                phone: "555-987-6543",
+                                email: "jane@example.com",
+                                address: "456 Oak Ave\nOthertown, CA 54321"
+                            },
+                            items: [
+                                {
+                                    productName: "Fresh Fruit Basket",
+                                    quantity: 1,
+                                    price: 32.50,
+                                    subtotal: "32.50"
+                                }
+                            ]
+                        }
+                    ];
+                }
+                
+                // Group orders based on view type
+                switch(viewType) {
+                    case 'user':
+                        displayOrdersByUser(orders);
+                        break;
+                    case 'product':
+                        displayOrdersByProduct(orders);
+                        break;
+                    default:
+                        displayChronologicalOrders(orders);
+                }
+                
+            } catch (error) {
+                console.error("Error loading orders:", error);
+                ordersContainer.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading orders: ${error.message}</div>`;
+            }
+        }
+
+        function displayChronologicalOrders(orders) {
+            const ordersContainer = document.getElementById('ordersContainer');
+            ordersContainer.innerHTML = '';
+            
+            orders.forEach(order => {
+                const orderDate = new Date(order.orderDate).toLocaleString();
+                const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0);
+                
+                const orderCard = document.createElement('div');
+                orderCard.className = 'flex flex-col bg-white rounded-lg shadow-md p-6 order-card transition-all';
+                orderCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-[#9289fe] text-lg sm:text-xl font-bold">${order.customer.name}</h3>
+                        <span class="bg-[#f1f0fb] px-3 py-1 rounded text-sm sm:text-base font-semibold ${getStatusColor(order.status)}">${order.status}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="flex gap-2 text-xs sm:text-sm font-medium">#${order.id.toUpperCase()}</span>
+                        <span class="flex gap-2 text-xs sm:text-sm font-medium">${orderDate}</span>
+                    </div>
+                    <div class="my-3 mt-6">
+                        <span class="bg-[#fef2f9] text-[#ffa2e0] px-3 py-1 rounded text-sm sm:text-base font-bold">${extractMonthDay(orderDate)}</span>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div class="flex items-center">
+                            <span class="text-base sm:text-lg text-[#9289fe] font-bold">$${order.total}</span>
+                            <span class="text-base font-medium mx-2"> – </span>
+                            <span class="text-base font-medium">(${totalItems} items)</span>
+                        </div>
+                        <button data-order-id="${order.id}" class="view-details-btn bg-primary text-white hover:bg-secondary text-sm font-medium px-3 py-2 rounded-md ml-auto">
+                            View Details
+                        </button>
+                    </div>
+                        
+                `;
+                ordersContainer.appendChild(orderCard);
+            });
+            
+            // Add event listeners to view buttons
+            document.querySelectorAll('.view-details-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const orderId = e.target.getAttribute('data-order-id');
+                    showOrderDetails(orders.find(o => o.id === orderId));
+                });
+            });
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+        // ### Order Management - User View ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+        function displayOrdersByUser(orders) {
+            const ordersContainer = document.getElementById('ordersContainer');
+            ordersContainer.innerHTML = '';
+            
+            // Group orders by user
+            const usersMap = orders.reduce((acc, order) => {
+                const userKey = order.customer.userPhone || order.customer.phone;
+                if (!acc[userKey]) {
+                    acc[userKey] = {
+                        customer: order.customer,
+                        orders: [],
+                        totalSpent: 0,
+                        totalOrders: 0
+                    };
+                }
+                acc[userKey].orders.push(order);
+                acc[userKey].totalSpent += parseFloat(order.total);
+                acc[userKey].totalOrders++;
+                return acc;
+            }, {});
+
+            // Convert to array and sort by total spent
+            const userGroups = Object.values(usersMap).sort((a, b) => b.totalSpent - a.totalSpent);
+
+            userGroups.forEach(userGroup => {
+                const userSection = document.createElement('div');
+                userSection.className = 'bg-white rounded-lg shadow-md p-6 mb-6';
+                userSection.innerHTML = `
+                    <div class="border-b pb-3 mb-3">
+                        <h3 class="text-primary font-bold text-xl mb-1">
+                            ${userGroup.customer.name || 'Guest Customer'}
+                            ${userGroup.customer.userPhone ? `<span class="text-sm font-normal text-gray-600">(Registered User)</span>` : ''}
+                        </h3>
+                        <div class="flex justify-between text-sm font-medium">
+                            <span>Phone: ${userGroup.customer.phone} ${userGroup.customer.wechat ? `| WeChat: ${userGroup.customer.wechat}` : ''}</span>
+                            <div>
+                                <span class="mr-4">Orders: ${userGroup.totalOrders}</span>
+                                <span class="text-primary font-bold">Total: $${userGroup.totalSpent.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-orders space-y-3">
+                        ${userGroup.orders.map(order => `
+                            <div class="order-item pl-3 border-l-2 border-primary">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <span class="font-medium">Order #${order.id.toUpperCase()}</span>
+                                        <span class="text-sm text-gray-600 ml-2">${new Date(order.orderDate).toLocaleDateString()}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm ${getStatusColor(order.status)}">${order.status}</span>
+                                        <button data-order-id="${order.id}" 
+                                            class="view-details-btn text-primary hover:text-secondary text-sm font-medium">
+                                            View
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="text-sm">
+                                    ${order.items.length} items - $${order.total}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                ordersContainer.appendChild(userSection);
+            });
+
+            // Add event listeners to view buttons
+            document.querySelectorAll('.view-details-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const orderId = e.target.getAttribute('data-order-id');
+                    const order = orders.find(o => o.id === orderId);
+                    showOrderDetails(order);
+                });
+            });
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+        // ### Order Management - Product View ### ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+        function displayOrdersByProduct(orders) {
+            const ordersContainer = document.getElementById('ordersContainer');
+            ordersContainer.innerHTML = '';
+            
+            // Aggregate product data across all orders
+            const productsMap = orders.reduce((acc, order) => {
+                order.items.forEach(item => {
+                    const key = item.productId || item.productName;
+                    if (!acc[key]) {
+                        acc[key] = {
+                            productId: item.productId,
+                            name: item.productName,
+                            price: item.price,
+                            totalQuantity: 0,
+                            totalRevenue: 0,
+                            orders: [],
+                            customers: new Set(),
+                            firstOrderDate: order.orderDate,
+                            lastOrderDate: order.orderDate
+                        };
+                    }
+                    
+                    acc[key].totalQuantity += item.quantity;
+                    acc[key].totalRevenue += item.quantity * item.price;
+                    acc[key].orders.push(order.id);
+                    acc[key].customers.add(order.customer.userPhone || order.customer.phone);
+                    
+                    // Update date range
+                    if (new Date(order.orderDate) < new Date(acc[key].firstOrderDate)) {
+                        acc[key].firstOrderDate = order.orderDate;
+                    }
+                    if (new Date(order.orderDate) > new Date(acc[key].lastOrderDate)) {
+                        acc[key].lastOrderDate = order.orderDate;
+                    }
+                });
+                return acc;
+            }, {});
+
+            // Convert to array and sort by total quantity
+            const productGroups = Object.values(productsMap).sort((a, b) => b.totalQuantity - a.totalQuantity);
+
+            productGroups.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'bg-white rounded-lg shadow-md p-4 mb-6';
+                productCard.innerHTML = `
+                    <div class="border-b pb-3 mb-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-lg">${product.name}</h3>
+                                <p class="text-sm text-gray-600">$${product.price.toFixed(2)} per unit</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-primary font-bold text-xl">${product.totalQuantity}</div>
+                                <div class="text-sm">units sold</div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2 text-sm">
+                            <div>
+                                <div class="text-gray-600">Revenue</div>
+                                <div class="font-medium">$${product.totalRevenue.toFixed(2)}</div>
+                            </div>
+                            <div>
+                                <div class="text-gray-600">Customers</div>
+                                <div class="font-medium">${product.customers.size}</div>
+                            </div>
+                            <div>
+                                <div class="text-gray-600">First Ordered</div>
+                                <div class="font-medium">${new Date(product.firstOrderDate).toLocaleDateString()}</div>
+                            </div>
+                            <div>
+                                <div class="text-gray-600">Last Ordered</div>
+                                <div class="font-medium">${new Date(product.lastOrderDate).toLocaleDateString()}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-orders">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-medium">Recent Orders</h4>
+                            <button class="toggle-orders text-primary hover:text-secondary text-sm font-medium">
+                                Show/Hide Orders
+                            </button>
+                        </div>
+                        <div class="orders-list hidden space-y-2">
+                            ${product.orders.slice(0, 5).map(orderId => {
+                                const order = orders.find(o => o.id === orderId);
+                                return `
+                                    <div class="flex justify-between items-center text-sm p-2 bg-gray-50 rounded">
+                                        <div>
+                                            <span class="font-medium">Order #${orderId}</span>
+                                            <span class="text-gray-600 ml-2">
+                                                ${new Date(order.orderDate).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                        <button data-order-id="${orderId}" 
+                                            class="view-details-btn text-primary hover:text-secondary font-medium">
+                                            View
+                                        </button>
+                                    </div>
+                                `;
+                            }).join('')}
+                            ${product.orders.length > 5 ? 
+                                `<div class="text-center text-sm text-gray-600 mt-2">
+                                    + ${product.orders.length - 5} more orders
+                                </div>` : ''}
+                        </div>
+                    </div>
+                `;
+                ordersContainer.appendChild(productCard);
+
+                // Add toggle functionality
+                const toggleBtn = productCard.querySelector('.toggle-orders');
+                const ordersList = productCard.querySelector('.orders-list');
+                toggleBtn.addEventListener('click', () => {
+                    ordersList.classList.toggle('hidden');
+                    toggleBtn.textContent = ordersList.classList.contains('hidden') 
+                        ? 'Show Orders' 
+                        : 'Hide Orders';
+                });
+            });
+
+            // Add event listeners to view buttons
+            document.querySelectorAll('.view-details-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const orderId = e.target.getAttribute('data-order-id');
+                    const order = orders.find(o => o.id === orderId);
+                    showOrderDetails(order);
+                });
+            });
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+        // ### Order Management - Details Modal ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+        // Order Detail Modal Functions
+        async function showOrderDetails(order) {
+            const modal = document.getElementById('orderDetailModal');
+            const content = document.getElementById('orderDetailContent');
+            
+            // Show loading state
+            content.innerHTML = '<div class="text-center py-8">Loading order details...</div>';
+            modal.classList.remove('hidden');
+
+            try {
+                // Format dates
+                const orderDate = new Date(order.orderDate).toLocaleString();
+                const updateDate = order.lastUpdated 
+                    ? new Date(order.lastUpdated.toDate()).toLocaleString() 
+                    : 'N/A';
+
+                // Build order items table
+                const itemsTable = order.items.map(item => `
+                    <tr class="border-b border-gray-200">
+                        <td class="py-3">${item.productName}</td>
+                        <td class="text-center">${item.quantity}</td>
+                        <td class="text-right">$${item.price.toFixed(2)}</td>
+                        <td class="text-right">$${item.subtotal}</td>
+                    </tr>
+                `).join('');
+
+                // Build status options
+                const statusOptions = ['order placed', 'order on-hold', 'order completed', 'order cancelled']
+                    .map(status => `
+                        <option value="${status}" ${order.status === status ? 'selected' : ''}>
+                            ${status.charAt(0).toUpperCase() + status.slice(1)}
+                        </option>
+                    `).join('');
+
+                // Populate modal content
+                content.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h4 class="font-bold mb-2">Order Information</h4>
+                            <div class="space-y-1 text-sm">
+                                <div class="flex">
+                                    <span class="w-32 text-gray-600">Order ID:</span>
+                                    <span>${order.id.toUpperCase()}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-32 text-gray-600">Date:</span>
+                                    <span>${orderDate}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-32 text-gray-600">Last Updated:</span>
+                                    <span>${updateDate}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-32 text-gray-600">Status:</span>
+                                    <select id="orderStatus" class="p-1 border rounded ${getStatusBgColor(order.status)}">
+                                        ${statusOptions}
+                                    </select>
+                                    <button id="saveStatusBtn" class="ml-2 bg-primary hover:bg-secondary text-white px-3 py-1 rounded text-sm">
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold mb-2">Customer Information</h4>
+                            <div class="space-y-1 text-sm">
+                                <div class="flex">
+                                    <span class="w-32 text-gray-600">Name:</span>
+                                    <span>${order.customer.name}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-32 text-gray-600">Phone:</span>
+                                    <span>${order.customer.phone}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-32 text-gray-600">Email:</span>
+                                    <span>${order.customer.email || 'N/A'}</span>
+                                </div>
+                                ${order.customer.userId ? `
+                                <div class="flex">
+                                    <span class="w-32 text-gray-600">User ID:</span>
+                                    <span class="text-sm">${order.customer.userId.toUpperCase()}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="my-4">
+                        <h4 class="bg-[#938cd9] p-3 rounded text-indigo-50 font-bold mb-2">Shipping Address</h4>
+                        <div class="bg-white border-b border-[#5a5198] p-3 pb-2 mx-2 text-sm font-medium text-black">
+                            ${order.customer.address.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                    
+                    <div class="my-8">
+                        <h4 class="bg-[#938cd9] p-3 rounded text-indigo-50 font-bold mb-6">Order Items</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full max-w-[97%] mx-auto">
+                                <thead>
+                                    <tr class="border-b border-gray-300">
+                                        <th class="text-left text-lg pb-2">Product</th>
+                                        <th class="text-center text-lg pb-2">Qty</th>
+                                        <th class="text-right text-lg pb-2">Price</th>
+                                        <th class="text-right text-lg pb-2">Subtotal</th>
+                                    </tr>
+    </thead>
+    <tbody>
+        ${itemsTable}
+        <tr class="border-t border-gray-300 font-bold">
+                                        <td colspan="3" class="text-right pt-3">Total:</td>
+                                        <td class="text-right pt-3">$${order.total}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    ${order.customer.notes ? `
+                    <div class="my-8">
+                        <h4 class="bg-[#938cd9] p-3 rounded text-indigo-50 font-bold mb-2">Customer Notes</h4>
+                        <div class="bg-white border-b border-[#5a5198] p-3 pb-2 mx-2 text-sm font-medium text-black">
+                            ${order.customer.notes.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="flex justify-end space-x-2">
+                        <button id="printOrderBtn" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md">
+                            Print
+                        </button>
+                        <button id="closeModalBtn" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md">
+                            Close
+                        </button>
+                    </div>
+                `;
+
+                // Add event listeners
+                document.getElementById('saveStatusBtn').addEventListener('click', () => updateOrderStatus(order.id));
+                document.getElementById('printOrderBtn').addEventListener('click', printOrder);
+                document.getElementById('closeOrderModal').addEventListener('click', () => {
+                    modal.classList.add('hidden');
+                });
+
+            } catch (error) {
+                console.error("Error loading order details:", error);
+                content.innerHTML = `
+                    <div class="text-center py-8 text-red-500">
+                        Error loading order details: ${error.message}
+                    </div>
+                    <div class="flex justify-end">
+                        <button id="closeModalBtn" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md">
+                            Close
+                        </button>
+                    </div>
+                `;
+                document.getElementById('closeModalBtn').addEventListener('click', () => {
+                    modal.classList.add('hidden');
+                });
+            }
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+        // ### Order Management - Update Status ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+        async function updateOrderStatus(orderId) {
+            const newStatus = document.getElementById('orderStatus').value;
+            const saveBtn = document.getElementById('saveStatusBtn');
+            
+            try {
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving...';
+                
+                await db.collection('orders').doc(orderId).update({
+                    status: newStatus,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Update UI
+                document.getElementById('orderStatus').className = `p-1 border rounded ${getStatusBgColor(newStatus)}`;
+                saveBtn.textContent = 'Updated!';
+                
+                // Refresh order list after a delay
+                setTimeout(() => {
+                    const currentView = document.querySelector('[id$="View"].bg-primary').id;
+                    loadOrders(currentView.replace('View', ''));
+                    document.getElementById('closeOrderModal').click();
+                }, 1000);
+
+                saveBtn.textContent = 'Save';
+                
+            } catch (error) {
+                console.error("Error updating status:", error);
+                saveBtn.textContent = 'Error! Try Again';
+                saveBtn.disabled = false;
+            }
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+        // ### Order Management - Print Order ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+        function printOrder() {
+            const printContent = document.getElementById('orderDetailContent').innerHTML;
+            const originalContent = document.body.innerHTML;
+            
+            document.body.innerHTML = `
+                <div class="container mx-auto p-6" style="font-size: 14px;">
+                    <h1 class="text-2xl font-bold mb-4">Order Details</h1>
+                    ${printContent}
+                </div>
+            `;
+            
+            window.print();
+            document.body.innerHTML = originalContent;
+            // Re-attach event listeners after restoring content
+            document.getElementById('closeOrderModal').addEventListener('click', () => {
+                document.getElementById('orderDetailModal').classList.add('hidden');
+            });
+        }
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+// @@@@@
+// ### Product Management Functions ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+        // Variable to store images for the current product
+        let currentProductImages = [];
+
+
+        
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Show Toast ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+
+        // Toast notification function
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `mb-3 p-3 rounded-md ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white max-w-md`;
+            toast.textContent = message;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'transition-opacity');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - CURRENT VERSION - WITH FILTER BY STATUS - Load Products ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+async function loadProducts(filter = 'all') {
+    const productsList = document.getElementById('productsList');
+    if (!productsList) {
+        console.error("Products list element not found");
+        return;
+    }
+    
+    productsList.innerHTML = '<div class="col-span-full text-center py-8">Loading products...</div>';
+    
+    try {
+        
+
+        // get all products from Firestore
+        const snapshot = await db.collection('products').orderBy('lastUpdated', 'desc').get();
+        
+        // handle case if empty
+        if (snapshot.empty) {
+            productsList.innerHTML = '<div class="col-span-full text-center py-8">No orders found<img src="/assets/images/gif-shaking-no-money-penguin.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>';
+            return;
+        }
+        
+        // convert to array
+        let products = [];
+        snapshot.forEach((doc) => {
+            products.push({ id: doc.id, ...doc.data() });
+        });
+
+        // apply client-side filtering
+        if (filter !== 'all') {
+            products = products.filter(product => product.status === filter);
+        }
+
+        // Render results
+        if (products.length === 0) {
+            productsList.innerHTML = `<div class="col-span-full text-center py-8">No ${filter} products found<img src="/assets/images/gif-shaking-no-money-penguin.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>`;
+            return;
+        }
+
+        // Sort by lastUpdated
+        products.sort((a, b) => {
+            return (b.lastUpdated || 0) - (a.lastUpdated || 0);
+        });
+
+
+
+// Consider separating the rendering logic into a function for better readability
+        
+        // RENDER
+        productsList.innerHTML = '';
+        
+        // RENDER PRODUCT CARD LOGIC
+        products.forEach((product) => {
+            const productCard = document.createElement('div');
+            productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden';
+            
+            // Get the main image (first in the images array) or use the legacy imageUrl field
+            const mainImageUrl = (product.images && product.images.length > 0) 
+                ? product.images[0].url 
+                : (product.imageUrl || '');
+            
+            // Format the last updated date if available
+            let lastUpdatedText = '';
+            if (product.lastUpdated) {
+                const date = product.lastUpdated instanceof Date ? 
+                    product.lastUpdated : 
+                    product.lastUpdated.toDate ? product.lastUpdated.toDate() : new Date(product.lastUpdated);
+                
+                lastUpdatedText = `Updated: ${date.toLocaleDateString()}`;
+            }
+            
+            productCard.innerHTML = `
+                <div class="h-48 bg-gray-100 flex items-center justify-center">
+                    ${mainImageUrl ? 
+                        `<img src="${mainImageUrl}" alt="${product.name}" class="h-full object-contain">` : 
+                        '<div class="text-gray-400">No Image</div>'}
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-lg mb-1">${product.name}</h3>
+                    <p class="text-primary font-bold mb-2">$${product.price ? product.price.toFixed(2) : '0.00'}</p>
+                    <p class="text-sm text-gray-600 line-clamp-2 mb-4">${product.description || 'No description'}</p>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm ${product.status === 'released' ? 'text-green-600' : 'text-gray-600'}">
+                            ${product.status || 'unreleased'}
+                        </span>
+                        <span class="text-sm text-gray-500">
+                            ${lastUpdatedText}
+                        </span>
+                    </div>
+                    <div class="flex justify-between">
+                        <button data-product-id="${product.id}" class="edit-product-btn text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded">
+                            Edit
+                        </button>
+                        <button data-product-id="${product.id}" class="delete-product-btn text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+            productsList.appendChild(productCard);
+        });
+
+
+// End of render logic
+
+        
+        // Clean up any existing event listeners to prevent duplicates
+        const addProductBtn = document.getElementById('addProductBtn');
+        if (addProductBtn) {
+            // Clone the button to remove all event listeners
+            const newAddBtn = addProductBtn.cloneNode(true);
+            addProductBtn.parentNode.replaceChild(newAddBtn, addProductBtn);
+            
+            // Add fresh event listener
+            newAddBtn.addEventListener('click', () => {
+                openProductModal(); // Call with no parameters for a new product
+            });
+        }
+        
+        // Event delegation for edit and delete buttons to avoid attaching multiple listeners
+        document.addEventListener('click', (e) => {
+            // Handle edit button clicks
+            if (e.target.classList.contains('edit-product-btn')) {
+                const productId = e.target.getAttribute('data-product-id');
+                if (productId) {
+                    openProductModal(productId);
+                }
+            }
+            
+            // Handle delete button clicks
+            if (e.target.classList.contains('delete-product-btn')) {
+                const productId = e.target.getAttribute('data-product-id');
+                if (productId && typeof confirmDeleteProduct === 'function') {
+                    confirmDeleteProduct(productId);
+                }
+            }
+        }, { capture: false });
+        
+        
+// END OF TRY BLOCK
+
+    } catch (error) {
+        console.error("Error loading products:", error);
+        if (productsList) {
+            productsList.innerHTML = `<div class="col-span-full text-center py-8 text-red-300">Error loading products: ${error.message}<img src="/assets/images/gif-surprised-corgi-detective.gif" alt="" class="w-48 h-auto mx-auto"></div>`;
+        }
+    }
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Open Product Modal ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+
+        function openProductModal(productId = null) {
+            const modal = document.getElementById('productModal');
+            const form = document.getElementById('productForm');
+            
+            // Reset form and images array
+            form.reset();
+            currentProductImages = [];
+            refreshImageGallery();
+            
+            document.getElementById('productId').value = '';
+            
+            // Set title
+            document.getElementById('productModalTitle').textContent = 
+                productId ? 'Edit Product' : 'Add New Product';
+            
+            // If editing, load product data
+            if (productId) {
+                db.collection('products').doc(productId).get().then(doc => {
+                    if (doc.exists) {
+                        const product = doc.data();
+                        document.getElementById('productId').value = doc.id;
+                        document.getElementById('productName').value = product.name || '';
+                        document.getElementById('productPrice').value = product.price || '';
+                        document.getElementById('productDescription').value = product.description || '';
+                        
+                        // Add status field handling
+                        const statusSelect = document.getElementById('productStatus');
+                        if (statusSelect) {
+                            statusSelect.value = product.status || 'unreleased';
+                        }
+                        
+                        // Handle images
+                        if (product.images && Array.isArray(product.images)) {
+                            // Use the new images array structure
+                            currentProductImages = [...product.images];
+                        } else if (product.imageUrl) {
+                            // Convert legacy single imageUrl to the new format
+                            currentProductImages = [{
+                                url: product.imageUrl,
+                                name: 'Legacy Image',
+                                path: product.imagePath || ''
+                            }];
+                        }
+                        
+                        refreshImageGallery();
+                        
+                        // Ensure the save button is visible
+                        document.getElementById('saveProductBtn').style.display = 'block';
+                    }
+                }).catch(error => {
+                    console.error("Error getting product:", error);
+                    showToast('Error loading product data. Please try again.', 'error');
+                });
+            } else {
+                // Ensure the save button is visible for new products
+                document.getElementById('saveProductBtn').style.display = 'block';
+            }
+            
+            // Show modal
+            modal.classList.remove('hidden');
+        }
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Current Version - Refresh Image Gallery ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+
+        // Function to refresh the image gallery based on currentProductImages
+        function refreshImageGallery() {
+            const gallery = document.getElementById('imageGallery');
+            if (!gallery) return;
+            
+            // Clear all items
+            gallery.innerHTML = '';
+            
+            // Add each image to the gallery
+            currentProductImages.forEach((image, index) => {
+                const imageItem = document.createElement('div');
+                imageItem.className = 'image-item';
+                imageItem.setAttribute('data-index', index);
+                
+                imageItem.innerHTML = `
+                    ${index === 0 ? '<span class="main-image-badge">Main</span>' : ''}
+                    <img src="${image.url}" alt="${image.name || 'Product image'}">
+                    <div class="delete-image" data-index="${index}">×</div>
+                `;
+                
+                gallery.appendChild(imageItem);
+                
+                // Add delete event listener
+                imageItem.querySelector('.delete-image').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const idx = parseInt(e.target.getAttribute('data-index'));
+                    currentProductImages.splice(idx, 1);
+                    refreshImageGallery();
+                });
+            });
+            
+            // Add the add button
+            const addBtn = document.createElement('div');
+            addBtn.id = 'addImageBtn';
+            addBtn.className = 'add-image-btn';
+            addBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+            `;
+            gallery.appendChild(addBtn);
+            
+            // Setup sortable functionality
+            if (typeof Sortable !== 'undefined') {
+                new Sortable(gallery, {
+                    animation: 150,
+                    filter: '#addImageBtn', // Don't allow dragging the add button
+                    onEnd: function(evt) {
+                        // Skip if we moved the add button (shouldn't happen due to filter, but just in case)
+                        if (evt.item.id === 'addImageBtn') return;
+                        
+                        // Get old and new indices
+                        const oldIndex = evt.oldIndex;
+                        const newIndex = evt.newIndex;
+                        
+                        // Move the image in the array
+                        const movedImage = currentProductImages.splice(oldIndex, 1)[0];
+                        currentProductImages.splice(newIndex, 0, movedImage);
+                        
+                        // Refresh to update the "Main" badge
+                        refreshImageGallery();
+                    }
+                });
+            }
+            
+            // Add image button click handler
+            const addImageBtn = document.getElementById('addImageBtn');
+            if (addImageBtn) {
+                addImageBtn.addEventListener('click', () => {
+                    document.getElementById('productImageInput').click();
+                });
+            }
+        }
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Image Upload ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+    // Set up event listeners once DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        // Handle image file selection
+        const fileInput = document.getElementById('productImageInput');
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                const files = e.target.files;
+                if (!files.length) return;
+                
+                const file = files[0];
+                if (!file.type.match('image.*')) {
+                    showToast('Please select an image file', 'error');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    // Add the new image to the current images array
+                    currentProductImages.push({
+                        url: event.target.result,
+                        name: file.name,
+                        file: file, // Keep the file object for later upload
+                        isNew: true // Flag to indicate this is a new upload
+                    });
+                    
+                    refreshImageGallery();
+                    fileInput.value = ''; // Reset the input for the next selection
+                };
+                
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Set up cancel button
+        const cancelBtn = document.getElementById('cancelProductBtn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                document.getElementById('productModal').classList.add('hidden');
+            });
+        }
+
+        // Set up close button
+        const closeBtn = document.getElementById('closeProductModal');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                document.getElementById('productModal').classList.add('hidden');
+            });
+        }
+    });
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Save / Submit Product ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+    
+        // Save product with multiple images
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('productForm');
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const saveBtn = document.getElementById('saveProductBtn');
+                    const cancelBtn = document.getElementById('cancelProductBtn');
+                    const productId = document.getElementById('productId').value;
+                    
+                    if (!saveBtn || !cancelBtn) return;
+                    
+                    saveBtn.disabled = true;
+                    cancelBtn.disabled = true;
+                    saveBtn.textContent = 'Saving...';
+                    
+                    try {
+                        const productData = {
+                            name: document.getElementById('productName').value,
+                            price: parseFloat(document.getElementById('productPrice').value),
+                            description: document.getElementById('productDescription').value,
+                            status: document.getElementById('productStatus').value,
+                            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+                        
+                        // Process images
+                        const updatedImages = [];
+                        
+                        // First, upload any new images to Firebase Storage
+                        for (let i = 0; i < currentProductImages.length; i++) {
+                            const image = currentProductImages[i];
+                            
+                            if (image.isNew && image.file) {
+                                try {
+                                    // This is a new image that needs to be uploaded
+                                    const storageRef = storage.ref();
+                                    
+                                    // Fix: Generate a more unique file path with safer URL encoding
+                                    const timestamp = Date.now();
+                                    const safeFileName = encodeURIComponent(image.name).replace(/%20/g, '_');
+                                    const filePath = `products/${timestamp}_${safeFileName}`;
+                                    const fileRef = storageRef.child(filePath);
+                                    
+                                    // Convert data URL to blob if needed
+                                    let fileToUpload = image.file;
+                                    if (typeof image.url === 'string' && image.url.startsWith('data:')) {
+                                        // It's a data URL, convert to blob
+                                        const response = await fetch(image.url);
+                                        fileToUpload = await response.blob();
+                                    }
+                                    
+                                    await fileRef.put(fileToUpload, {contentType: image.file.type});
+                                    const url = await fileRef.getDownloadURL();
+                                    
+                                    updatedImages.push({
+                                        url: url,
+                                        name: image.name,
+                                        path: fileRef.fullPath
+                                    });
+                                } catch (error) {
+                                    console.error("Error uploading image:", error);
+                                    // Continue with the next image instead of stopping the entire process
+                                    showToast(`Error uploading image ${image.name}: ${error.message}`, 'warning');
+                                }
+                            } else {
+                                // This is an existing image, keep it as is
+                                updatedImages.push({
+                                    url: image.url,
+                                    name: image.name || '',
+                                    path: image.path || ''
+                                });
+                            }
+                        }
+                        
+                        // Update the images array in the product data
+                        productData.images = updatedImages;
+                        
+                        // Set the first image as the main image for backward compatibility
+                        if (updatedImages.length > 0) {
+                            productData.imageUrl = updatedImages[0].url;
+                            productData.imagePath = updatedImages[0].path;
+                        } else {
+                            // No images, clear the fields
+                            productData.imageUrl = '';
+                            productData.imagePath = '';
+                        }
+                        
+                        // Save to Firestore
+                        if (productId) {
+                            // Update existing product
+                            await db.collection('products').doc(productId).update(productData);
+                            showToast('Product updated successfully!');
+                        } else {
+                            // Add new product
+                            productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                            await db.collection('products').add(productData);
+                            showToast('Product added successfully!');
+                        }
+                        
+                        // Update UI
+                        setTimeout(() => {
+                            document.getElementById('productModal').classList.add('hidden');
+                            
+                            // Get current filter value
+                            const currentFilter = document.getElementById('productFilter')?.value || 'all';
+                            
+                            // Reload products with current filter
+                            loadProducts(currentFilter);
+                        }, 1000);
+                        
+                    } catch (error) {
+                        console.error("Error saving product:", error);
+                        showToast('Error saving product: ' + error.message, 'error');
+                        saveBtn.textContent = 'Save';
+                    } finally {
+                        saveBtn.disabled = false;
+                        cancelBtn.disabled = false;
+                        saveBtn.textContent = 'Save';
+                    }
+                    
+                    saveBtn.textContent = 'Save';
+                    
+                });
+            }
+        });
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Current Version - Delete Product ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+        // Helper function for product deletion confirmation
+        function confirmDeleteProduct(productId) {
+            if (!productId) return;
+            
+            if (confirm('Are you sure you want to delete this product?')) {
+                deleteProduct(productId);
+            }
+        }
+
+        // Helper function to actually delete a product
+        async function deleteProduct(productId) {
+            try {
+                // Get the product to find any images to delete
+                const productDoc = await db.collection('products').doc(productId).get();
+                
+                if (productDoc.exists) {
+                    const product = productDoc.data();
+                    
+                    // First delete any associated images from storage
+                    if (product.images && Array.isArray(product.images)) {
+                        for (const image of product.images) {
+                            if (image.path) {
+                                try {
+                                    await storage.ref(image.path).delete();
+                                } catch (imageError) {
+                                    console.warn(`Could not delete image at path ${image.path}:`, imageError);
+                                }
+                            }
+                        }
+                    } else if (product.imagePath) {
+                        // Handle legacy single image
+                        try {
+                            await storage.ref(product.imagePath).delete();
+                        } catch (imageError) {
+                            console.warn(`Could not delete image at path ${product.imagePath}:`, imageError);
+                        }
+                    }
+                    
+                    // Then delete the product document
+                    await db.collection('products').doc(productId).delete();
+                    showToast('Product deleted successfully');
+                    
+                    // Reload products list
+                    loadProducts();
+                }
+            } catch (error) {
+                console.error("Error deleting product:", error);
+                showToast('Error deleting product: ' + error.message, 'error');
+            }
+        }
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// @@@
+        // ### Product Management - Initialize Page & Modal Close Handlers ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+  
+
+        // Modal close handlers
+        document.getElementById('closeProductModal').addEventListener('click', () => {
+            document.getElementById('productModal').classList.add('hidden');
+        });
+
+        document.getElementById('cancelProductBtn').addEventListener('click', () => {
+            document.getElementById('productModal').classList.add('hidden');
+        });
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize default tab state
+            document.getElementById('ordersSection').classList.remove('hidden');
+            document.getElementById('productsSection').classList.add('hidden');
+            
+            // Set active tab styling
+            document.getElementById('ordersTab').classList.add('tab-active');
+            document.getElementById('productsTab').classList.remove('tab-active');
+
+            // Add button to open modal on the page -- WILL GET REMOVED BY CLONING NODE LOGIC IN LOAD PRODUCTS
+            const addProductBtn = document.getElementById('addProductBtn');
+            if (addProductBtn) {
+                addProductBtn.addEventListener('click', () => openProductModal());
+            }
+
+            // Add event listener for the filter dropdown
+            const productFilter = document.getElementById('productFilter');
+            if (productFilter) {
+                productFilter.addEventListener('change', function() {
+                    loadProducts(this.value);
+                });
+            }
+            
+            // Load products with default filter on page load
+            loadProducts('all');
+
+        });
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+// // Random functions below // //
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+        // For dateString in format "4/21/2025, 12:49:56 AM"
+        function extractMonthDay(dateString) {
+
+            const datePart = dateString.split(",")[0];
+            const [month, day] = datePart.split("/");
+
+            const monthNames = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+
+            return `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
+        }
+
+
+    </script>
+</body>
+</html>
+<!-- End of HTML Document -->

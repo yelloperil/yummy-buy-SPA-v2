@@ -64,7 +64,7 @@ async function loadProducts(filter = 'all') {
                     lastUpdated: new Date(2025, 3, 28),
                     images: [
                         {
-                            url: "images-v2/A_meticulously_organized_arran(1).jpeg",
+                            url: "/assets/placeholder/A_meticulously_organized_arran(1).jpeg",
                             name: "vegetables.jpg"
                         }
                     ]
@@ -78,7 +78,7 @@ async function loadProducts(filter = 'all') {
                     lastUpdated: new Date(2025, 3, 29),
                     images: [
                         {
-                            url: "images-v2/A_meticulously_organized_arran(2).jpeg",
+                            url: "/assets/placeholder/A_meticulously_organized_arran(2).jpeg",
                             name: "meat.jpg"
                         }
                     ]
@@ -90,7 +90,7 @@ async function loadProducts(filter = 'all') {
                     description: "Assorted fresh fruits",
                     status: "unreleased",
                     lastUpdated: new Date(2025, 3, 30),
-                    imageUrl: "images-v2/A_meticulously_organized_arran(3).jpeg"
+                    imageUrl: "/assets/placeholder/A_meticulously_organized_arran(3).jpeg"
                 }
             ];
             

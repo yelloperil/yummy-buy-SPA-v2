@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Yummy Buy 😋</title>
-  <link rel="icon" type="image/png" href="assets/icons/favicon-1.png">
+  <link rel="icon" type="image/png" href="/assets/icons/favicon-1.png">
   <script src="https://cdn.jsdelivr.net/npm/p5@0.10.2/lib/p5.min.js"></script>
   <style>
     html, body { margin: 0; padding: 0; overflow: hidden; height: 100%; width: 100%; }
@@ -24,24 +24,24 @@ let bubbleBorderColor, bubbleFillColor, bubbleTextColor;
 
 // Sizing constants
 const baseSlothSizeRel = 1 / 75;
-const baseBubbleSizeRel = 1 / 220; 
+const baseBubbleSizeRel = 1 / 200; 
 const minPixelSize = 1;
 const breakpointWidth = 768;
 const baseBrandSizeRelAbove = 1 / 100; 
-const baseBrandSizeRelBelow = 1 / 70;  
+const baseBrandSizeRelBelow = 1 / 80;  
 
 // Scaling factors
 const bubbleScaleFactorLarge = 1.0;
 const bubbleScaleFactorSmall = 1.0;
-const mobileHeightScaleFactor = 0.333;
-const desktopHeightScaleFactor = 0.50;
+const mobileHeightScaleFactor = 0.3;
+const desktopHeightScaleFactor = 0.4;
 
 // Text parameters
 let slothPixelSize, bubbleTextPixelSize, brandTextPixelSize;
 let pS, pT; 
 const textCharWidth = 5, textCharHeight = 7;
 const bubbleCharSpacing = 1, brandCharSpacing = 2;
-const textLineSpacing = 2;
+const textLineSpacing = 5;
 const bubbleVerticalPadding = 6;
 
 // Sloth movement variables
@@ -49,7 +49,7 @@ let slothCurrentX;
 let slothCurrentY; 
 let slothTargetX;
 let slothDirection = 1, lastMoveTime = 0;
-const moveInterval = 1000, pauseDuration = 500;
+const moveInterval = 1000, pauseDuration = 1100;
 let canTriggerMove = true, pauseStartTime = 0;
 
 // Brand text variables
@@ -57,7 +57,7 @@ let brandTextWidth = 0, brandTextMinX = 0, brandTextMaxX = 0, stepWidth = 0;
 let targetLetterIndex = 0;
 const brandMessage = "YUMMY BUY";
 let letterScales = [], letterColors = [];
-const highlightScaleTarget = 1.05, defaultScaleTarget = 1.0, lerpSpeed = 0.15;
+const highlightScaleTarget = 1.1, defaultScaleTarget = 1.0, lerpSpeed = 0.15;
 
 // Confetti variables
 let confettiParticles = [];
@@ -260,7 +260,8 @@ function updateMessage() {
     if (hours === 0) hours = 12;
     
     const timeStr = `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    message = `Welcome To:\n------------------\nThe MIRANDA MARKET\n------------------\n${dateStr}\n${timeStr} ${ampm}`;
+    message = `${dateStr}\n------------------\nThe MIRANDA MARKET\n------------------\n${timeStr} ${ampm}`;
+    // message = `Welcome To:\n------------------\nThe MIRANDA MARKET\n------------------\n${dateStr}\n${timeStr} ${ampm}`;
 }
 
 function draw() {
@@ -367,7 +368,7 @@ function draw() {
     // Mobile-specific adjustments
     let breakpointShiftAmount = 0; 
     if (width < breakpointWidth) {
-        breakpointShiftAmount = pS * 3;
+        breakpointShiftAmount = pS * 0.8;
     }
     
     // Calculate bubble and text positions
@@ -384,9 +385,9 @@ function draw() {
     let textBlockWidthScaled = textBlockWidthUnscaled * finalBubbleScale;
     
     // Position text block
-    let textBlockCenterX = slothCurrentX + pS * 1;
+    let textBlockCenterX = slothCurrentX + pS * -2;
     let textStartX = textBlockCenterX - (textBlockWidthScaled / 2);
-    let verticalPaddingTotal = (conceptualBubbleBodyHeightPixels * pT) - textBlockHeightUnscaled;
+    let verticalPaddingTotal = (conceptualBubbleBodyHeightPixels * pT) - textBlockHeightUnscaled * 2;
     let textStartY = conceptualBubbleTopY + (verticalPaddingTotal * finalBubbleScale) / 2;
     
     // Prepare text colors and scales
@@ -423,11 +424,11 @@ function draw() {
     pop();
     
     // Draw bubble tail
-    let tail_pT = max(1, floor(pT * 0.5));
-    let tailStartX = textStartX + textBlockWidthUnscaled / 2;
-    let tailStartY = textStartY + textBlockHeightUnscaled;
+    let tail_pT = max(1, floor(pT * 0.7));
+    let tailStartX = textStartX + (textBlockWidthUnscaled / 2);
+    let tailStartY = textStartY + textBlockHeightUnscaled + 4;
     let tailTargetX = slothCurrentX;
-    let tailTargetY = adjustedHeadTopY + pS * 2;
+    let tailTargetY = adjustedHeadTopY + pS * 3;
     
     push(); 
     translate(tailStartX, tailStartY);

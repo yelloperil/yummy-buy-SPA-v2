@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yummy Buy 😋</title>
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-1.png">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <!-- same as products.html, index.html -->
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link
+    href="https://fonts.googleapis.com/css2?family=Roboto&family=Lora&family=DM+Mono&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Zen+Old+Mincho&family=IBM+Plex+Sans+JP&family=Iansui&family=Klee+One&family=Dela+Gothic+One&family=Yusei+Magic&family=Noto+Sans+SC&family=Zen+Kaku+Gothic+Antique&family=Noto+Sans+JP&family=DotGothic16&family=Noto+Sans+TC&display=swap"
+    rel="stylesheet"
+    >
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#5D5CDE',
+                            secondary: '#A5A4FF',
+                        },
+                        fontFamily: {
+                            roboto: ['Roboto', 'sans-serif'],
+                            lora: ['Lora', 'serif'],
+                            dmMono: ['DM Mono', 'monospace'],
+                            zenMaru: ['"Zen Maru Gothic"', 'sans-serif'],
+                            zenMincho: ['Zen Old Mincho', 'serif'],
+                            'ibm-plex-sans-jp': ['IBM Plex Sans JP', 'sans-serif'],
+                            iansui: ['Iansui', 'sans-serif'],
+                            'klee-one': ['Klee One', 'cursive'],
+                            'dela-gothic-one': ['Dela Gothic One', 'sans-serif'],
+                            'yusei-magic': ['Yusei Magic', 'sans-serif'],
+                            'noto-sans-sc': ['Noto Sans SC', 'sans-serif'],
+                            'zen-kaku-gothic-antique': ['Zen Kaku Gothic Antique', 'sans-serif'],
+                            'noto-sans-jp': ['Noto Sans JP', 'sans-serif'],
+                            dotgothic16: ['DotGothic16', 'sans-serif'],
+                            'noto-sans-tc': ['Noto Sans TC', 'sans-serif'],
+                        },
+                        keyframes: {
+                            'pulse-glow': {
+                            '0%, 100%': { filter: 'drop-shadow(0 0 10px rgba(173, 216, 230, 0.7))' },
+                            '50%': { filter: 'drop-shadow(0 0 15px rgba(173, 216, 230, 0.9))' },
+                            }
+                        },
+                        animation: {
+                            // name: keyframes   duration   timing   iterations
+                            'pulse-glow': 'pulse-glow 3s   ease-in-out infinite',
+                        }                                                
+                    },
+                },
+        };
+
+        // Check for dark mode preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            document.documentElement.classList.toggle('dark', event.matches);
+        });
+    </script>
+
+    <style>
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .tab-active {
+            border-bottom: 3px solid #5D5CDE;
+            font-weight: 600;
+        }
+        /* Add toast styles here */
+        .toast {
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .modal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .close {
+            cursor: pointer;
+            float: right;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container flex-col mx-auto px-4 py-8">
+
+        <!-- Header -->
+         <!-- SNIPPET ONE -->
+        <header class="relative flex-1 flex justify-between items-center mb-2 py-4 sm:mb-8 sm:py-8">
+
+            <!-- BACK TO HOME -->
+            <span class="flex-1 flex gap-2 items-center text-primary text-base sm:text-lg sm:font-bold hover:text-secondary">
+                <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-8 h-8">
+                <a href="index.html" class="text-primary text-base font-semibold hover:text-secondary pb-1 pl-2">home</a>
+            </span>
+
+            <!-- TITLE CONTAINER -->
+            <div class="flex-3 flex justify-center items-center gap-1 xl:gap-2">
+                
+                <!-- TITLE IMAGE -->
+                <img src="/assets/icons/radar-0_no_bg.gif" alt="link back to home" class="w-auto h-10 sm:h-16 xl:h-24 mt-2 sm:mt-3 lg:mt-4 xl:mt-5 2xl:mt-6">
+                
+                <!-- TITLE TEXT -->
+                <h1 class="font-zenMaru text-3xl sm:text-3xl lg:text-5xl xl:text-6xl font-bold text-primary">My Orders</h1>
+
+            </div>
+
+            <div class="relative flex-1 flex justify-end items-center gap-4">
+
+                <!-- HIDDEN USER PHONE DISPLAY -->
+                <span id="userPhoneDisplay" class="absolute top-full translate-y-1/2 lg:static lg:translate-y-0 hidden text-primary text-bold lg:font-semibold text-xs sm:text-sm lg:text-base text-indigo-100 border-b-2 border-[#f13dc3] ml-auto pr-0.5 pb-0.5">
+                    <!-- User's phone number will be displayed here -->
+                </span>
+
+                <!-- logout -->
+                <button id="logoutBtn" class="hover:bg-red-300 bg-red-500 text-sm sm:text-base text-white pt-1 pb-1.5 sm:py-2 px-2 sm:px-4 mb-1 sm:mb-0 rounded-md">
+                    Log Out
+                </button>
+                
+            </div>
+
+        </header>
+
+        <!-- Orders Section -->
+        <div id="ordersSection mb-6">
+            <!-- View Selector -->
+            <div class="flex mb-4 space-x-2 sm:space-x-2.5 lg:space-x-3 xl:space-x-3.5 mt-10 sm:mt-8 md:mt-6 lg:mt-4 xl:mt-2 2xl:mt-0">
+                <button id="chronologicalView" class="bg-primary font-semibold text-white px-3 py-2 text-sm sm:px-4 sm:py-2.5 sm:text-base xl:px-5 xl:py-3 xl:text-lg 2xl:text-xl rounded-md">By Order Time</button>
+                <button id="productView" class="bg-gray-300 font-semibold hover:bg-gray-400 px-3 py-2 text-sm sm:px-4 sm:py-2.5 sm:text-base xl:px-5 xl:py-3 xl:text-lg 2xl:text-xl rounded-md">By Product</button>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="mb-6 flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
+                <input type="text" id="orderSearch" placeholder="Search orders..." class="p-2 border rounded-md flex-grow">
+                <select id="statusFilter" class="p-2 border rounded-md">
+                    <option value="all">All Statuses</option>
+                    <option value="order placed">Order Placed</option>
+                    <option value="order on-hold">Order On-Hold</option>
+                    <option value="order completed">Order Completed</option>
+                    <option value="order cancelled">Order Cancelled</option>
+                </select>
+                <input type="date" id="dateFilter" class="p-2 border rounded-md">
+            </div>
+
+            <!-- Orders Container -->
+            <div id="ordersContainer" class="grid grid-cols-1 gap-4">
+                <!-- Orders will be loaded here -->
+            </div>
+        </div>
+
+
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+<!-- End line 1 to 117 - up to Products Section -->
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+
+            <!-- Order Detail Modal -->
+    <div id="orderDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 max-w-4xl w-full max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Order Details</h3>
+                <button id="closeOrderModal" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="orderDetailContent"></div>
+        </div>
+    </div>
+
+
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+<!-- End line 198 to 211 - Order Detail Modal -->
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+    <!-- SIMPLE Custom Alert Modal -->
+    <!-- <div id="customAlert" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <p>You must be logged in to see order history.</p>
+            <button id="okButton">Okay</button>
+        </div>
+    </div> -->
+
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+<!-- Custom Alert Modal -->
+<div id="customAlert" class="fixed inset-0 z-50 flex hidden items-center justify-center">
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+    
+    <!-- Modal Content -->
+    <div class="relative w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl animate-modal-enter mx-4" 
+         role="dialog" 
+         aria-modal="true" 
+         aria-labelledby="modalTitle">
+        
+        <!-- Header -->
+        <div class="mb-6 flex items-start">
+            <!-- Icon -->
+            <div class="mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-amber-50">
+                <svg class="h-6 w-6 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+
+            <!-- Title & Close -->
+            <div class="flex-1">
+                <h2 id="modalTitle" class="text-lg font-semibold text-gray-900">Access Required</h2>
+            </div>
+            
+            <button 
+                id="closeModal" 
+                class="absolute right-6 top-6 text-2xl text-gray-400 hover:text-gray-900"
+                aria-label="Close dialog">
+                &times;
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="mb-8">
+            <p class="text-gray-600 leading-relaxed">
+                You must be logged in to view your order history.
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div>
+            <button 
+                id="okButton"
+                class="w-full rounded-lg bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/30 font-medium tracking-wide">
+                Return to Homepage
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+<style>
+/* Custom animation for modal entrance */
+@keyframes modal-enter {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.animate-modal-enter {
+    animation: modal-enter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+</style>
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+    <!-- Custom Alert Modal -->
+    <div id="customAlert" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <p>You must be logged in to see order history.</p>
+            <button id="okButton">Okay</button>
+        </div>
+    </div>
+
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+
+<!-- ////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+        // ### START OF SCRIPT SECTION ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+
+
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+<script>
+
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCTUZbw1qSdFEBG2SGo7smQgqXEKZZWCaw",
+      authDomain: "mei-wen-ti.firebaseapp.com",
+      projectId: "mei-wen-ti",
+      storageBucket: "mei-wen-ti.firebasestorage.app",
+      messagingSenderId: "103509830524",
+      appId: "1:103509830524:web:5ddef022db357ce99152f9",
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+////////////////////////////////////////////////////////////////////////
+
+    // Check authentication state
+    // auth.onAuthStateChanged(user => {
+    //     if (!user) {
+    //         // Redirect to login if not authenticated
+    //         window.location.href = 'index.html';
+    //     } else {
+    //         // Load orders by default
+    //         loadOrders('chronological');
+    //     }
+    // });
+
+////////////////////////////////////////////////////////////////////////
+
+    let currentUser;
+    
+    // Init variables
+    const userPhoneDisplay = document.getElementById('userPhoneDisplay');
+    // userPhoneDisplay.textContent = formattedPhoneNumber;
+    // userPhoneDisplay.classList.remove('hidden');
+
+    // Check if user is already logged in
+    firebase.auth().onAuthStateChanged((user) => {
+        const websiteAdmins = ['+17789569063', '+16049778798', '+16049778799', '+15054443986', '+17788929401', '+1-778-956-9063', '+1-604-977-8798', '+1-604-977-8799', '+1-505-444-3986', '+1-778-892-9401' ]
+        if (user && websiteAdmins.includes(user.phoneNumber)) {
+            // Debug:
+                console.log("if (user && websiteAdmins.includes(user.phoneNumber)) { : User is signed in and is an admin ", "User: ", user)
+            // User is signed in and is an admin
+            currentUser = {
+                uid: user.uid,
+                phoneNumber: user.phoneNumber // Correct property name
+            };
+            isLoggedIn = true;
+            
+            // Update UI with formatted number
+            const formattedPhone = formatPhoneNumber(user.phoneNumber);
+            userPhoneDisplay.textContent = formattedPhone;
+            userPhoneDisplay.classList.remove('hidden');
+            
+            // Fetch and populate user data
+            fetchAndPopulateUserData(user.phoneNumber);
+        } else if (user) {
+            // Debug:
+                console.log("else if (user) { : User is signed in but not an admin ", "User: ", user)
+            // User is signed in but not an admin
+            currentUser = {
+                uid: user.uid,
+                phoneNumber: user.phoneNumber // Correct property name
+            };
+            isLoggedIn = true;
+            
+            // Update UI with formatted number
+            const formattedPhone = formatPhoneNumber(user.phoneNumber);
+            userPhoneDisplay.textContent = formattedPhone;
+            userPhoneDisplay.classList.remove('hidden');
+            
+            // Fetch and populate user data
+            fetchAndPopulateUserData(user.phoneNumber);
+        } else {
+            // Debug:
+                console.log("else { : User is signed out ", "User: ", user)
+            // User is signed out
+            currentUser = null;
+            isLoggedIn = false;
+            
+            // Update UI
+            userPhoneDisplay.classList.add('hidden');
+            
+            // // Show custom alert modal
+            document.getElementById('customAlert').classList.remove('hidden');
+        }
+    });
+
+    // Close modal and redirect to index.html
+    document.getElementById('okButton').addEventListener('click', function() {
+        // Redirect to index.html after closing the modal
+        window.location.href = 'index.html';
+    });
+
+    document.getElementById('closeModal').addEventListener('click', function() {
+        document.getElementById('customAlert').classList.add('hidden');
+        window.location.href = 'index.html';
+    });
+
+
+
+    // Function to fetch and populate user data
+    async function fetchAndPopulateUserData(phoneNumber) {
+        try {
+            // Query Firestore for the user's most recent order
+            const ordersRef = db.collection('orders');
+            const querySnapshot = await ordersRef
+                .where('customer.phone', '==', currentUser.phoneNumber)
+                .orderBy('orderDate', 'desc')
+                .limit(1)
+                .get();
+
+            if (!querySnapshot.empty) {
+                const mostRecentOrder = querySnapshot.docs[0].data();
+                const customerData = mostRecentOrder.customer;
+
+                // Populate form fields
+                document.getElementById('name').value = customerData.name || '';
+                document.getElementById('wechat').value = customerData.wechat || '';
+                
+                // Set delivery type and handle address
+                const deliveryTypeSelect = document.getElementById('deliveryType');
+                deliveryTypeSelect.value = customerData.deliveryType || 'Pickup';
+                
+                // Trigger the change event to show/hide address field
+                const event = new Event('change');
+                deliveryTypeSelect.dispatchEvent(event);
+                
+                // If delivery was selected, populate address
+                if (customerData.deliveryType === 'Delivery' && customerData.address) {
+                    document.getElementById('address').value = customerData.address;
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    }
+
+
+////////////////////////////////////////////////////////////////////////
+
+    // Logout user
+    // function logoutUser() {
+    //     firebase.auth().signOut().then(() => {
+    //         // Sign-out successful
+    //         isLoggedIn = false;
+    //         currentUser = null;
+            
+    //         // Reset UI
+    //         userPhoneDisplay.classList.add('hidden');
+    //         userPhoneDisplay.textContent = '';
+    //     }).catch((error) => {
+    //         console.error('Error signing out:', error);
+    //     });
+    // }
+
+////////////////////////////////////////////////////////////////////////
+
+
+    // Logout functionality
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        auth.signOut().then(() => {
+            window.location.href = 'index.html';
+        });
+    });
+
+    // Tab switching
+    // document.getElementById('ordersTab').addEventListener('click', () => {
+    //     document.getElementById('ordersSection').classList.remove('hidden');
+    //     document.getElementById('productsSection').classList.add('hidden');
+    //     document.getElementById('ordersTab').classList.add('tab-active');
+    //     document.getElementById('productsTab').classList.remove('tab-active');
+    // });
+
+    // document.getElementById('productsTab').addEventListener('click', () => {
+    //     document.getElementById('ordersSection').classList.add('hidden');
+    //     document.getElementById('productsSection').classList.remove('hidden');
+    //     document.getElementById('ordersTab').classList.remove('tab-active');
+    //     document.getElementById('productsTab').classList.add('tab-active');
+    //     loadProducts();
+    // });
+
+
+    // Initialize a variable to keep track of the current view type
+    let currentViewType = 'chronological'; // Default view type
+
+    // Event listener for chronological view button
+    document.getElementById('chronologicalView').addEventListener('click', () => {
+        currentViewType = 'chronological'; // Update current view type
+        loadOrders(currentViewType);
+        updateActiveViewButton('chronologicalView');
+    });
+
+    // Event listener for product view button
+    document.getElementById('productView').addEventListener('click', () => {
+        currentViewType = 'product'; // Update current view type
+        loadOrders(currentViewType);
+        updateActiveViewButton('productView');
+    });
+
+    // Add event listener for status filter
+    document.getElementById('statusFilter').addEventListener('change', () => {
+        loadOrders(currentViewType); // Call with the current view type
+    });
+
+    // Add event listener for date filter
+    document.getElementById('dateFilter').addEventListener('change', () => {
+        loadOrders(currentViewType); // Call with the current view type
+    });
+
+    function updateActiveViewButton(activeId) {
+        ['chronologicalView', 'productView'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (id === activeId) {
+                btn.classList.add('bg-primary', 'text-white');
+                btn.classList.remove('bg-gray-300', 'hover:bg-gray-400');
+            } else {
+                btn.classList.remove('bg-primary', 'text-white');
+                btn.classList.add('bg-gray-300', 'hover:bg-gray-400');
+            }
+        });
+    }
+
+    // function updateActiveViewButton(activeId) {
+    //     ['chronologicalView', 'userView', 'productView'].forEach(id => {
+    //         const btn = document.getElementById(id);
+    //         if (id === activeId) {
+    //             btn.classList.add('bg-primary', 'text-white');
+    //             btn.classList.remove('bg-gray-300', 'hover:bg-gray-400');
+    //         } else {
+    //             btn.classList.remove('bg-primary', 'text-white');
+    //             btn.classList.add('bg-gray-300', 'hover:bg-gray-400');
+    //         }
+    //     });
+    // }
+
+    // Helper for Group by User View component
+    function getStatusColor(status) {
+        const statusColors = {
+            'order placed': 'text-blue-600',
+            'order on-hold': 'text-yellow-600',
+            'order completed': 'text-green-600',
+            'order cancelled': 'text-red-600',
+        };
+        return statusColors[status] || 'text-gray-600';
+    }
+
+    // Helper for Order Details Modal component
+    function getStatusBgColor(status) {
+        const statusColors = {
+            'order placed': 'bg-blue-100 text-blue-800',
+            'order on-hold': 'bg-yellow-100 text-yellow-800',
+            'order completed': 'bg-green-100 text-green-800',
+            'order cancelled': 'bg-gray-100 text-red-800'
+        };
+        return statusColors[status] || 'bg-gray-100 text-gray-800';
+    }
+
+
+
+    // Global cached orders array
+    let myOrders = null;
+
+    async function loadOrders(viewType) {
+        const ordersContainer = document.getElementById('ordersContainer');
+        ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">Loading orders...</div>';
+        
+        try {
+            // Only fetch orders once
+            if (!myOrders) {
+
+                // get all orders
+                const query = db.collection('orders').orderBy('orderDate', 'desc');
+
+
+                const snapshot = await query.get();
+                
+                if (snapshot.empty) {
+                    ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">No orders found<img src="/assets/images/shake-wallet-penguin-1.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>';
+                    return;
+                }
+
+                // Cache orders with deep data structure
+                allOrders = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                    // Ensure nested objects are properly preserved
+                    customer: { ...doc.data().customer },
+                    items: doc.data().items.map(item => ({ ...item })),
+                    total: doc.data().total,
+                    status: doc.data().status,
+                    orderDate: doc.data().orderDate
+                }));
+
+                myOrders = allOrders.filter(order => order.customer.phone === currentUser.phoneNumber)
+                
+                // Alternatively, replace "myOrders = allOrders.filter(order => order.customer.phone === currentUser.userPhone)" with server-side query:
+                // const query = db.collection('orders')
+                //                 .where('customer.phone', '==', currentUser.phoneNumber)
+                //                 .orderBy('orderDate', 'desc');
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                // ALTERNATE Logic for getting MY ORDERS
+
+                // // Get current user's phone number first
+                // const userPhone = currentUser?.phoneNumber;
+                // // order filtering by User
+                // const query = db.collection('orders')
+                //                 .where('customer.phone', '==', userPhone)
+                //                 .orderBy('orderDate', 'desc');
+
+                // const snapshot = await query.get();
+                
+                // if (snapshot.empty) {
+                //     ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">No orders found<img src="/assets/placeholder/shake-wallet-penguin-1.gif" alt="Penguin shaking no money" class="w-48 h-auto mx-auto"></div>';
+                //     return;
+                // }
+                
+                // // Cache orders with deep data structure
+                // myOrders = snapshot.docs.map(doc => ({
+                //     id: doc.id,
+                //     ...doc.data(),
+                //     // Ensure nested objects are properly preserved
+                //     customer: { ...doc.data().customer },
+                //     items: doc.data().items.map(item => ({ ...item })),
+                //     total: doc.data().total,
+                //     status: doc.data().status,
+                //     orderDate: doc.data().orderDate
+                // }));
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            } // END of IF block
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            // Use cached orders for filtering
+            let filteredOrders = [...myOrders];
+            const statusFilter = document.getElementById('statusFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            
+            // Apply filters to cached data
+            if (statusFilter !== 'all') {
+                filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
+            }
+            if (dateFilter) {
+                const startDate = new Date(dateFilter);
+                const endDate = new Date(startDate);
+                endDate.setDate(endDate.getDate() + 1);
+                
+                filteredOrders = filteredOrders.filter(order => {
+                    const orderDate = new Date(order.orderDate);
+                    return orderDate >= startDate && orderDate < endDate;
+                });
+            }
+            
+            if (filteredOrders.length === 0) {
+                
+                ordersContainer.innerHTML = '<div class="col-span-full text-lg text-center font-bold py-2">No orders found.<img src="/assets/images/gif-pudgy-penguin-1.gif" alt="" class="w-auto h-[50vh] mx-auto my-6 rounded-[6em]"></div>';
+                // ordersContainer.innerHTML = '<div class="col-span-full text-lg text-center font-bold py-2">No orders found.<img src="/assets/images/gif-orca-blue-bg.gif" alt="" class="w-auto h-[50vh] mx-auto my-6 rounded-[12em]"></div>';
+
+                // ordersContainer.innerHTML = `
+                //     <div class="col-span-full text-center py-8">
+                //         No orders found
+                //         <div class="w-full h-[50vh] mx-auto my-10 rounded-6xl overflow-hidden"> <!-- Container with fixed size -->
+                //         <img 
+                //             src="/assets/images/gif-orca-blue-bg.gif" 
+                //             alt="Orca pod swimming - loading" 
+                //             class="w-full h-full object-cover object-center scale-150" <!-- Critical zoom line -->
+                //         >
+                //         </div>
+                //     </div>
+                // `;
+
+                // ordersContainer.innerHTML = `
+                //     <div class="w-50 h-50 rounded-full overflow-hidden mx-auto my-10">
+                //         <img 
+                //             src="/assets/images/gif-art-loop-dark-bg.gif" 
+                //             alt="Zoomed content" 
+                //             class="w-50 h-50 mx-auto my-10 rounded-full object-cover object-center overflow-hidden scale-100 hover:scale-[1.5] origin-[center_center] transition-transform"
+                //         >
+                //     </div>
+                //     `;
+
+                // ordersContainer.innerHTML = `
+                //     <div class="w-50 h-50 rounded-full overflow-hidden mx-auto my-10 group">
+                //     <img 
+                //         src="/assets/images/gif-art-loop-dark-bg.gif" 
+                //         alt="Zoom effect"
+                //         class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110"
+                //     >
+                //     </div>
+                //     `;
+
+                // ordersContainer.innerHTML = `
+                //     <div class="w-50 h-50 rounded-full overflow-hidden mx-auto my-10">
+                //         <img 
+                //             src="/assets/images/gif-art-loop-dark-bg.gif" 
+                //             alt="Zoomed content"
+                //             class="w-full h-full object-cover object-[30%_50%] transition-all duration-500"
+                //         >
+                //     </div>
+                //     `;
+
+                // ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">No orders found<img src="/assets/images/gif-art-loop-dark-bg.gif" alt="Image not loaded." class="w-50 h-50 mx-auto my-10 rounded-full object-cover object-center scale-[]"></div>';
+
+                // ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">No orders found<img src="/assets/images/gif-orca-blue-bg.gif" alt="Penguin shaking no money" class="w-auto h-[50vh] mx-auto my-10 rounded-2xl"></div>';
+
+                return;
+            }
+
+            // Group orders based on view type using filtered data
+            switch(viewType) {
+                case 'product':
+                    displayOrdersByProduct(filteredOrders);
+                    break;
+                default:
+                    displayChronologicalOrders(filteredOrders);
+            }
+            
+        } catch (error) {
+            console.error("Error loading orders:", error);
+            ordersContainer.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading orders: ${error.message}</div>`;
+        }
+    }
+
+    
+    function refreshOrderCache() {
+        myOrders = null;
+        loadOrders(); // Call with current view type
+    }
+
+
+    // // Order Loading Functions
+    // async function loadOrders(viewType) {
+    //     const ordersContainer = document.getElementById('ordersContainer');
+    //     ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">Loading orders...</div>';
+        
+    //     try {
+    //         let query = db.collection('orders').orderBy('orderDate', 'desc');
+    //         const statusFilter = document.getElementById('statusFilter').value;
+    //         const dateFilter = document.getElementById('dateFilter').value;
+            
+    //         // Apply filters
+    //         if (statusFilter !== 'all') {
+    //             query = query.where('status', '==', statusFilter);
+    //         }
+    //         if (dateFilter) {
+    //             const startDate = new Date(dateFilter);
+    //             const endDate = new Date(startDate);
+    //             endDate.setDate(endDate.getDate() + 1);
+    //             query = query.where('orderDate', '>=', startDate.toISOString())
+    //                         .where('orderDate', '<', endDate.toISOString());
+    //         }
+            
+    //         const snapshot = await query.get();
+            
+    //         if (snapshot.empty) {
+    //             ordersContainer.innerHTML = '<div class="col-span-full text-center py-8">No orders found</div>';
+    //             return;
+    //         }
+            
+    //         let orders = [];
+
+    //         snapshot.forEach(doc => {
+    //             if (doc.data().customer.userPhone === user.userPhone) {
+    //                 orders.push({ id: doc.id, ...doc.data() })
+    //             } else if (ordersContainer.innerHTML === '') {
+    //                 ordersContainer.innerHTML = `
+    //                     <h3>No orders found.</h3>
+    //                 `
+    //             }
+    //         });
+            
+    //         // Group orders based on view type
+    //         switch(viewType) {
+    //             // case 'user':
+    //             //     displayOrdersByUser(orders);
+    //             //     break;
+    //             case 'product':
+    //                 displayOrdersByProduct(orders);
+    //                 break;
+    //             default:
+    //                 displayChronologicalOrders(orders);
+    //         }
+            
+    //     } catch (error) {
+    //         console.error("Error loading orders:", error);
+    //         ordersContainer.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading orders: ${error.message}</div>`;
+    //     }
+    // }
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+    // Init Load Orders on Page Load
+    ////////////////////////////////////////////////////////////////////////
+    loadOrders('chronological')
+    ////////////////////////////////////////////////////////////////////////
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    function displayChronologicalOrders(orders) {
+        const ordersContainer = document.getElementById('ordersContainer');
+        ordersContainer.innerHTML = '';
+        
+        orders.forEach(order => {
+            const orderDate = new Date(order.orderDate).toLocaleString();
+            const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0);
+            
+            const orderCard = document.createElement('div');
+            orderCard.className = 'flex flex-col bg-white rounded-lg shadow-md p-6 order-card transition-all';
+            orderCard.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="bg-[#fae8e0] text-[#ef7c8e] px-4 py-2 rounded-md text-lg sm:text-xl xl:text-2xl font-bold">ID: ${order.id.toUpperCase()}</h3>
+                    <span class="bg-[#f1f0fb] px-3 py-1 rounded text-sm font-semibold ${getStatusColor(order.status)}">${order.status}</span>
+                </div>
+                <div class="flex justify-between items-start mt-2 mb-6 pr-1">
+                    <span class="bg-[#ef7c8e] text-[#fae8e0] px-3 py-1 rounded-md text-base font-bold">${extractMonthDay(orderDate)}</span>
+                    <span class="ml-auto text-xs sm:text-sm text-[#807a7d] font-semibold">${orderDate}</span>
+                </div>
+                <div class="flex justify-between items-end">
+                    <div class="flex items-center">
+                        <span class="text-xl text-primary font-bold">$${order.total}</span>
+                        <span class="text-base font-medium mx-2"> – </span>
+                        <span class="text-base font-medium">(${totalItems} items)</span>
+                    </div>
+                    <button data-order-id="${order.id}" class="view-details-btn bg-primary text-white hover:bg-secondary text-sm font-medium px-3 py-2 rounded-md ml-auto">
+                        View Details
+                    </button>
+                </div>
+                    
+            `;
+
+            ordersContainer.appendChild(orderCard);
+
+        });
+        
+        // Add event listeners to view buttons
+        document.querySelectorAll('.view-details-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const orderId = e.target.getAttribute('data-order-id');
+                showOrderDetails(orders.find(o => o.id === orderId));
+            });
+        });
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+    // ### Order Management - User View ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+    // function displayOrdersByUser(orders) {
+    //     const ordersContainer = document.getElementById('ordersContainer');
+    //     ordersContainer.innerHTML = '';
+        
+    //     // Group orders by user
+    //     const usersMap = orders.reduce((acc, order) => {
+    //         const userKey = order.customer.userPhone || order.customer.phone;
+    //         if (!acc[userKey]) {
+    //             acc[userKey] = {
+    //                 customer: order.customer,
+    //                 orders: [],
+    //                 totalSpent: 0,
+    //                 totalOrders: 0
+    //             };
+    //         }
+    //         acc[userKey].orders.push(order);
+    //         acc[userKey].totalSpent += parseFloat(order.total);
+    //         acc[userKey].totalOrders++;
+    //         return acc;
+    //     }, {});
+
+    //     // Convert to array and sort by total spent
+    //     const userGroups = Object.values(usersMap).sort((a, b) => b.totalSpent - a.totalSpent);
+
+    //     userGroups.forEach(userGroup => {
+    //         const userSection = document.createElement('div');
+    //         userSection.className = 'bg-white rounded-lg shadow-md p-6 mb-6';
+    //         userSection.innerHTML = `
+    //             <div class="border-b pb-3 mb-3">
+    //                 <h3 class="text-primary font-bold text-xl mb-1">
+    //                     ${userGroup.customer.name || 'Guest Customer'}
+    //                     ${userGroup.customer.userPhone ? `<span class="text-sm font-normal text-gray-600">(Registered User)</span>` : ''}
+    //                 </h3>
+    //                 <div class="flex justify-between text-sm font-medium">
+    //                     <span>Phone: ${userGroup.customer.phone} ${userGroup.customer.wechat ? `| WeChat: ${userGroup.customer.wechat}` : ''}</span>
+    //                     <div>
+    //                         <span class="mr-4">Orders: ${userGroup.totalOrders}</span>
+    //                         <span class="text-primary font-bold">Total: $${userGroup.totalSpent.toFixed(2)}</span>
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //             <div class="user-orders space-y-3">
+    //                 ${userGroup.orders.map(order => `
+    //                     <div class="order-item pl-3 border-l-2 border-primary">
+    //                         <div class="flex justify-between items-center">
+    //                             <div>
+    //                                 <span class="font-medium">Order #${order.id}</span>
+    //                                 <span class="text-sm text-gray-600 ml-2">${new Date(order.orderDate).toLocaleDateString()}</span>
+    //                             </div>
+    //                             <div class="flex items-center gap-2">
+    //                                 <span class="text-sm ${getStatusColor(order.status)}">${order.status}</span>
+    //                                 <button data-order-id="${order.id}" 
+    //                                     class="view-details-btn text-primary hover:text-secondary text-sm font-medium">
+    //                                     View
+    //                                 </button>
+    //                             </div>
+    //                         </div>
+    //                         <div class="text-sm">
+    //                             ${order.items.length} items - $${order.total}
+    //                         </div>
+    //                     </div>
+    //                 `).join('')}
+    //             </div>
+    //         `;
+
+    //         if (order.customer.userPhone === user.userPhone) {
+    //             ordersContainer.appendChild(userSection);
+    //             // ordersContainer.appendChild(orderCard);
+    //         } else if (ordersContainer.innerHTML === '') {
+    //             ordersContainer.innerHTML = `
+    //                 <h3>No orders found.</h3>
+    //             `
+    //         }
+    //     });
+
+    //     // Add event listeners to view buttons
+    //     document.querySelectorAll('.view-details-btn').forEach(btn => {
+    //         btn.addEventListener('click', (e) => {
+    //             const orderId = e.target.getAttribute('data-order-id');
+    //             const order = orders.find(o => o.id === orderId);
+    //             showOrderDetails(order);
+    //         });
+    //     });
+    // }
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+    // ### Order Management - Product View ### ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+    function displayOrdersByProduct(orders) {
+        const ordersContainer = document.getElementById('ordersContainer');
+        ordersContainer.innerHTML = '';
+        
+        // Aggregate product data across all orders
+        const productsMap = orders.reduce((acc, order) => {
+            order.items.forEach(item => {
+                const key = item.productId || item.productName;
+                if (!acc[key]) {
+                    acc[key] = {
+                        productId: item.productId,
+                        name: item.productName,
+                        price: item.price,
+                        totalQuantity: 0,
+                        totalRevenue: 0,
+                        orders: [],
+                        customers: new Set(),
+                        firstOrderDate: order.orderDate,
+                        lastOrderDate: order.orderDate
+                    };
+                }
+                
+                acc[key].totalQuantity += item.quantity;
+                acc[key].totalRevenue += item.quantity * item.price;
+                acc[key].orders.push(order.id);
+                acc[key].customers.add(order.customer.userPhone || order.customer.phone);
+                
+                // Update date range
+                if (new Date(order.orderDate) < new Date(acc[key].firstOrderDate)) {
+                    acc[key].firstOrderDate = order.orderDate;
+                }
+                if (new Date(order.orderDate) > new Date(acc[key].lastOrderDate)) {
+                    acc[key].lastOrderDate = order.orderDate;
+                }
+            });
+            return acc;
+        }, {});
+
+        // Convert to array and sort by total quantity
+        const productGroups = Object.values(productsMap).sort((a, b) => b.totalQuantity - a.totalQuantity);
+
+        productGroups.forEach(product => {
+            const productCard = document.createElement('div');
+            productCard.className = 'bg-white rounded-lg shadow-md p-6';
+            productCard.innerHTML = `
+                <div class="border-b pb-3 mb-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-primary text-xl font-bold">${product.name}</h3>
+                            <p class="text-gray-700 text-base font-semibold py-2">$${product.price.toFixed(2)} per unit</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-orders">
+                    <div class="flex justify-between items-center">
+                        <h4 class="list-title hidden text-gray-900 text-base font-semibold">Recently Ordered </h4>
+                        <button class="toggle-orders ml-auto hover:text-secondary bg-[#f1f0fb] text-blue-600 text-base font-semibold px-4 py-2 rounded">
+                            Show Orders
+                        </button>
+                    </div>
+                    <div class="orders-list hidden space-y-2 mt-6 mb-2">
+                        ${product.orders.slice(0, 5).map(orderId => {
+                            const order = orders.find(o => o.id === orderId);
+                            return `
+                                <div class="flex justify-between items-center text-sm p-2 bg-gray-50 rounded">
+                                    <div>
+                                        <span class="font-medium">Order #${orderId.toUpperCase()}</span>
+                                        <span class="text-gray-600 ml-2">
+                                            ${new Date(order.orderDate).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                    <button data-order-id="${orderId}" 
+                                        class="view-details-btn text-primary hover:text-secondary font-medium">
+                                        View
+                                    </button>
+                                </div>
+                            `;
+                        }).join('')}
+                        ${product.orders.length > 5 ? 
+                            `<div class="text-center text-sm text-gray-600 mt-2">
+                                + ${product.orders.length - 5} more orders
+                            </div>` : ''}
+                    </div>
+                </div>
+            `;
+
+            ordersContainer.appendChild(productCard);
+
+            // Add toggle functionality
+            const toggleBtn = productCard.querySelector('.toggle-orders');
+            const ordersList = productCard.querySelector('.orders-list');
+            const listTitle = productCard.querySelector('.list-title');
+            toggleBtn.addEventListener('click', () => {
+                ordersList.classList.toggle('hidden');
+                listTitle.classList.toggle('hidden');
+                toggleBtn.textContent = ordersList.classList.contains('hidden') 
+                    ? 'Show Orders' 
+                    : 'Hide Orders';
+            });
+        });
+
+        // Add event listeners to view buttons
+        document.querySelectorAll('.view-details-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const orderId = e.target.getAttribute('data-order-id');
+                const order = orders.find(o => o.id === orderId);
+                showOrderDetails(order);
+            });
+        });
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+    // ### Order Management - Details Modal ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+    document.getElementById('closeOrderModal').addEventListener('click', () => {
+        document.getElementById('orderDetailModal').classList.add('hidden');
+    });
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+    // Order Detail Modal Functions
+    async function showOrderDetails(order) {
+        const modal = document.getElementById('orderDetailModal');
+        const content = document.getElementById('orderDetailContent');
+        
+        // Show loading state
+        content.innerHTML = '<div class="text-center py-8">Loading order details...</div>';
+        modal.classList.remove('hidden');
+
+        try {
+            // Format dates
+            const orderDate = new Date(order.orderDate).toLocaleString();
+            const updateDate = order.lastUpdated 
+                ? new Date(order.lastUpdated.toDate()).toLocaleString() 
+                : 'N/A';
+
+            // Build order items table
+            const itemsTable = order.items.map(item => `
+                <tr class="border-b border-gray-200">
+                    <td class="py-3">${item.productName}</td>
+                    <td class="text-center">${item.quantity}</td>
+                    <td class="text-right">$${item.price.toFixed(2)}</td>
+                    <td class="text-right">$${item.subtotal}</td>
+                </tr>
+            `).join('');
+
+            // Build status options
+            const statusOptions = ['order placed', 'order on-hold', 'order completed', 'order cancelled']
+                .map(status => `
+                    <option value="${status}" ${order.status === status ? 'selected' : ''}>
+                        ${status.charAt(0).toUpperCase() + status.slice(1)}
+                    </option>
+                `).join('');
+
+            // Populate modal content
+            content.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h4 class="font-bold mb-2">Order Information</h4>
+                        <div class="space-y-1 text-sm">
+                            <div class="flex">
+                                <span class="w-32 text-gray-600">Order ID:</span>
+                                <span>${order.id.toUpperCase()}</span>
+                            </div>
+                            <div class="flex">
+                                <span class="w-32 text-gray-600">Date:</span>
+                                <span>${orderDate}</span>
+                            </div>
+                            <div class="flex">
+                                <span class="w-32 text-gray-600">Last Updated:</span>
+                                <span>${updateDate}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-32 text-gray-600">Status:</span>
+                                <span id="orderStatus" class="p-1 border rounded ${getStatusBgColor(order.status)}">
+                                    ${order.status}
+                                </span>
+                                <!-- <button id="saveStatusBtn" class="ml-2 bg-primary hover:bg-secondary text-white px-3 py-1 rounded text-sm">
+                                    Update
+                                </button> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-2">Customer Information</h4>
+                        <div class="space-y-1 text-sm">
+                            <div class="flex">
+                                <span class="w-32 text-gray-600">Name:</span>
+                                <span>${order.customer.name}</span>
+                            </div>
+                            <div class="flex">
+                                <span class="w-32 text-gray-600">Phone:</span>
+                                <span>${order.customer.phone}</span>
+                            </div>
+                            <div class="flex">
+                                <span class="w-32 text-gray-600">Wechat:</span>
+                                <span>${order.customer.wechat || 'N/A'}</span>
+                            </div>
+                            ${order.customer.userId ? `
+                            <div class="flex">
+                                <span class="w-32 text-gray-600">User ID:</span>
+                                <span class="text-sm">${order.customer.userId.toUpperCase()}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="my-4">
+                    <h4 class="bg-[#938cd9] p-3 rounded text-indigo-50 font-bold mb-2">Shipping Address</h4>
+                    <div class="bg-white border-b border-[#5a5198] p-3 pb-2 mx-2 text-sm font-medium text-black">
+                        ${order.customer.address.replace(/\n/g, '<br>')}
+                    </div>
+                </div>
+                
+                <div class="my-8">
+                    <h4 class="bg-[#938cd9] p-3 rounded text-indigo-50 font-bold mb-6">Order Items</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full max-w-[97%] mx-auto">
+                            <thead>
+                                <tr class="border-b border-gray-300">
+                                    <th class="text-left text-lg pb-2">Product</th>
+                                    <th class="text-center text-lg pb-2">Qty</th>
+                                    <th class="text-right text-lg pb-2">Price</th>
+                                    <th class="text-right text-lg pb-2">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody">
+                                ${itemsTable}
+                                <tr class="border-t border-gray-300 font-bold">
+                                    <td colspan="3" class="text-right pt-3">Total:</td>
+                                    <td class="text-right pt-3">$${order.total}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                ${order.customer.notes ? `
+                <div class="my-8">
+                    <h4 class="bg-[#938cd9] p-3 rounded text-indigo-50 font-bold mb-2">Customer Notes</h4>
+                    <div class="bg-white border-b border-[#5a5198] p-3 pb-2 mx-2 text-sm font-medium text-black">
+                        ${order.customer.notes.replace(/\n/g, '<br>')}
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div class="flex justify-end space-x-2">
+                    <button id="printOrderBtn" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md">
+                        Print
+                    </button>
+                    <button id="closeModalBtn" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md">
+                        Close
+                    </button>
+                </div>
+            `;
+
+            // Add event listeners
+            // document.getElementById('saveStatusBtn').addEventListener('click', () => updateOrderStatus(order.id));
+            document.getElementById('printOrderBtn').addEventListener('click', printOrder);
+            document.getElementById('closeModalBtn').addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+
+
+        } catch (error) {
+            console.error("Error loading order details:", error);
+            content.innerHTML = `
+                <div class="text-center py-8 text-red-500">
+                    Error loading order details: ${error.message}
+                </div>
+                <div class="flex justify-end">
+                    <button id="closeModalBtn" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md">
+                        Close
+                    </button>
+                </div>
+            `;
+            document.getElementById('closeModalBtn').addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+        }
+    }
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+    // ### Order Management - Update Status ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+    // async function updateOrderStatus(orderId) {
+    //     const newStatus = document.getElementById('orderStatus').value;
+    //     const saveBtn = document.getElementById('saveStatusBtn');
+        
+    //     try {
+    //         saveBtn.disabled = true;
+    //         saveBtn.textContent = 'Saving...';
+            
+    //         await db.collection('orders').doc(orderId).update({
+    //             status: newStatus,
+    //             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+    //         });
+            
+    //         // Update UI
+    //         document.getElementById('orderStatus').className = `p-1 border rounded ${getStatusBgColor(newStatus)}`;
+    //         saveBtn.textContent = 'Updated!';
+            
+    //         // Refresh order list after a delay
+    //         setTimeout(() => {
+    //             const currentView = document.querySelector('[id$="View"].bg-primary').id;
+    //             loadOrders(currentView.replace('View', ''));
+    //             document.getElementById('closeOrderModal').click();
+    //         }, 1000);
+            
+    //     } catch (error) {
+    //         console.error("Error updating status:", error);
+    //         saveBtn.textContent = 'Error! Try Again';
+    //         saveBtn.disabled = false;
+    //     }
+    // }
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+    // ### Order Management - Print Order ### <nav>@@@</nav>
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+    function printOrder() {
+        const printContent = document.getElementById('orderDetailContent').innerHTML;
+        const originalContent = document.body.innerHTML;
+        
+        document.body.innerHTML = `
+            <div class="container mx-auto p-6" style="font-size: 14px;">
+                <h1 class="text-2xl font-bold mb-4">Order Details</h1>
+                ${printContent}
+            </div>
+        `;
+        
+        window.print();
+        document.body.innerHTML = originalContent;
+        // Re-attach event listeners after restoring content
+        document.getElementById('closeOrderModal').addEventListener('click', () => {
+            document.getElementById('orderDetailModal').classList.add('hidden');
+        });
+    }
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+// // Random functions below // //
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+        // For dateString in format "4/21/2025, 12:49:56 AM"
+        function extractMonthDay(dateString) {
+            const datePart = dateString.split(",")[0];
+            const [month, day] = datePart.split("/");
+            const monthNames = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            return `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
+        }
+
+        // Convert +1########## into (###) ###-####
+        function formatPhoneNumber(phoneNumber) {
+            // Remove the leading '+' and country code
+            const cleaned = phoneNumber.replace(/^\+1/, ''); // Assuming the country code is always +1
+            // Extract area code and the rest of the number
+            const areaCode = cleaned.slice(0, 3);
+            const firstPart = cleaned.slice(3, 6);
+            const secondPart = cleaned.slice(6, 10);
+            
+            // Format the phone number
+            return `(${areaCode}) ${firstPart}-${secondPart}`;
+        }
+
+
+    </script>
+
+</body>
+
+</html>
+
+<!-- END -->

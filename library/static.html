@@ -1,11 +1,10 @@
-<!-- Last Update: May 2, 2025 - Prior to replacing it as index, with sloth homepage -->
+<!-- from index.html version 6 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yummy Buy 😋</title>
-    <link rel="icon" type="image/png" href="assets/icons/favicon-1.png">
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -107,7 +106,7 @@
                 <!-- LOGO -- Pulsating Glow Effect + Expand on Hover -->
                 <a href="index.html" >
                     <img
-                        src="./images-v2/mascot-logo-1.png"
+                        src="/assets/placeholder/mascot-logo-1.png"
                         alt="Yummy Buy Mascot"
                         class="w-48 h-auto transition-transform duration-300 ease-in-out hover:scale-125 animate-pulse-glow"
                     /> 
@@ -212,7 +211,7 @@
                    ***COMMENT OUT*** Logo
                     <a href="index.html" class="shrink-0 hover:opacity-90 transition-opacity">
                         <img
-                            src="./images-v2/mascot-logo-1.png"
+                            src="/assets/placeholder/mascot-logo-1.png"
                             alt="Yummy Buy Mascot"
                             class="w-20 h-20 sm:w-32 sm:h-32 md:w-48 md:h-48 transition-transform duration-300 ease-in-out hover:scale-105 animate-pulse-glow"
                         />
@@ -282,7 +281,7 @@
                 ***COMMENT OUT*** LOGO -- Pulsating Glow Effect + Expand on Hover
                 <a href="index.html" >
                     <img
-                        src="./images-v2/mascot-logo-1.png"
+                        src="/assets/placeholder/mascot-logo-1.png"
                         alt="Yummy Buy Mascot"
                         class="w-48 h-48 transition-transform duration-300 ease-in-out hover:scale-125 animate-pulse-glow"
                     /> 
@@ -382,7 +381,7 @@
                     <div id="cartItemsContainer" class="mb-4 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 min-h-[33.33vh] flex flex-col items-center justify-center">
 
                         <!-- Empty Cart Image -->   
-                        <img id="emptyCartImage" src="./images-v2/cart-placeholder-1.gif" alt="Empty Cart" class="w-1/2 h-auto mb-4 mr-10 hidden">
+                        <img id="emptyCartImage" src="/assets/placeholder/cart-placeholder-1.gif" alt="Empty Cart" class="w-1/2 h-auto mb-4 mr-10 hidden">
 
                         <!-- Empty Cart Message -->
                         <p id="emptyCartMessage" class="text-gray-500 dark:text-gray-400 hidden">Wow, so empty!</p>
@@ -473,7 +472,7 @@
                 <!-- Centered Image -->
                 <!-- <div class="h-full flex items-center justify-center w-full mb-10"> -->
                 <div class="h-full flex items-center justify-center w-full p-10">
-                    <img src="./images-v2/slogan-logo-1.png" 
+                    <img src="/assets/placeholder/slogan-logo-1.png" 
                          alt="Yummy Buy Mascot" 
                          class="w-full h-auto aspect-square object-contain md:h-auto lg:h-auto">
                          <!-- class="h-3/4 h-auto aspect-square object-contain md:h-1/3 lg:h-2/3"> -->
@@ -515,7 +514,7 @@
                     <div class="relative">
                         <div id="recaptcha-container" class="mb-4"></div>
                         <label for="phoneNumber" class="block mb-1">Phone Number</label>
-                        <input type="tel" id="phoneNumber" placeholder="+1 (604) 969-3855" 
+                        <input type="tel" id="phoneNumber" placeholder="+1 123-456-7890" 
                             class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base">
                         <p id="phoneError" class="text-red-500 text-sm mt-1 hidden"></p>
                     </div>
@@ -523,25 +522,6 @@
                         Send Verification Code
                     </button>
                 </div>
-                <!-- <div id="phoneInputContainer" class="space-y-4">
-                    <p class="mb-4">Please enter your phone number to authenticate. We'll send you a verification code via SMS.</p>
-                    <div class="relative">
-                        <div id="recaptcha-container" class="mb-4"></div>
-                        <label for="phoneNumber" class="block mb-1">Phone Number</label>
-                    <input type="text" id="phoneNumber" placeholder="+1" 
-                        class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-base"
-                        pattern="[0-9\s\(\)-]{10,14}"
-                        inputmode="tel"
-                        minlength="8"
-                        onfocus="this.placeholder='+1 '"
-                        oninput="formatPhoneNumber(this)"
-                        onblur="formatPhoneNumber(this)">
-                        <p id="phoneError" class="text-red-500 text-sm mt-1 hidden"></p>
-                    </div>
-                    <button id="sendCodeBtn" class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-md font-medium">
-                        Send Verification Code
-                    </button>
-                </div> -->
                 
                 <!-- Verification Code Input -->
                 <div id="codeInputContainer" class="space-y-4 hidden">
@@ -605,7 +585,7 @@
         const phoneInputContainer = document.getElementById('phoneInputContainer');
         const codeInputContainer = document.getElementById('codeInputContainer');
         const authSuccessContainer = document.getElementById('authSuccessContainer');
-        // const phoneNumberInput = document.getElementById('phoneNumber');
+        const phoneNumberInput = document.getElementById('phoneNumber');
         const sendCodeBtn = document.getElementById('sendCodeBtn');
         const verifyCodeBtn = document.getElementById('verifyCodeBtn');
         const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');
@@ -678,122 +658,32 @@
             });
         }
         
-        // Phone number formatting and validation
-        // // already declared above
-        // const phoneNumberInput = document.getElementById('phoneNumber');
-
-        // Phone Number Input Logic
-        const phoneNumberInput = document.getElementById('phoneNumber');
-
-        phoneNumberInput.addEventListener('focus', () => {
-            phoneNumberInput.placeholder = "+1 ";
-        });
-
-        phoneNumberInput.addEventListener('blur', () => {
-            phoneNumberInput.placeholder = "+1 (604) 969-3855";
-        });
-
-        phoneNumberInput.addEventListener('input', (e) => {
-            // Get raw digits only
-            let rawValue = e.target.value.replace(/\D/g, '');
-            
-            // Limit to 10 digits (excluding country code)
-            if (rawValue.length > 10) {
-                rawValue = rawValue.slice(0, 10);
-            }
-
-            // Formatting logic
-            let formattedValue = '';
-            if (rawValue.length > 0) {
-                formattedValue = '+1 '; // Country code
-                
-                // Area code
-                if (rawValue.length >= 1) {
-                    formattedValue += '(' + rawValue.slice(0, 3);
-                }
-                
-                // Middle digits
-                if (rawValue.length >= 4) {
-                    formattedValue += ') ' + rawValue.slice(3, 6);
-                }
-                
-                // Last digits
-                if (rawValue.length >= 7) {
-                    formattedValue += '-' + rawValue.slice(6, 10);
-                }
-            }
-
-            // Update input value
-            e.target.value = formattedValue;
-
-            // Focus logic
-            if (rawValue.length === 10) {
-                setTimeout(() => {
-                    document.getElementById('sendCodeBtn').focus();
-                }, 300);
-            }
-        });
-
-
-
-
-        // phoneNumberInput.addEventListener('input', (e) => {
-        //     let value = e.target.value.replace(/[^0-9]/g, ''); // Remove non-digit characters
-        //     if (value.length > 10) {
-        //         value = value.slice(0, 10); // Limit to 10 digits
-        //     }
-
-        //     // Format the phone number
-        //     if (value.length > 0) {
-        //         value = '+1 (' + value;
-        //     }
-        //     if (value.length > 8) {
-        //         value = value.slice(0, 3) + ') ' + value.slice(9);
-        //     }
-        //     if (value.length > 13) {
-        //         value = value.slice(0, 13) + '-' + value.slice(13);
-        //     }
-        //     if (value.length > 16) {
-        //         value = value.slice(0, 16) + '-' + value.slice(16);
-        //     }
-
-        //     e.target.value = value;
-
-        //     // Trigger send code button focus after 10 digits
-        //     if (value.replace(/\D/g, '').length === 10) {
-        //         setTimeout(() => {
-        //             document.getElementById('sendCodeBtn').focus();
-        //         }, 300);
-        //     }
-        // });
-        
         // Send verification code
         sendCodeBtn.addEventListener('click', async () => {
-            const trimmedPhoneNumber = phoneNumberInput.value.replace(/[^0-9]/g, '').trim(); // Get only digits
-            if (trimmedPhoneNumber.length !== 10) {
+            const phoneNumber = phoneNumberInput.value.trim();
+            
+            if (!phoneNumber) {
                 phoneError.textContent = 'Please enter a valid phone number';
                 phoneError.classList.remove('hidden');
                 return;
             }
-
-            const phoneNumber = '+1' + trimmedPhoneNumber; // Append +1 for authentication
-
+            
             try {
                 sendCodeBtn.disabled = true;
                 sendCodeBtn.textContent = 'Sending...';
-
+                
                 // Send verification code
                 const appVerifier = window.recaptchaVerifier;
                 const confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier);
                 verificationId = confirmationResult.verificationId;
-
+                
                 // Show verification code input
                 phoneInputContainer.classList.add('hidden');
                 codeInputContainer.classList.remove('hidden');
-
+                
                 // Focus on the first verification code input
                 verificationInputs[0].focus();
-
+                
                 // Handle verification code inputs
                 setupVerificationInputs();
             } catch (error) {
@@ -802,60 +692,13 @@
                 phoneError.classList.remove('hidden');
                 sendCodeBtn.disabled = false;
                 sendCodeBtn.textContent = 'Send Verification Code';
-
+                
                 // Reset reCAPTCHA
                 window.recaptchaVerifier.reset(window.recaptchaWidgetId);
                 initRecaptcha();
             }
         });
         
-
-    
-
-        // // Send verification code
-        // sendCodeBtn.addEventListener('click', async () => {
-        //     const phoneNumber = phoneNumberInput.value.replace(/[^0-9]/g, '').trim(); // Get only digits
-        //     if (phoneNumber.length !== 10) {
-        //         phoneError.textContent = 'Please enter a valid phone number';
-        //         phoneError.classList.remove('hidden');
-        //         return;
-        //     }
-
-        //     const fullPhoneNumber = '+1' + phoneNumber; // Append +1 for authentication
-
-        //     try {
-        //         sendCodeBtn.disabled = true;
-        //         sendCodeBtn.textContent = 'Sending...';
-
-        //         // Send verification code
-        //         const appVerifier = window.recaptchaVerifier;
-        //         const confirmationResult = await firebase.auth().signInWithPhoneNumber(fullPhoneNumber, appVerifier);
-        //         verificationId = confirmationResult.verificationId;
-
-        //         // Show verification code input
-        //         phoneInputContainer.classList.add('hidden');
-        //         codeInputContainer.classList.remove('hidden');
-
-        //         // Focus on the first verification code input
-        //         verificationInputs[0].focus();
-
-        //         // Handle verification code inputs
-        //         setupVerificationInputs();
-        //     } catch (error) {
-        //         console.error('Error sending verification code:', error);
-        //         phoneError.textContent = error.message || 'Error sending verification code. Please try again.';
-        //         phoneError.classList.remove('hidden');
-        //         sendCodeBtn.disabled = false;
-        //         sendCodeBtn.textContent = 'Send Verification Code';
-
-        //         // Reset reCAPTCHA
-        //         window.recaptchaVerifier.reset(window.recaptchaWidgetId);
-        //         initRecaptcha();
-        //     }
-        // });
-
-
-
         // Set up verification code inputs
         function setupVerificationInputs() {
             verificationInputs.forEach((input, index) => {
@@ -1101,30 +944,30 @@
 
         // Sample product data (replace with your actual products)
         const products = [
-            { id: 1, name: "Product 1", price: 3.99, image: "./images-v2/A_meticulously_organized_arran(1).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 2, name: "Product 2", price: 4.99, image: "./images-v2/A_meticulously_organized_arran(10).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 3, name: "Product 3", price: 7.99, image: "./images-v2/A_meticulously_organized_arran(11).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 4, name: "Product 4", price: 13.99, image: "./images-v2/A_meticulously_organized_arran(13).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 5, name: "Product 5", price: 4.99, image: "./images-v2/A_meticulously_organized_arran(17).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 6, name: "Product 6", price: 5.99, image: "./images-v2/A_meticulously_organized_arran(2).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 7, name: "Product 7", price: 21.99, image: "./images-v2/A_meticulously_organized_arran(20).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 8, name: "Product 8", price: 15.99, image: "./images-v2/A_meticulously_organized_arran(21).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 9, name: "Product 9", price: 12.99, image: "./images-v2/A_meticulously_organized_arran(23).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 10, name: "Product 10", price: 32.99, image: "./images-v2/A_meticulously_organized_arran(29).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 11, name: "Product 11", price: 6.99, image: "./images-v2/A_meticulously_organized_arran(3).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 12, name: "Product 12", price: 9.99, image: "./images-v2/A_meticulously_organized_arran(30).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 13, name: "Product 13", price: 13.99, image: "./images-v2/A_meticulously_organized_arran(32).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 14, name: "Product 14", price: 4.99, image: "./images-v2/A_meticulously_organized_arran(33).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 15, name: "Product 15", price: 32.99, image: "./images-v2/A_meticulously_organized_arran(34).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 16, name: "Product 16", price: 3.99, image: "./images-v2/A_meticulously_organized_arran(4).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 17, name: "Product 17", price: 4.99, image: "./images-v2/A_meticulously_organized_arran(5).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 18, name: "Product 18", price: 7.99, image: "./images-v2/A_meticulously_organized_arran(6).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 19, name: "Product 19", price: 13.99, image: "./images-v2/A_meticulously_organized_arran(7).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 20, name: "Product 20", price: 4.99, image: "./images-v2/A_meticulously_organized_arran(8).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 21, name: "Product 21", price: 5.99, image: "./images-v2/A_meticulously_organized_arran(9).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 22, name: "Product 22", price: 21.99, image: "./images-v2/painterly_anime_artwork_A_meti(1).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 23, name: "Product 23", price: 15.99, image: "./images-v2/painterly_anime_artwork_A_meti(2).jpeg", description: "This is a placeholder text for the description of the product." },
-            { id: 24, name: "Product 24", price: 12.99, image: "./images-v2/painterly_anime_artwork_A_meti.jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 1, name: "Product 1", price: 3.99, image: "/assets/placeholder/A_meticulously_organized_arran(1).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 2, name: "Product 2", price: 4.99, image: "/assets/placeholder/A_meticulously_organized_arran(10).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 3, name: "Product 3", price: 7.99, image: "/assets/placeholder/A_meticulously_organized_arran(11).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 4, name: "Product 4", price: 13.99, image: "/assets/placeholder/A_meticulously_organized_arran(13).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 5, name: "Product 5", price: 4.99, image: "/assets/placeholder/A_meticulously_organized_arran(17).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 6, name: "Product 6", price: 5.99, image: "/assets/placeholder/A_meticulously_organized_arran(2).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 7, name: "Product 7", price: 21.99, image: "/assets/placeholder/A_meticulously_organized_arran(20).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 8, name: "Product 8", price: 15.99, image: "/assets/placeholder/A_meticulously_organized_arran(21).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 9, name: "Product 9", price: 12.99, image: "/assets/placeholder/A_meticulously_organized_arran(23).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 10, name: "Product 10", price: 32.99, image: "/assets/placeholder/A_meticulously_organized_arran(29).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 11, name: "Product 11", price: 6.99, image: "/assets/placeholder/A_meticulously_organized_arran(3).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 12, name: "Product 12", price: 9.99, image: "/assets/placeholder/A_meticulously_organized_arran(30).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 13, name: "Product 13", price: 13.99, image: "/assets/placeholder/A_meticulously_organized_arran(32).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 14, name: "Product 14", price: 4.99, image: "/assets/placeholder/A_meticulously_organized_arran(33).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 15, name: "Product 15", price: 32.99, image: "/assets/placeholder/A_meticulously_organized_arran(34).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 16, name: "Product 16", price: 3.99, image: "/assets/placeholder/A_meticulously_organized_arran(4).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 17, name: "Product 17", price: 4.99, image: "/assets/placeholder/A_meticulously_organized_arran(5).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 18, name: "Product 18", price: 7.99, image: "/assets/placeholder/A_meticulously_organized_arran(6).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 19, name: "Product 19", price: 13.99, image: "/assets/placeholder/A_meticulously_organized_arran(7).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 20, name: "Product 20", price: 4.99, image: "/assets/placeholder/A_meticulously_organized_arran(8).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 21, name: "Product 21", price: 5.99, image: "/assets/placeholder/A_meticulously_organized_arran(9).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 22, name: "Product 22", price: 21.99, image: "/assets/placeholder/painterly_anime_artwork_A_meti(1).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 23, name: "Product 23", price: 15.99, image: "/assets/placeholder/painterly_anime_artwork_A_meti(2).jpeg", description: "This is a placeholder text for the description of the product." },
+            { id: 24, name: "Product 24", price: 12.99, image: "/assets/placeholder/painterly_anime_artwork_A_meti.jpeg", description: "This is a placeholder text for the description of the product." },
         ]
 
         // Initialize cart
@@ -1518,15 +1361,8 @@
         });
 
         function formatPhoneNumber(phoneNumber) {
-            // Remove all non-digit characters
-            const cleaned = phoneNumber.replace(/[^0-9]/g, '');
-            
-            // Format the phone number
-            if (cleaned.length === 10) {
-                return `+1 (${cleaned.slice(0,3)}) ${cleaned.slice(3,6)}-${cleaned.slice(6,10)}`;
-            }
-            return cleaned;
-        
+            // Remove the leading '+' and country code
+            const cleaned = phoneNumber.replace(/^\+1/, ''); // Assuming the country code is always +1
             // Extract area code and the rest of the number
             const areaCode = cleaned.slice(0, 3);
             const firstPart = cleaned.slice(3, 6);
