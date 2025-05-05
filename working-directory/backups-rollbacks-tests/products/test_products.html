@@ -3,8 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yummy Buy 😋</title>
-    <link rel="icon" type="image/png" href="/assets/icons/mascot-head-purple-bg-favicon.io/favicon-16x16.png">
+    <!-- Title -->
+    <title>Yummy Buy</title>
+    <!-- Favicons -->
+    <link rel="icon" href="/assets/icons/mascot-sitting-favicon.io/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/mascot-sitting-favicon.io/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/mascot-sitting-favicon.io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/mascot-sitting-favicon.io/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/icons/mascot-sitting-favicon.io/android-chrome-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/icons/mascot-sitting-favicon.io/apple-touch-icon.png">
+    <link rel="manifest" href="/assets/icons/mascot-sitting-favicon.io/site.webmanifest">
     <!-- Custom CSS -->
      <link rel="stylesheet" href="/styles/products.css">
     <!-- Firebase SDK -->
@@ -28,19 +36,31 @@
 
 </head>
 
-<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
+<body class="bg-[#6A47C4] dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
 
-<!-- START -->
-    <!-- LOADING Modal Elements -->
-    <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center bg-[#6A47C4] z-50 opacity-100 transition-opacity duration-500 pointer-events-auto" aria-label="Loading, please wait">
-      
-        <!-- MOBILE -->
-        <img src="/assets/images/GIF-mobile-loading-2.gif" alt="Loading screen" class="block sm:hidden object-cover w-auto h-full max-h-screen">
-
-        <!-- DESKTOP -->
-        <img src="/assets/images/desktop-loading_3D_pastel.gif" alt="Loading screen" class="hidden sm:block object-cover w-auto h-full">
-
+    <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center bg-[#6A47C4] z-50 opacity-0 transition-opacity duration-500 pointer-events-auto" aria-label="Loading, please wait">
+        <video id="loadingVideoMobile" src="/assets/videos/mobile-loading-mp4-v1.mp4" autoplay loop muted class="block sm:hidden object-cover w-full h-full max-h-screen"></video>
+        <video id="loadingVideoDesktop" src="/assets/videos/desktop-loading-mp4-v1.mp4" autoplay loop muted class="hidden sm:block object-cover w-full h-full max-h-screen"></video>
     </div>
+
+    
+    <!-- START -->
+    
+<!-- v1.0 PROGRESS LOADING BAR Modal Elements -->
+<!-- <body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300"> -->
+
+    <!-- <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center bg-[#6A47C4] z-50 opacity-0 transition-opacity duration-500 pointer-events-auto" aria-label="Loading, please wait">
+        MOBILE
+        <video id="loadingVideo" src="/assets/videos/mobile-loading-mp4-v1.mp4" autoplay loop muted class="block sm:hidden object-cover w-full h-full max-h-screen"></video>
+        DESKTOP
+        <video id="loadingVideo" src="/assets/videos/desktop-loading-mp4-v1.mp4" autoplay loop muted class="hidden sm:block object-cover w-full h-full max-h-screen"></video>
+    </div> -->
+
+    <!-- GIF Version - OLD -->
+    <!-- <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center bg-[#6A47C4] z-50 opacity-100 transition-opacity duration-500 pointer-events-auto" aria-label="Loading, please wait"> -->
+        <!-- <img src="/assets/images/GIF-mobile-loading-2.gif" alt="Loading screen" class="block sm:hidden object-cover w-auto h-full max-h-screen"> -->
+        <!-- <img src="/assets/images/desktop-loading_3D_pastel.gif" alt="Loading screen" class="hidden sm:block object-cover w-auto h-full"> -->
+    <!-- </div>       -->
 
     <!-- LOADING Logic -->
     <!-- <script>
@@ -61,6 +81,7 @@
           setTimeout(hideLoadingScreen, 3000); // Match GIF loop duration
         });
       </script> -->
+
 <!-- END -->
     
     <!-- Gallery Modal for enlarged images -->
@@ -85,21 +106,216 @@
     </div>
 
     <!-- @@@ FADE IN EFFECT -- OUTERMOST PARENT of VISIBLE PAGE CONTENT - 1 LVL BELOW BODY-->
-    <main class="content opacity-0 transition-opacity duration-500 ease-in">
+    <main class="content opacity-0 transition-opacity duration-500 ease-in px-4 py-2 sm:px-[2vw] sm:py-[2vh]">
 
         <!-- OUTER WRAPPER CONTAINER -->
-        <div class="px-4 py-2 sm:py-8">
-        
-            <!-- <HEADER /> -->
-            <header class="relative h-full w-auto flex flex-col justify-between sm:flex-row justify-between gap-y-6 my-2 mb-12">
+        <!-- <div class="px-4 py-2 sm:py-8"> -->
 
-                <!-- Logo + Title Container -->
-                <div class="w-auto h-1/3 sm:w-1/4 flex items-start justify-between gap-4 px-1 sm:items-center sm:px-0">
-                    <!-- <div class="flex flex-row items-start sm:items-center justify-between gap-4 px-1 sm:px-0 w-full sm:col-start-1 sm:col-span-6"> -->
-                    <!-- <div class="flex flex-row items-center justify-around gap-4 w-full sm:col-start-1 sm:col-span-5"> -->
-                    <!-- <div class="flex flex-row items-center justify-center w-full sm:col-start-1 sm:col-span-5"> -->
+            <!-- ROLLBACK -- VERSION 0.2 -->
+            <header class="relative flex-col sm:grid sm:grid-cols-14 items-center gap-y-6 my-2 pb-12">
+                <div class="flex items-center gap-4 w-full sm:col-start-1 sm:col-span-2">
                     
                     <!-- LOGO -- Pulsating Glow Effect + Expand on Hover -->
+                    <a href="index.html" >
+                        <img
+                            src="/assets/placeholder/mascot-logo-1.png"
+                            alt="Yummy Buy Mascot"
+                            class="w-48 h-auto transition-transform duration-300 ease-in-out hover:scale-125 animate-pulse-glow"
+                        /> 
+                    </a>
+    
+                    <!-- TITLE TEXT: 呀蜜佰 -->
+                    <div class="flex flex-col gap-3">
+                        <h1 class="min-w-[120px] sm:min-w-0 pl-4">
+                            <a href="index.html" class="font-zenMaru text-2xl sm:text-5xl md:text-6xl font-bold text-indigo-100 hover:text-secondary transition-colors">
+                                呀蜜佰 😋
+                            </a>
+                        </h1>
+                        <!-- <h1 class="font-zenMaru text-xl sm:text-5xl pl-4 font-bold text-indigo-100">
+                            <a href="index.html" class="hover:text-secondary transition-colors duration-200">
+                                呀蜜佰 😋
+                            </a>
+                        </h1> -->
+                    </div>
+    
+                </div>
+                
+                <!-- CONTAINER: NAVIGATION LINKS -->
+                <div class="self-center sm:col-start-6 sm:col-span-3">
+    
+                    <!-- NAVIGATION LINKS -->
+                    <!-- <nav class="flex justify-around justify-center gap-2 px-9 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105"> -->
+                        <nav class="flex justify-around justify-center bg-[#292f3d] gap-2 px-9 py-3 pb-4 outline outline-3 outline-indigo-100 hover:outline-2 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-105">
+
+                        <!-- NAVIGATION LINKS: Home -->
+                        <span class="text-base text-indigo-100 hover:text-primary font-black border-b-2 border-primary hover:border-b-2 hover:border-indigo-100 px-1 transition-colors duration-200">Home</span>
+                        
+                        <!-- NAVIGATION LINKS: Products -->
+                        <span class="text-base text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">
+                            <a href="products.html">Products</a>
+                        </span>
+                        
+                        <!-- NAVIGATION LINKS: Orders -->
+                        <!-- <span class="text-base text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">Orders</span> -->
+                        <span class="text-base text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-md transition-colors duration-200">
+                            <a href="history.html">Your Orders</a>
+                        </span>
+                    </nav>
+                </div>
+                
+                <!-- CONTAINER: HIDDEN ADMIN LINK, HIDDEN USER PHONE DISPLAY, LOGIN BUTTON -->
+    
+                <div class="items-end gap-4 sm:col-start-13 sm:col-span-1">
+    
+                    <div class="flex items-end gap-2">
+                                    
+                        <!-- HIDDEN ADMIN LINK -->
+                        <h3 id="adminLink" class="hidden">
+                            <a href="admin.html" class="block hover:text-[#f13dc3] text-white bg-transparent hover:bg-primary px-8 pt-2 pb-3 pb-2.5 ml-1 rounded-md font-semibold transition-all duration-200 border border-[#f13dc3] hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-secondary">
+                                Admin
+                            </a>
+                        </h3>
+                        
+                        <!-- LOGIN BUTTON -->
+                        <button id="loginBtn" class="bg-[#4a427f] hover:text-[#f13dc3] hover:bg-primary ml-auto text-white py-3 px-10 rounded-lg font-semibold transition-all duration-200 border-invisible hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                            <!-- <button id="loginBtn" class="bg-[#4a427f] hover:bg-secondary ml-auto text-white py-2.5 px-8 rounded-lg font-semibold transition-all duration-200 ring-1 ring-offset-1 ring-primary focus:ring-2 focus:ring-offset-2 focus:ring-primary"> -->
+                            <!-- <button id="loginBtn" class="bg-[#4a427f] hover:bg-secondary ml-auto text-white py-2.5 px-8 rounded-lg font-semibold transition-all duration-200 border-invisible hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-primary"> -->
+                            Log In
+                        </button>
+        
+                    </div>
+        
+                </div>
+    
+                <!-- ABSOLUTE POSITIONED HIDDEN -->
+                <div class="absolute flex items-end top-4 right-0">
+                    <span id="userPhoneDisplay" class="text-sm font-bold text-indigo-100 border-b-2 border-[#f13dc3] ml-auto pr-0.5 pb-1">
+                        <!-- User's phone number will be displayed here -->
+                    </span>
+                </div>
+    
+            </header>
+
+
+<!-- VERSION 3.0 -- HEADER - Simplified and Responsive
+<header class="flex flex-col sm:flex-row sm:items-center justify-between gap-y-6 mb-12 py-4">
+    Logo + Title Container - Simplified with flexbox
+    <div class="flex justify-between items-center gap-4">
+        Logo with pulsating effect
+        <a href="index.html" class="block">
+            <img
+                src="/assets/images/mascot-logo-1.png"
+                alt="Yummy Buy Mascot"
+                class="w-32 sm:w-36 md:w-40 lg:w-48 h-auto transition-transform duration-300 hover:scale-125 animate-pulse-glow"
+            /> 
+        </a>
+
+        Title Text: Mobile-friendly with flex
+        <h1 class="flex flex-col sm:hidden text-end">
+            <a href="index.html" class="font-zenMaru text-4xl mobile:text-5xl font-bold text-indigo-100 hover:text-secondary transition-colors duration-300">
+                呀蜜佰 <br> 😋
+            </a>
+        </h1>
+        
+        Title Text: Desktop
+        <h1 class="hidden sm:block">
+            <a href="index.html" class="font-zenMaru text-5xl md:text-6xl lg:text-7xl font-bold text-indigo-100 hover:text-secondary transition-colors duration-300">
+                呀蜜佰 😋
+            </a>
+        </h1>
+    </div>
+
+    Middle Section: Navigation
+    <div class="flex flex-col sm:flex-row justify-center items-center">
+        Hamburger Menu for Mobile
+        <div class="block mobile:hidden w-full bg-[#292f3d] px-3 py-2 rounded-md">
+            <input type="checkbox" id="menu-toggle" class="hidden peer">
+            <label for="menu-toggle" class="text-white font-semibold cursor-pointer">
+                Menu
+            </label>
+            <div class="hidden peer-checked:block bg-[#292f3d] p-2 space-y-1">
+                <a href="index.html" class="block text-xs text-[#787fe7] hover:text-[#935cde] font-semibold">
+                    Home
+                </a>
+                <a class="block text-xs text-indigo-200 font-semibold">
+                    Products
+                </a>
+                <a href="history.html" class="block text-xs text-[#787fe7] hover:text-[#935cde] font-semibold">
+                    Orders
+                </a>
+            </div>
+        </div>
+
+        Navigation Links for Tablet/Desktop
+        <nav class="hidden mobile:flex w-full sm:w-auto items-center justify-center mt-4 sm:mt-0">
+            <div class="flex justify-center gap-4 bg-[#292f3d] px-6 py-2 sm:px-10 sm:py-3 rounded-full outline outline-1 hover:outline-2 outline-indigo-100 hover:outline-indigo-200 transition-all duration-300">
+                Home Link
+                <span class="text-xs sm:text-sm md:text-base lg:text-lg text-[#787fe7] hover:text-[#935cde] font-semibold">
+                    <a href="index.html">Home</a>
+                </span>
+
+                Products Link (Active)
+                <span class="text-xs sm:text-sm md:text-base lg:text-lg text-indigo-100 font-black border-b-2 border-primary hover:border-indigo-100 px-1">
+                    Products
+                </span>
+
+                Orders Link
+                <span class="text-xs sm:text-sm md:text-base lg:text-lg text-[#787fe7] hover:text-[#935cde] font-semibold">
+                    <a href="history.html">Orders</a>
+                </span>
+            </div>
+        </nav>
+    </div>
+
+    Right Section: Login/User Info
+    <div class="flex justify-end items-center">
+        <div class="relative">
+            Admin Link (Hidden)
+            <h3 id="adminLink" class="hidden absolute bottom-full translate-y-2 right-0 text-white hover:text-[#f13dc3] bg-transparent hover:bg-primary px-3 py-2 text-xs sm:text-base rounded-md font-semibold border border-[#f13dc3] hover:border-secondary transform hover:scale-105">
+                <a href="admin.html">Admin</a>
+            </h3>
+            
+            Login Button
+            <button id="loginBtn" class="flex items-center justify-center px-6 py-2 text-xs sm:text-base font-bold text-indigo-100 hover:text-[#f13dc3] bg-[#4a427f] hover:bg-primary rounded-lg hover:scale-105 transition-all duration-200">
+                <p>Log In</p>
+            </button>
+            
+            User Phone Display
+            <div class="absolute bottom-full sm:top-full right-0 -translate-y-3 sm:translate-y-3">
+                <span id="userPhoneDisplay" class="text-xs sm:text-sm font-semibold text-indigo-100 border-b border-[#f13dc3] pb-0.5"></span>
+            </div>
+        </div>
+    </div>
+</header> -->
+
+
+        
+            <!-- HEADER [OLD] VERSION 2.0
+            <header class="
+            relative 
+            h-[20vh] w-auto 
+            flex flex-col 
+            sm:flex-row 
+            justify-between 
+            gap-y-6 
+            pt-2 
+            pb-12">
+
+                OLD Logo + Title Container
+                    <div class="
+                    w-auto h-1/3 sm:w-1/4 
+                    flex items-start justify-between sm:items-center
+                    gap-4 
+                    px-1 sm:px-0
+                    pb-0 md:pb-8 lg:pb-0
+                    ">
+                    <div class="flex flex-row items-start sm:items-center justify-between gap-4 px-1 sm:px-0 w-full sm:col-start-1 sm:col-span-6">
+                    <div class="flex flex-row items-center justify-around gap-4 w-full sm:col-start-1 sm:col-span-5">
+                    <div class="flex flex-row items-center justify-center w-full sm:col-start-1 sm:col-span-5">
+
+                Logo + Title Container
+                <div>
+                    LOGO -- Pulsating Glow Effect + Expand on Hover
                     <a href="index.html" class="flex-1">
                         <img
                             src="/assets/images/mascot-logo-1.png"
@@ -108,41 +324,194 @@
                         /> 
                     </a>
 
-                    <!-- TITLE TEXT: 呀蜜佰 -->
-                    <div class="flex-1 absolute right-0 top-0 lg:-right-3 sm:hover:scale-125 transition-transform duration-300 ease-in-out">
+                    TITLE TEXT: 呀蜜佰
+                    <div class="
+                    flex-1 
+                    absolute 
+                    right-0 
+                    top-0 
+                    hover:scale-110 
+                    transition-transform 
+                    duration-300 
+                    ease-in-out">
                         <h1 class="min-w-[120px] sm:min-w-0">
-                            <a href="index.html" class="hidden sm:block font-zenMaru text-5xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold text-indigo-100 hover:text-secondary sm:hover:scale-115 transition-colors transition-transform duration-300 ease-in-out hover:scale-110 ml-auto">
+
+                            <a href="index.html" class="
+                                hidden sm:block 
+                                font-zenMaru 
+                                text-5xl 
+                                md:text-5xl 
+                                lg:text-6xl 
+                                xl:text-7xl 
+                                2xl:text-8xl 
+                                font-bold text-indigo-100 hover:text-secondary 
+                                transition-transform duration-300 ease-in-out  
+                                ml-auto ">
                                 呀蜜佰 😋
                             </a>
-                            <a href="index.html" class="block sm:hidden text-end leading-tight font-zenMaru text-5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-indigo-100 hover:text-secondary sm:hover:scale-150 transition-colors transition-transform duration-300 ease-in-out hover:scale-110">
-                                呀蜜佰 <br> 😋
+                            
+                            <a href="index.html" class="
+                                block sm:hidden 
+                                flex flex-col gap-2
+                                justify-start items-end
+                                font-zenMaru 
+                                text-4xl mobile:text-5xl
+                                font-bold text-indigo-100 hover:text-secondary 
+                                transition-transform duration-300 ease-in-out ">
+                                <div>呀蜜佰</div>
+                                <div>😋</div>
                             </a>
+
                         </h1>
                     </div>
 
                 </div>
                 
-                <!-- CONTAINER: NAVIGATION LINKS -->
+            VERSION 2.0 -- CONTAINER: NAVIGATION LINKS
+
+                Hamburger Menu for small screens (below 380px)
+                <div class="
+                    block mobile:hidden
+                    w-1/3
+                    text-sm
+                    bg-[#292f3d] 
+                    px-3 pb-2 pt-1
+                    rounded-xs">
+
+                    <input type="checkbox" id="menu-toggle" 
+                        class="
+                        hidden peer">
+
+                    <label for="menu-toggle" 
+                        class="
+                        text-white font-semibold cursor-pointer">
+                        Menu
+                    </label>
+
+                    <div 
+                        class="
+                        hidden peer-checked:block bg-[#292f3d] p-2 space-y-1">
+
+                    <a href="index.html" 
+                        class="
+                        block text-xs text-[#787fe7] hover:text-[#935cde] font-semibold">
+                        Home
+                    </a>
+
+                    <a class="
+                        block text-xs text-indigo-200 font-semibold">
+                        Products
+                    </a>
+
+                    <a href="history.html" 
+                        class="
+                        block text-xs text-[#787fe7] hover:text-[#935cde] font-semibold">
+                        Orders
+                    </a>
+
+                    </div>
+
+                </div>
+                
+                Existing Container for horizontal navbar (380px and above)
+                <div class="hidden mobile:block w-2/3 sm:w-3/4 sm:mx-8 self-start flex-1 sm:flex sm:justify-center sm:self-end sm:mb-6 lg:px-24 2xl:px-32">
+
+                    NAVIGATION LINKS
+                    <nav class="
+                    w-3/4 sm:w-3/4 
+                    flex sm:flex-1 gap-2 justify-around 
+                    bg-[#292f3d] 
+                    px-6 pb-2 pt-2 
+                    outline outline-1 hover:outline-2
+                    outline-indigo-100 hover:outline-indigo-200 rounded-full 
+                    transition-transform ease-in-out duration-300 
+                    sm:px-10 sm:gap-5 sm:pb-2.5 sm:pt-2
+                    ">
+
+                    NAVIGATION LINKS: Home
+                    <span class="
+                        text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl 
+                        text-[#787fe7] hover:text-[#935cde] 
+                        font-semibold hover:font-bold">
+                        <a href="index.html">Home</a>
+                    </span>
+
+                    NAVIGATION LINKS: Products
+                    <span class="text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl 
+                        text-indigo-100 hover:text-secondary font-black 
+                        border-b hover:border-b-2 sm:border-b-2 sm:hover:border-b-3
+                        border-primary hover:border-indigo-100 
+                        px-1">
+                        Products
+                    </span>
+
+                    NAVIGATION LINKS: Orders
+                    <span class="hidden xl:block 
+                        text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl 
+                        text-[#787fe7] hover:text-[#935cde] 
+                        font-semibold 
+                    ">
+                        <a href="history.html">Your Orders</a>
+                    </span>
+
+                    NAVIGATION LINKS: Orders
+                    <span class="block xl:hidden 
+                        text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl 
+                        text-[#787fe7] hover:text-[#935cde] 
+                        font-semibold
+                    ">
+                        <a href="history.html">Orders</a>
+                    </span>
+                    </nav>
+                </div>
+
+            VERSION 1.0 -- CONTAINER: NAVIGATION LINKS
                 <div class="w-2/3 sm:w-3/4 sm:mx-8 self-start flex-1 sm:flex sm:justify-center sm:self-end sm:mb-6 lg:px-24 2xl:px-32">
 
-                    <!-- NAVIGATION LINKS -->
-                    <nav class="w-3/4 sm:w-3/4 flex sm:flex-1 gap-2 justify-around bg-[#292f3d] px-6 pb-2 pt-2 outline outline-1 outline-indigo-100 hover:outline-1 hover:outline-indigo-200 rounded-full transition-transform ease-in-out duration-200 hover:scale-102 sm:px-8 sm:gap-3 sm:pb-2.5 sm:pt-2 sm:outline-3 sm:hover:outline-2 sm:hover:scale-105">
+                    NAVIGATION LINKS
+                    <nav class="
+                        w-3/4 sm:w-3/4 
+                        flex sm:flex-1 gap-2 justify-around 
+                        bg-[#292f3d] 
+                        px-6 pb-2 pt-2 
+                        outline outline-1 hover:outline-2
+                        outline-indigo-100 hover:outline-indigo-200 rounded-full 
+                        transition-transform ease-in-out duration-300 
+                        sm:px-10 sm:gap-5 sm:pb-2.5 sm:pt-2
+                    ">
 
-                        <!-- NAVIGATION LINKS: Home -->
-                        <span class="text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold hover:text-sm sm:hover:text-md transition-colors duration-200">
+                        NAVIGATION LINKS: Home
+                        <span class="
+                            text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl 
+                            text-[#787fe7] hover:text-[#935cde] 
+                            font-semibold hover:font-bold">
                             <a href="index.html">Home</a>
                         </span>
 
-                        <!-- NAVIGATION LINKS: Products -->
-                        <span class="text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl text-indigo-100 hover:text-primary font-black border-b sm:border-b-2 border-primary hover:border-b sm:hover:border-b-2 hover:border-indigo-100 px-1 transition-colors duration-200">Products</span>
+                        NAVIGATION LINKS: Products
+                        <span class="text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl 
+                            text-indigo-100 hover:text-secondary font-black 
+                            border-b hover:border-b-2 sm:border-b-2 sm:hover:border-b-3
+                            border-primary hover:border-indigo-100 
+                            px-1">
+                            Products
+                        </span>
                         
-                        <!-- NAVIGATION LINKS: Orders -->
-                        <span class="hidden xl:block text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold sm:hover:text-md transition-colors duration-200">
+                        NAVIGATION LINKS: Orders
+                        <span class="hidden xl:block 
+                            text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl 
+                            text-[#787fe7] hover:text-[#935cde] 
+                            font-semibold 
+                        ">
                             <a href="history.html">Your Orders</a>
                         </span>
                         
-                        <!-- NAVIGATION LINKS: Orders -->
-                        <span class="xl:hidden block text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl text-[#aca9e4] hover:text-primary font-semibold hover:font-semibold sm:hover:text-md transition-colors duration-200">
+                        NAVIGATION LINKS: Orders
+                        <span class="block xl:hidden 
+                            text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl 
+                            text-[#787fe7] hover:text-[#935cde] 
+                            font-semibold
+                        ">
                             <a href="history.html">Orders</a>
                         </span>
                         
@@ -150,33 +519,57 @@
 
                 </div>
                 
-                <!-- CONTAINER: HIDDEN ADMIN LINK, HIDDEN USER PHONE DISPLAY, LOGIN BUTTON -->
+                CONTAINER: HIDDEN ADMIN LINK, HIDDEN USER PHONE DISPLAY, LOGIN BUTTON
                 <div class="w-1/4 sm:w-1/4 absolute right-0 bottom-0 sm:relative sm:flex sm:justify-end sm:items-end sm:mb-6">
                     <div class="relative">
                                     
-                        <!-- HIDDEN ADMIN LINK -->
-                        <h3 id="adminLink" class="hidden absolute right-full -translate-x-1/4">
-                            <a href="admin.html" class="sm:block hover:text-[#f13dc3] text-white bg-transparent hover:bg-primary px-3 pt-1.5 pb-2 mr-2 text-xs sm:text-base sm:px-8 sm:pt-2 sm:pb-3 sm:m-0 sm:ml-1 rounded-md font-semibold transition-all duration-200 border border-[#f13dc3] hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-secondary">
-                                Admin
-                            </a>
+                        HIDDEN ADMIN LINK
+                        <h3 id="adminLink" 
+                            class="
+                            hidden absolute
+                            bottom-full translate-y-2
+                            mobile:right-full mobile:-translate-x-2
+                            md:bottom-full md:translate-y-2
+                            lg:right-full lg:-translate-x-2
+                            text-white hover:text-[#f13dc3] 
+                            bg-transparent hover:bg-primary 
+                            px-3 pt-1.5 pb-2 mr-2 text-xs 
+                            sm:text-base sm:px-8 sm:pt-2 sm:pb-3 sm:m-0 sm:ml-1 
+                            rounded-md font-semibold 
+                            transition-all duration-200 border border-[#f13dc3] hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-secondary">
+                            <a href="admin.html">Admin</a>
                         </h3>
                         
-                        <!-- LOGIN BUTTON -->
-                        <button id="loginBtn" class="flex items-center justify-center h-full sm:h-auto px-6 pt-2 pb-2.5 mb-0.5 text-xs font-bold ml-auto text-indigo-100 sm:font-semibold sm:text-base sm:pb-3 sm:pt-2 sm:px-8 rounded-lg bg-[#4a427f] hover:text-[#f13dc3] hover:bg-primary transition-all duration-200 border-invisible hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        LOGIN BUTTON
+                        <button id="loginBtn" 
+                            class="
+                            flex items-center justify-center 
+                            h-full sm:h-auto 
+                            px-6 pt-2 pb-2.5 mb-0.5 
+                            sm:pb-3 sm:pt-2 sm:px-8 
+                            text-xs  sm:text-base
+                            font-bold sm:font-semibold
+                            ml-auto 
+                            text-indigo-100 hover:text-[#f13dc3] hover:bg-primary 
+                            rounded-lg bg-[#4a427f]  
+                            border-invisible hover:border-secondary 
+                            hover:scale-105 
+                            focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                            
                             <p>Log In</p>
                         </button>
                         
-                        <!-- USER NUMBER DISPLAY -->
+                        USER NUMBER DISPLAY
                         <div class="absolute bottom-full -translate-y-3 sm:translate-y-3 sm:top-full right-0">
-                            <!-- USER DISPLAY -->
-                            <span id="userPhoneDisplay" class="text-xs sm:text-sm font-semibold sm:font-bold text-indigo-100 border-b sm:border-b-2 border-[#f13dc3] ml-auto sm:pr-0.5 pb-0.5 sm:pb-1">
-                                <!-- User's phone number will be displayed here -->
+                            USER DISPLAY
+                            <span id="userPhoneDisplay" class="text-xs sm:text-sm font-semibold sm:font-bold text-indigo-100 border-b sm:border-b-2 border-[#f13dc3] ml-auto sm:pr-0.5 pb-0.5 sm:pb-1 **no-underline**" style="text-decoration: none;">
+                                User's phone number will be displayed here
                             </span>
                         </div>
 
                     </div>
                 </div>
-            </header>
+            </header> -->
 
 
 
@@ -377,7 +770,9 @@
                     </button>
                 </div>
             </div>
-        </div>
+
+            <!-- Removed -- original outer wrap, replaced with <main> -->
+        <!-- </div> -->
 
     </main>
 <!-- END OF DOM ELEMENTS -->
@@ -387,8 +782,8 @@
 
 
 <!-- BEGIN JAVASCRIPT -->
+    <!-- v1.0 -->
     <!-- <script>
-        // Show loading screen on page load
         // document.addEventListener("DOMContentLoaded", function() {
         //     const progressBar = document.getElementById("progressBar");
         //     progressBar.classList.remove("hidden");
@@ -398,7 +793,8 @@
         // });
     </script> -->
 
-    <script>
+    <!-- v2.0 -->
+    <!-- <script>
         function hideLoadingScreen() {
             const loadingScreen = document.getElementById('loadingScreen');
             // Start fade-out transition
@@ -415,8 +811,77 @@
             // Loading screen is visible by default
             setTimeout(hideLoadingScreen, 2500); // Match GIF loop duration
         });
+    </script> -->
+
+    <!-- v3.0 -->
+    <!-- <script>
+        const loadingScreen = document.getElementById('loadingScreen');
+        const content = document.querySelector('.content');
+
+        // Function to show the loading screen with a fade-in
+        function showLoadingScreen() {
+            // Briefly delay adding opacity-100 to trigger the transition
+            setTimeout(() => {
+                loadingScreen.classList.add('opacity-100');
+            }, 0); // A small delay is usually sufficient
+        }
+
+        function hideLoadingScreen() {
+            // Start fade-out transition
+            loadingScreen.classList.remove('opacity-100');
+            loadingScreen.classList.add('opacity-0');
+            // Hide after transition completes
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                // Fade in content
+                content.classList.add('opacity-100');
+            }, 1500); // Match the CSS transition duration
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Immediately show the loading screen with fade-in
+            showLoadingScreen();
+            // Simulate loading time before hiding (adjust as needed)
+            setTimeout(hideLoadingScreen, 3000); // Match your video duration
+        });
+    </script> -->
+
+    <!-- v3.1 -->
+    <script>
+        const loadingScreen = document.getElementById('loadingScreen');
+        const content = document.querySelector('.content');
+        const loadingVideoMobile = document.getElementById('loadingVideoMobile');
+        const loadingVideoDesktop = document.getElementById('loadingVideoDesktop');
+        const startTime = 0.55; 
+
+        function showLoadingScreen() {
+            loadingScreen.classList.add('opacity-100');
+            if (loadingVideoMobile) {
+                loadingVideoMobile.currentTime = startTime;
+            }
+            if (loadingVideoDesktop) {
+                loadingVideoDesktop.currentTime = startTime;
+            }
+        }
+
+        function hideLoadingScreen() {
+            loadingScreen.classList.remove('opacity-100');
+            loadingScreen.classList.add('opacity-0');
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                content.classList.add('opacity-100');
+            }, 500);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            showLoadingScreen();
+            setTimeout(hideLoadingScreen, 3000);
+        });
     </script>
 
+    <!-- ////////////////////////////////////////////////////////////////////////////////// -->
+
+    <!-- START - MAIN SCRIPT -->
     <script>
         // Firebase Configuration
         const firebaseConfig = {
