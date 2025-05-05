@@ -35,11 +35,16 @@ tailwind.config = {
             display: ['responsive'],
             flexDirection: ['responsive'],
             screens: {
-                'narrow': '350px',
-                'smartphone': '420px',
+                'narrow': '380px',
+                'mobile': '450px',
                 'tablet': '960px',
+                'desktop': '1080px',
                 'desktop-lg': '1440px',
-            },    
+            },
+            boxSizing: {
+                'content': 'content-box',
+                'border': 'border-box', // This is the default, you can keep it for clarity
+            },  
         },
     },
     variants: {

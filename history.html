@@ -31,38 +31,43 @@
 <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
 <body class="bg-gray-100 min-h-screen">
-    <div class="container flex-col mx-auto px-4 py-8">
+    <div class="flex-col px-2 mobile:px-4 py-4 mobile:py-6">
 
         <!-- Header -->
          <!-- SNIPPET ONE -->
-        <header class="relative flex-1 flex justify-between items-center mb-2 py-4 sm:mb-8 sm:py-8">
+        <header class="relative flex-1 flex justify-between items-end mb-2 py-4 sm:mb-8 sm:py-8">
 
             <!-- BACK TO HOME -->
-            <span class="flex-1 flex gap-2 items-center text-primary text-base sm:text-lg sm:font-bold hover:text-secondary">
-                <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-8 h-8">
-                <a href="index.html" class="text-primary text-base font-semibold hover:text-secondary pb-1 pl-2">home</a>
+            <span class="flex-1">
+                <a href="index.html" class="flex gap-2 lg:gap-3 text-primary text-base font-semibold hover:text-secondary pb-1 pl-2">
+                    <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-5 narrow:w-6 mobile:w-7 xl:w-8 h-5 narrow:h-6 mobile:h-7 xl:h-8">
+                    <!-- <span>home</span> -->
+                    <span class="text-primary text-sm mobile:text-base sm:text-lg sm:font-semibold hover:text-secondary">home</span>
+                </a>
             </span>
 
             <!-- TITLE CONTAINER -->
             <div class="flex-3 flex justify-center items-center gap-1 xl:gap-2">
                 
                 <!-- TITLE IMAGE -->
-                <img src="/assets/icons/radar-0_no_bg.gif" alt="link back to home" class="w-auto h-10 sm:h-16 xl:h-24 mt-2 sm:mt-3 lg:mt-4 xl:mt-5 2xl:mt-6">
+                <img src="/assets/icons/radar-0_no_bg.gif" alt="link back to home" class="self-start w-auto h-10 narrow:h-12 mobile:h-16 sm:20 lg:h-24 xl:h-28">
                 
-                <!-- TITLE TEXT -->
-                <h1 class="font-zenMaru text-3xl sm:text-3xl lg:text-5xl xl:text-6xl font-bold text-primary">My Orders</h1>
+                <!-- Mobile - TITLE TEXT -->
+                <h1 class="hidden narrow:block self-start mobile:self-center font-zenMaru text-2xl narrow:text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-primary">My Orders</h1>
+                <!-- Desktop - TITLE TEXT -->
+                <h1 class="block narrow:hidden self-start font-zenMaru text-2xl narrow:text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-primary">Orders</h1>
 
             </div>
 
             <div class="relative flex-1 flex justify-end items-center gap-4">
 
                 <!-- HIDDEN USER PHONE DISPLAY -->
-                <span id="userPhoneDisplay" class="absolute top-full translate-y-1/2 lg:static lg:translate-y-0 hidden text-primary text-bold lg:font-semibold text-xs sm:text-sm lg:text-base text-indigo-100 border-b-2 border-[#f13dc3] ml-auto pr-0.5 pb-0.5">
+                <span id="userPhoneDisplay" class="hidden absolute bottom-full lg:top-full -translate-y-1/2 lg:static lg:translate-y-0 text-primary text-bold lg:font-semibold text-xs sm:text-sm lg:text-base text-indigo-100 border-b-2 border-[#f13dc3] ml-auto pr-0.5 pb-0.5">
                     <!-- User's phone number will be displayed here -->
                 </span>
 
                 <!-- logout -->
-                <button id="logoutBtn" class="hover:bg-red-300 bg-red-500 text-sm sm:text-base text-white pt-1 pb-1.5 sm:py-2 px-2 sm:px-4 mb-1 sm:mb-0 rounded-md">
+                <button id="logoutBtn" class="hover:bg-red-300 bg-red-500 text-xs mobile:text-sm sm:lg text-white font-semibold mobile:font-bold pt-1 pb-1.5 sm:py-2 px-2 sm:px-4 mb-1 sm:mb-0 rounded-md">
                     Log Out
                 </button>
                 
@@ -80,15 +85,15 @@
 
             <!-- Search and Filters -->
             <div class="mb-6 flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
-                <input type="text" id="orderSearch" placeholder="Search orders..." class="p-2 border rounded-md flex-grow">
-                <select id="statusFilter" class="p-2 border rounded-md">
+                <input type="text" id="orderSearch" placeholder="Search orders..." class="text-xs narrow:text-sm mobile:text-base sm:text-lg p-2 border rounded-md flex-grow">
+                <select id="statusFilter" class="text-xs narrow:text-sm mobile:text-base sm:text-lg p-2 border rounded-md">
                     <option value="all">All Statuses</option>
                     <option value="order placed">Order Placed</option>
                     <option value="order on-hold">Order On-Hold</option>
                     <option value="order completed">Order Completed</option>
                     <option value="order cancelled">Order Cancelled</option>
                 </select>
-                <input type="date" id="dateFilter" class="p-2 border rounded-md">
+                <input type="date" id="dateFilter" placeholder="Filter by Date" class="text-xs narrow:text-sm mobile:text-base sm:text-lg p-2 border rounded-md">
             </div>
 
             <!-- Orders Container -->
@@ -628,7 +633,7 @@
             
             if (filteredOrders.length === 0) {
                 
-                ordersContainer.innerHTML = '<div class="col-span-full text-lg text-center font-bold py-2">No orders found.<img src="/assets/images/gif-pudgy-penguin-1.gif" alt="" class="w-auto h-[50vh] mx-auto my-6 rounded-[6em]"></div>';
+                ordersContainer.innerHTML = '<div class="col-span-full text-lg text-center font-bold py-2">No orders found. <img src="/assets/images/pudgy-penguin-1.gif" alt="" class="w-auto h-[50vh] mx-auto my-6 rounded-[6em]"></div>';
                 // ordersContainer.innerHTML = '<div class="col-span-full text-lg text-center font-bold py-2">No orders found.<img src="/assets/images/gif-orca-blue-bg.gif" alt="" class="w-auto h-[50vh] mx-auto my-6 rounded-[12em]"></div>';
 
                 // ordersContainer.innerHTML = `
@@ -790,9 +795,9 @@
             const orderCard = document.createElement('div');
             orderCard.className = 'flex flex-col bg-white rounded-lg shadow-md p-6 order-card transition-all';
             orderCard.innerHTML = `
-                <div class="flex justify-between items-start mb-2">
-                    <h3 class="bg-[#fae8e0] text-[#ef7c8e] px-4 py-2 rounded-md text-lg sm:text-xl xl:text-2xl font-bold">ID: ${order.id.toUpperCase()}</h3>
-                    <span class="bg-[#f1f0fb] px-3 py-1 rounded text-sm font-semibold ${getStatusColor(order.status)}">${order.status}</span>
+                <div class="flex  justify-between items-start mb-2">
+                    <h3 class="bg-[#fae8e0] text-[#ef7c8e] px-4 py-2 rounded-md text-sm narrow:base mobile:lg sm:text-xl xl:text-2xl font-bold">ID: ${order.id.toUpperCase()}</h3>
+                    <span class="bg-[#f1f0fb] px-3 py-1 rounded text-xs sm:text-sm font-medium sm:font-semibold ${getStatusColor(order.status)}">${order.status}</span>
                 </div>
                 <div class="flex justify-between items-start mt-2 mb-6 pr-1">
                     <span class="bg-[#ef7c8e] text-[#fae8e0] px-3 py-1 rounded-md text-base font-bold">${extractMonthDay(orderDate)}</span>
