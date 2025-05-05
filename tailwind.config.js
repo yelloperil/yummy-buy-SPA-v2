@@ -35,11 +35,11 @@ tailwind.config = {
             display: ['responsive'],
             flexDirection: ['responsive'],
             screens: {
-                'narrow': '380px',
-                'mobile': '450px',
+                'mobile': '380px',
+                'desktop': '450px',
                 'tablet': '960px',
-                'desktop': '1080px',
-                'desktop-lg': '1440px',
+                'desktop-lg': '1080px',
+                'desktop-xl;': '1440px',
             },
             boxSizing: {
                 'content': 'content-box',

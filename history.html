@@ -31,7 +31,7 @@
 <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
 <body class="bg-gray-100 min-h-screen">
-    <div class="flex-col px-2 mobile:px-4 py-4 mobile:py-6">
+    <div class="flex-col px-2 desktop:px-4 py-4 desktop:py-6">
 
         <!-- Header -->
          <!-- SNIPPET ONE -->
@@ -40,9 +40,9 @@
             <!-- BACK TO HOME -->
             <span class="flex-1">
                 <a href="index.html" class="flex gap-2 lg:gap-3 text-primary text-base font-semibold hover:text-secondary pb-1 pl-2">
-                    <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-5 narrow:w-6 mobile:w-7 xl:w-8 h-5 narrow:h-6 mobile:h-7 xl:h-8">
+                    <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-5 mobile:w-6 desktop:w-7 xl:w-8 h-5 mobile:h-6 desktop:h-7 xl:h-8">
                     <!-- <span>home</span> -->
-                    <span class="text-primary text-sm mobile:text-base sm:text-lg sm:font-semibold hover:text-secondary">home</span>
+                    <span class="text-primary text-sm desktop:text-base sm:text-lg sm:font-semibold hover:text-secondary">home</span>
                 </a>
             </span>
 
@@ -50,12 +50,12 @@
             <div class="flex-3 flex justify-center items-center gap-1 xl:gap-2">
                 
                 <!-- TITLE IMAGE -->
-                <img src="/assets/icons/radar-0_no_bg.gif" alt="link back to home" class="self-start w-auto h-10 narrow:h-12 mobile:h-16 sm:20 lg:h-24 xl:h-28">
+                <img src="/assets/icons/radar-0_no_bg.gif" alt="link back to home" class="self-start w-auto h-10 mobile:h-12 desktop:h-16 sm:20 lg:h-24 xl:h-28">
                 
                 <!-- Mobile - TITLE TEXT -->
-                <h1 class="hidden narrow:block self-start mobile:self-center font-zenMaru text-2xl narrow:text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-primary">My Orders</h1>
+                <h1 class="hidden mobile:block self-start desktop:self-center font-zenMaru text-2xl mobile:text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-primary">My Orders</h1>
                 <!-- Desktop - TITLE TEXT -->
-                <h1 class="block narrow:hidden self-start font-zenMaru text-2xl narrow:text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-primary">Orders</h1>
+                <h1 class="block mobile:hidden self-start font-zenMaru text-2xl mobile:text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-primary">Orders</h1>
 
             </div>
 
@@ -67,7 +67,7 @@
                 </span>
 
                 <!-- logout -->
-                <button id="logoutBtn" class="hover:bg-red-300 bg-red-500 text-xs mobile:text-sm sm:lg text-white font-semibold mobile:font-bold pt-1 pb-1.5 sm:py-2 px-2 sm:px-4 mb-1 sm:mb-0 rounded-md">
+                <button id="logoutBtn" class="hover:bg-red-300 bg-red-500 text-xs desktop:text-sm sm:lg text-white font-semibold desktop:font-bold pt-1 pb-1.5 sm:py-2 px-2 sm:px-4 mb-1 sm:mb-0 rounded-md">
                     Log Out
                 </button>
                 
@@ -85,15 +85,15 @@
 
             <!-- Search and Filters -->
             <div class="mb-6 flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
-                <input type="text" id="orderSearch" placeholder="Search orders..." class="text-xs narrow:text-sm mobile:text-base sm:text-lg p-2 border rounded-md flex-grow">
-                <select id="statusFilter" class="text-xs narrow:text-sm mobile:text-base sm:text-lg p-2 border rounded-md">
+                <input type="text" id="orderSearch" placeholder="Search orders..." class="text-xs mobile:text-sm desktop:text-base sm:text-lg p-2 border rounded-md flex-grow">
+                <select id="statusFilter" class="text-xs mobile:text-sm desktop:text-base sm:text-lg p-2 border rounded-md">
                     <option value="all">All Statuses</option>
                     <option value="order placed">Order Placed</option>
                     <option value="order on-hold">Order On-Hold</option>
                     <option value="order completed">Order Completed</option>
                     <option value="order cancelled">Order Cancelled</option>
                 </select>
-                <input type="date" id="dateFilter" placeholder="Filter by Date" class="text-xs narrow:text-sm mobile:text-base sm:text-lg p-2 border rounded-md">
+                <input type="date" id="dateFilter" placeholder="Filter by Date" class="text-xs mobile:text-sm desktop:text-base sm:text-lg p-2 border rounded-md">
             </div>
 
             <!-- Orders Container -->
@@ -795,21 +795,21 @@
             const orderCard = document.createElement('div');
             orderCard.className = 'flex flex-col bg-white rounded-lg shadow-md p-6 order-card transition-all';
             orderCard.innerHTML = `
-                <div class="flex  justify-between items-start mb-2">
-                    <h3 class="bg-[#fae8e0] text-[#ef7c8e] px-4 py-2 rounded-md text-sm narrow:base mobile:lg sm:text-xl xl:text-2xl font-bold">ID: ${order.id.toUpperCase()}</h3>
+                <div class="flex flex-col mobile:flex-row mobile:justify-between mobile:items-start mb-2">
+                    <h3 class="bg-[#fae8e0] text-[#ef7c8e] px-3 desktop:px-4 py-2 rounded-[5px] text-sm mobile:base desktop:lg sm:text-xl xl:text-2xl font-bold">ID: ${order.id.toUpperCase()}</h3>
                     <span class="bg-[#f1f0fb] px-3 py-1 rounded text-xs sm:text-sm font-medium sm:font-semibold ${getStatusColor(order.status)}">${order.status}</span>
                 </div>
                 <div class="flex justify-between items-start mt-2 mb-6 pr-1">
-                    <span class="bg-[#ef7c8e] text-[#fae8e0] px-3 py-1 rounded-md text-base font-bold">${extractMonthDay(orderDate)}</span>
+                    <span class="bg-[#ef7c8e] text-[#fae8e0] px-3 desktop:px-4 py-1 desktop:py-1 desktop:pb-1.5 rounded-[4px] desktop:rounded-md text-xs font-medium desktop:text-base desktop:font-semibold">${extractMonthDay(orderDate)}</span>
                     <span class="ml-auto text-xs sm:text-sm text-[#807a7d] font-semibold">${orderDate}</span>
                 </div>
                 <div class="flex justify-between items-end">
                     <div class="flex items-center">
-                        <span class="text-xl text-primary font-bold">$${order.total}</span>
-                        <span class="text-base font-medium mx-2"> – </span>
-                        <span class="text-base font-medium">(${totalItems} items)</span>
+                        <span class="text-sm mobile:text-base desktop:text-lg lg:text-xl text-primary font-bold">$${order.total}</span>
+                        <span class="text-xs mobile:text-sm desktop:text-base text-[#807a7d] font-medium mx-2"> – </span>
+                        <span class="text-xs mobile:text-sm desktop:text-base text-[#807a7d] font-medium">(${totalItems} items)</span>
                     </div>
-                    <button data-order-id="${order.id}" class="view-details-btn bg-primary text-white hover:bg-secondary text-sm font-medium px-3 py-2 rounded-md ml-auto">
+                    <button data-order-id="${order.id}" class="view-details-btn bg-primary text-white hover:bg-secondary text-xs desktop:text-base font-normal desktop:font-semibold px-2 desktop:px-3 py-1 desktop:py-2 rounded-[4px] desktop:rounded-md ml-auto">
                         View Details
                     </button>
                 </div>
