@@ -1,0 +1,90 @@
+<!-- HEADER - Simplified and Responsive -->
+<header class="flex flex-col sm:flex-row sm:items-center justify-between gap-y-6 mb-12 py-4">
+    <!-- Logo + Title Container - Simplified with flexbox -->
+    <div class="flex justify-between items-center gap-4">
+        <!-- Logo with pulsating effect -->
+        <a href="index.html" class="block">
+            <img
+                src="/assets/images/mascot-logo-1.png"
+                alt="Yummy Buy Mascot"
+                class="w-32 sm:w-36 md:w-40 lg:w-48 h-auto transition-transform duration-300 hover:scale-125 animate-pulse-glow"
+            /> 
+        </a>
+
+        <!-- Title Text: Mobile-friendly with flex -->
+        <h1 class="flex flex-col sm:hidden text-end">
+            <a href="index.html" class="font-zenMaru text-4xl mobile:text-5xl font-bold text-indigo-100 hover:text-secondary transition-colors duration-300">
+                呀蜜佰 <br> 😋
+            </a>
+        </h1>
+        
+        <!-- Title Text: Desktop -->
+        <h1 class="hidden sm:block">
+            <a href="index.html" class="font-zenMaru text-5xl md:text-6xl lg:text-7xl font-bold text-indigo-100 hover:text-secondary transition-colors duration-300">
+                呀蜜佰 😋
+            </a>
+        </h1>
+    </div>
+
+    <!-- Middle Section: Navigation -->
+    <div class="flex flex-col sm:flex-row justify-center items-center">
+        <!-- Hamburger Menu for Mobile -->
+        <div class="block mobile:hidden w-full bg-[#292f3d] px-3 py-2 rounded-md">
+            <input type="checkbox" id="menu-toggle" class="hidden peer">
+            <label for="menu-toggle" class="text-white font-semibold cursor-pointer">
+                Menu
+            </label>
+            <div class="hidden peer-checked:block bg-[#292f3d] p-2 space-y-1">
+                <a href="index.html" class="block text-xs text-[#787fe7] hover:text-[#935cde] font-semibold">
+                    Home
+                </a>
+                <a class="block text-xs text-indigo-200 font-semibold">
+                    Products
+                </a>
+                <a href="history.html" class="block text-xs text-[#787fe7] hover:text-[#935cde] font-semibold">
+                    Orders
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation Links for Tablet/Desktop -->
+        <nav class="hidden mobile:flex w-full sm:w-auto items-center justify-center mt-4 sm:mt-0">
+            <div class="flex justify-center gap-4 bg-[#292f3d] px-6 py-2 sm:px-10 sm:py-3 rounded-full outline outline-1 hover:outline-2 outline-indigo-100 hover:outline-indigo-200 transition-all duration-300">
+                <!-- Home Link -->
+                <span class="text-xs sm:text-sm md:text-base lg:text-lg text-[#787fe7] hover:text-[#935cde] font-semibold">
+                    <a href="index.html">Home</a>
+                </span>
+
+                <!-- Products Link (Active) -->
+                <span class="text-xs sm:text-sm md:text-base lg:text-lg text-indigo-100 font-black border-b-2 border-primary hover:border-indigo-100 px-1">
+                    Products
+                </span>
+
+                <!-- Orders Link -->
+                <span class="text-xs sm:text-sm md:text-base lg:text-lg text-[#787fe7] hover:text-[#935cde] font-semibold">
+                    <a href="history.html">Orders</a>
+                </span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Right Section: Login/User Info -->
+    <div class="flex justify-end items-center">
+        <div class="relative">
+            <!-- Admin Link (Hidden) -->
+            <h3 id="adminLink" class="hidden absolute bottom-full translate-y-2 right-0 text-white hover:text-[#f13dc3] bg-transparent hover:bg-primary px-3 py-2 text-xs sm:text-base rounded-md font-semibold border border-[#f13dc3] hover:border-secondary transform hover:scale-105">
+                <a href="admin.html">Admin</a>
+            </h3>
+            
+            <!-- Login Button -->
+            <button id="loginBtn" class="flex items-center justify-center px-6 py-2 text-xs sm:text-base font-bold text-indigo-100 hover:text-[#f13dc3] bg-[#4a427f] hover:bg-primary rounded-lg hover:scale-105 transition-all duration-200">
+                <p>Log In</p>
+            </button>
+            
+            <!-- User Phone Display -->
+            <div class="absolute bottom-full sm:top-full right-0 -translate-y-3 sm:translate-y-3">
+                <span id="userPhoneDisplay" class="text-xs sm:text-sm font-semibold text-indigo-100 border-b border-[#f13dc3] pb-0.5"></span>
+            </div>
+        </div>
+    </div>
+</header>

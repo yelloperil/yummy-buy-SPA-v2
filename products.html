@@ -236,6 +236,8 @@
                 </span>
 
                 <!-- NAVIGATION LINKS: Orders -->
+
+                <!-- > 450px -->
                 <span class="
                     hidden desktop:block 
                     text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl 
@@ -243,6 +245,9 @@
                     font-semibold 
                 ">
                     <a href="history.html">Your Orders</a>
+                </span>
+
+                <!-- < 450px -->
                 <span class="
                     block desktop:hidden 
                     text-xs sm:text-sm md:text-base xl:text-lg 2xl:text-xl 
@@ -256,28 +261,31 @@
             
             <!-- CONTAINER: HIDDEN ADMIN LINK, HIDDEN USER PHONE DISPLAY, LOGIN BUTTON -->
             <div class="
+                relative
                 flex-1
-                self-end 
-                flex justify-end items-end">
+                flex justify-end gap-4 items-center
+            ">
             <!-- <div class="flex-1 sm:flex sm:justify-end sm:items-end sm:mb-6"> -->
                 <!-- <div class="relative"> -->
                                 
                     <!-- HIDDEN ADMIN LINK -->
-                    <h3 id="adminLink" 
+                    <div id="adminLink" 
                         class="
-                        hidden absolute
-                        bottom-full translate-y-2
-                        mobile:right-full mobile:-translate-x-2
-                        md:bottom-full md:translate-y-2
-                        lg:right-full lg:-translate-x-2
+                        hidden 
+                        absolute top-full right-0 translate-y-2
+                        desktop:static desktop:translate-y-0
                         text-white hover:text-[#f13dc3] 
                         bg-transparent hover:bg-primary 
-                        px-3 pt-1.5 pb-2 mr-2 text-xs 
-                        sm:text-base sm:px-8 sm:pt-2 sm:pb-3 sm:m-0 sm:ml-1 
-                        rounded-md font-semibold 
-                        transition-all duration-200 border border-[#f13dc3] hover:border-secondary transform hover:scale-105 focus:ring-2 focus:ring-secondary">
+                        px-6 pt-1.5 pb-2 mb-0.5 
+                        desktop:px-6 desktop:pt-2 desktop:pb-2.5 desktop:mb-0.5 
+                        lg:px-8 lg:pt-2 lg:pb-3 lg:mb-1
+                        mb-0 md:mb-4 xl:mb-6
+                        text-xs  sm:text-base
+                        font-bold sm:font-semibold
+                        rounded-md desktop:rounded-lg
+                        border border-[#f13dc3] hover:border-secondary ">
                         <a href="admin.html">Admin</a>
-                    </h3>
+                    </div>
                     
                     <!-- LOGIN BUTTON -->
                     <button id="loginBtn" 
@@ -286,19 +294,42 @@
                         lg:pb-3 lg:pt-2 lg:px-8 
                         mb-0 md:mb-4 xl:mb-6
                         text-xs  sm:text-base
-                        font-bold sm:font-semibold
-                        text-indigo-100 hover:text-[#f13dc3] hover:bg-primary 
-                        rounded-lg bg-[#4a427f]  
+                        font-semibold sm:font-bold
+                        rounded-md desktop:rounded-lg  
+                        text-indigo-100 hover:text-[#f13dc3] 
+                        bg-[#4a427f] hover:bg-primary 
                         border-invisible hover:border-secondary 
-                        hover:scale-105 
-                        focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        hover:scale-105">
                         <p>Log In</p>
                     </button>
                     
                     <!-- USER NUMBER DISPLAY -->
-                    <div class="absolute bottom-full -translate-y-3 sm:translate-y-3 sm:top-full right-0">
+                    <!-- <div class="absolute bottom-full -translate-y-3 sm:translate-y-3 sm:top-full right-0"> -->
+                    <div class="
+                        absolute 
+                        right-0
+                        bottom-full 
+                        -translate-y-2
+                        sm:-translate-y-3
+                        md:top-full
+                        md:-translate-y-3">
                         <!-- USER DISPLAY -->
-                        <span id="userPhoneDisplay" class="text-xs sm:text-sm font-semibold sm:font-bold text-indigo-100 border-b sm:border-b-2 border-[#f13dc3] ml-auto sm:pr-0.5 pb-0.5 sm:pb-1 **no-underline**" style="text-decoration: none;">
+                        <span id="userPhoneDisplay" 
+                        class=" 
+                            text-xs 
+                            sm:text-sm 
+                            font-semibold 
+                            sm:font-bold 
+                            text-indigo-100 
+                            border-b 
+                            sm:border-b-2 
+                            border-[#f13dc3] 
+                            ml-auto 
+                            sm:pr-0.5 
+                            pb-0.5 
+                            sm:pb-1 
+                            no-decorate">
+                        <!-- **no-underline** style="text-decoration: none; -->
                             <!-- User's phone number will be displayed here -->
                         </span>
                     </div>
