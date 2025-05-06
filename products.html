@@ -1716,7 +1716,7 @@ async function verifyCode(code) {
         //             if (product.images && product.images.length > 0) {
         //                 // Create swiper carousel with images
         //                 carouselHTML = `
-        //                     <div class="product-carousel h-[calc(100vh/3)] sm:h-[calc(100vh/5)] bg-gray-100 dark:bg-gray-700 p-1.5 pb-0 overflow-hidden">
+        //                     <div class="product-carousel h-[calc(100vh/3)] sm:h-[calc(100vh/3)] bg-gray-100 dark:bg-gray-700 p-1.5 pb-0 overflow-hidden">
         //                         <div class="swiper swiper-${doc.id}">
         //                             <div class="swiper-wrapper">
         //                                 ${product.images.map(image => `
@@ -1735,14 +1735,14 @@ async function verifyCode(code) {
         //             } else if (product.imageUrl) {
         //                 // Fallback to legacy imageUrl
         //                 carouselHTML = `
-        //                     <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden">
+        //                     <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/3)] p-1.5 pb-0 overflow-hidden">
         //                         <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover rounded-t-lg">
         //                     </div>
         //                 `;
         //             } else {
         //                 // No image
         //                 carouselHTML = `
-        //                     <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden flex items-center justify-center">
+        //                     <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/3)] p-1.5 pb-0 overflow-hidden flex items-center justify-center">
         //                         <div class="text-gray-400">No Image</div>
         //                     </div>
         //                 `;
@@ -1854,7 +1854,7 @@ async function displayProducts() {
             if (product.images && product.images.length > 0) {
                 // Create swiper carousel with images
                 carouselHTML = `
-                    <div class="product-carousel h-[calc(100vh/3)] sm:h-[calc(100vh/5)] bg-gray-100 dark:bg-gray-700 p-1.5 pb-0 overflow-hidden">
+                    <div class="product-carousel h-[calc(100vh/3)] sm:h-[calc(100vh/3)] bg-gray-100 dark:bg-gray-700 p-1.5 pb-0 overflow-hidden">
                         <div class="swiper swiper-${doc.id}">
                             <div class="swiper-wrapper">
                                 ${product.images.map(image => `
@@ -1873,14 +1873,14 @@ async function displayProducts() {
             } else if (product.imageUrl) {
                 // Fallback to legacy imageUrl
                 carouselHTML = `
-                    <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden">
+                    <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/3)] p-1.5 pb-0 overflow-hidden">
                         <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover rounded-t-lg">
                     </div>
                 `;
             } else {
                 // No image
                 carouselHTML = `
-                    <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/5)] p-1.5 pb-0 overflow-hidden flex items-center justify-center">
+                    <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/3)] p-1.5 pb-0 overflow-hidden flex items-center justify-center">
                         <div class="text-gray-400">No Image</div>
                     </div>
                 `;
@@ -2124,6 +2124,8 @@ async function displayProducts() {
                 }
                 
                 filteredProducts.forEach(product => {
+
+                    // Create Card Wrapper
                     const productCard = document.createElement('div');
                     productCard.className = 'w-full h-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden transition-all hover:shadow-md';
                     
@@ -2133,30 +2135,33 @@ async function displayProducts() {
                     if (product.images && product.images.length > 0) {
                         // Create swiper carousel with images
                         carouselHTML = `
-                            <div class="product-carousel bg-gray-100 dark:bg-gray-700">
+                            <div class="product-carousel h-[calc(100vh/3)] sm:h-[calc(100vh/3)] bg-gray-100 dark:bg-gray-700 p-1.5 pb-0 overflow-hidden">
                                 <div class="swiper swiper-${product.id}">
                                     <div class="swiper-wrapper">
                                         ${product.images.map(image => `
                                             <div class="swiper-slide">
-                                                <img src="${image.url}" alt="${product.name}" class="w-full h-full object-cover">
+                                                <img src="${image.url}" alt="${product.name}" class="w-full h-full rounded-t-lg">
                                             </div>
                                         `).join('')}
                                     </div>
                                     <div class="swiper-pagination swiper-pagination-${product.id}"></div>
+                                    <div class="swiper-button-prev swiper-button-prev-${product.id}"></div>
+                                    <div class="swiper-button-next swiper-button-next-${product.id}"></div>
+                                    ${product.images.length > 1 ? `<div class="image-count absolute top-1.5 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">${product.images.length} images</div>` : ''}
                                 </div>
                             </div>
                         `;
                     } else if (product.imageUrl) {
                         // Fallback to legacy imageUrl
                         carouselHTML = `
-                            <div class="product-carousel bg-gray-100 dark:bg-gray-700">
-                                <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover">
+                            <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/3)] p-1.5 pb-0 overflow-hidden">
+                                <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover rounded-t-lg">
                             </div>
                         `;
-            } else {
+                    } else {
                         // No image
                         carouselHTML = `
-                            <div class="product-carousel bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                            <div class="product-carousel bg-gray-100 dark:bg-gray-700 h-[calc(100vh/3)] sm:h-[calc(100vh/3)] p-1.5 pb-0 overflow-hidden flex items-center justify-center">
                                 <div class="text-gray-400">No Image</div>
                             </div>
                         `;
@@ -2183,7 +2188,7 @@ async function displayProducts() {
                             </div>
                         </div>
                     `;
-                    
+
                     productList.appendChild(productCard);
                     
                     // Initialize swiper for this product if it has multiple images
@@ -2192,7 +2197,7 @@ async function displayProducts() {
                     }
                 });
 
-                // Add event listeners
+                // Add event listeners for product cards
                 document.querySelectorAll('.add-to-cart').forEach(button => {
                     button.addEventListener('click', addToCart);
                 });
@@ -2214,10 +2219,10 @@ async function displayProducts() {
                         }
                     });
                 });
-
+                
             } catch (error) {
-                console.error("Error searching products:", error);
-                productList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error searching products: ${error.message}</div>`;
+                console.error("Error loading products:", error);
+                productList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading products: ${error.message}</div>`;
             }
         }
 
