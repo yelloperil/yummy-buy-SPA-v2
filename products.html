@@ -16,6 +16,9 @@
     <!-- Custom CSS -->
      <link rel="stylesheet" href="/styles/products.css">
      <link rel="stylesheet" href="/styles/scrollbar.css">
+     <!-- Preload Videos -->
+     <link rel="preload" href="/assets/videos/mobile-loading-mp4-v1.mp4" as="video" media="(max-width: 639px)">
+     <link rel="preload" href="/assets/videos/desktop-loading-mp4-v1.mp4" as="video" media="(min-width: 640px)">
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -39,7 +42,11 @@
 
 <body class="bg-[#6A47C4] dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
 
-    <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center bg-[#6A47C4] z-50 opacity-0 transition-opacity duration-500 pointer-events-auto" aria-label="Loading, please wait">
+    <!-- Initial loader to prevent purple flash -->
+    <div id="initialLoader" class="fixed inset-0 bg-[#6A47C4] z-50"></div>
+    
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center bg-[#6A47C4] z-40 opacity-0 transition-opacity duration-500 pointer-events-auto" aria-label="Loading, please wait">
         <video id="loadingVideoMobile" src="/assets/videos/mobile-loading-mp4-v1.mp4" autoplay loop muted playsinline class="block sm:hidden object-cover w-full h-full max-h-screen"></video>
         <video id="loadingVideoDesktop" src="/assets/videos/desktop-loading-mp4-v1.mp4" autoplay loop muted playsinline class="hidden sm:block object-cover w-full h-full max-h-screen"></video>
     </div>
@@ -613,8 +620,75 @@
         });
     </script> -->
 
-    <!-- v3.1 -->
+    <!-- LOAD SCREEN LOGIC - v3.2 -->
     <script>
+        const loadingScreen = document.getElementById('loadingScreen');
+        const initialLoader = document.getElementById('initialLoader');
+        const content = document.querySelector('.content');
+        const loadingVideoMobile = document.getElementById('loadingVideoMobile');
+        const loadingVideoDesktop = document.getElementById('loadingVideoDesktop');
+        const startTime = 0.55;
+        const LOAD_DURATION = 3000;
+        let loadStartTime;
+
+        function showLoadingScreen() {
+            // Hide initial loader immediately when we start the proper loading screen
+            initialLoader.classList.add('hidden');
+            
+            loadingScreen.classList.add('opacity-100');
+            if (loadingVideoMobile) {
+                loadingVideoMobile.currentTime = startTime;
+            }
+            if (loadingVideoDesktop) {
+                loadingVideoDesktop.currentTime = startTime;
+            }
+            
+            // Record when we started showing the loading screen
+            loadStartTime = Date.now();
+        }
+
+        function hideLoadingScreen() {
+            // Calculate remaining time to ensure full 3000ms duration
+            const elapsed = Date.now() - loadStartTime;
+            const remaining = Math.max(0, LOAD_DURATION - elapsed);
+            
+            loadingScreen.classList.remove('opacity-100');
+            loadingScreen.classList.add('opacity-0');
+            
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                content.classList.add('opacity-100');
+            }, 500);
+        }
+
+        // Start showing loading screen as early as possible
+        document.addEventListener('readystatechange', () => {
+            if (document.readyState === 'interactive') {
+                showLoadingScreen();
+            }
+        });
+
+        // Fallback in case readystatechange doesn't fire
+        setTimeout(() => {
+            if (!loadStartTime) {
+                showLoadingScreen();
+            }
+        }, 100);
+
+        // Start hiding after full duration
+        setTimeout(hideLoadingScreen, LOAD_DURATION);
+        
+        // Ensure videos are loaded
+        window.addEventListener('load', () => {
+            if (!loadStartTime) {
+                showLoadingScreen();
+                setTimeout(hideLoadingScreen, LOAD_DURATION);
+            }
+        });
+    </script>
+     
+    <!-- v3.1 -->
+    <!-- <script>
         const loadingScreen = document.getElementById('loadingScreen');
         const content = document.querySelector('.content');
         const loadingVideoMobile = document.getElementById('loadingVideoMobile');
@@ -644,7 +718,7 @@
             showLoadingScreen();
             setTimeout(hideLoadingScreen, 3000);
         });
-    </script>
+    </script> -->
 
     <!-- ////////////////////////////////////////////////////////////////////////////////// -->
 
