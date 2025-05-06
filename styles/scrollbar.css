@@ -1,0 +1,32 @@
+/* Make Chrome scrollbar sleek and auto-hiding like Firefox */
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  scrollbar-width: thin; /* Firefox: keep sleek scrollbar */
+}
+
+/* Hide scrollbar by default in Chrome */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 0; /* Invisible when not scrolling */
+  background: transparent;
+}
+
+/* Show scrollbar on hover or scroll */
+.overflow-y-auto:where(:hover, :active)::-webkit-scrollbar {
+  width: 8px; /* Thin scrollbar */
+}
+
+/* Style the thumb */
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: transparent; /* Invisible by default */
+  border-radius: 4px;
+}
+
+/* Show thumb on hover or scroll */
+.overflow-y-auto:where(:hover, :active)::-webkit-scrollbar-thumb {
+  background: rgba(107, 70, 193, 0.5); /* Matches your bg-[#6A47C4] */
+}
+
+/* Keep track transparent */
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}

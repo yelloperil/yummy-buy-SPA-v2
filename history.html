@@ -39,18 +39,18 @@
 <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
 <body class="bg-gray-100 min-h-screen">
-    <div class="flex-col px-2 desktop:px-4 py-4 desktop:py-6">
+    <div class="flex-col px-2 desktop:px-4 pt-2 pb-4 sm:py-6">
 
         <!-- Header -->
          <!-- SNIPPET ONE -->
-        <header class="relative flex-1 flex justify-between items-end mb-2 py-4 sm:mb-8 sm:py-8">
+        <header class="relative flex-1 flex justify-between items-end mb-2 py-4 sm:mb-12 sm:mt-0">
 
             <!-- BACK TO HOME -->
             <span class="flex-1">
-                <a href="index.html" class="flex gap-2 lg:gap-3 text-primary text-base font-semibold hover:text-secondary pb-1 pl-2">
+                <a href="index.html" class="flex gap-2 lg:gap-3">
                     <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-5 mobile:w-6 desktop:w-7 xl:w-8 h-5 mobile:h-6 desktop:h-7 xl:h-8">
                     <!-- <span>home</span> -->
-                    <span class="text-primary text-sm desktop:text-base sm:text-lg sm:font-semibold hover:text-secondary">home</span>
+                    <span class="text-primary text-sm desktop:text-base sm:text-lg sm:font-semibold hover:text-secondary pb-1 pl-2">home</span>
                 </a>
             </span>
 
@@ -95,11 +95,11 @@
             <div class="mb-6 flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
                 <input type="text" id="orderSearch" placeholder="Search orders..." class="text-xs mobile:text-sm desktop:text-base sm:text-lg p-2 border rounded-md flex-grow">
                 <select id="statusFilter" class="text-xs mobile:text-sm desktop:text-base sm:text-lg p-2 border rounded-md">
-                    <option value="all">All Statuses</option>
-                    <option value="order placed">Order Placed</option>
-                    <option value="order on-hold">Order On-Hold</option>
-                    <option value="order completed">Order Completed</option>
-                    <option value="order cancelled">Order Cancelled</option>
+                    <option value="all"><span class="text-xs lg:text-sm 2xl:text-base">All Statuses</span></option>
+                    <option value="order placed"><span class="text-xs lg:text-sm 2xl:text-base">Order Placed</span></option>
+                    <option value="order on-hold"><span class="text-xs lg:text-sm 2xl:text-base">Order On-Hold</span></option>
+                    <option value="order completed"><span class="text-xs lg:text-sm 2xl:text-base">Order Completed</span></option>
+                    <option value="order cancelled"><span class="text-xs lg:text-sm 2xl:text-base">Order Cancelled</span></option>
                 </select>
                 <input type="date" id="dateFilter" placeholder="Filter by Date" class="text-xs mobile:text-sm desktop:text-base sm:text-lg p-2 border rounded-md">
             </div>
