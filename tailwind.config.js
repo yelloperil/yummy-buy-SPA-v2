@@ -44,6 +44,12 @@ tailwind.config = {
             boxSizing: {
                 'content': 'content-box',
                 'border': 'border-box', // This is the default, you can keep it for clarity
+            },
+            width: {
+                'clamp-nav': 'clamp(25vw, 30vw, 35vw)',
+            },  
+            height: {
+                'clamp-header': 'clamp(15vh,20vh,25vh)',
             },  
         },
     },

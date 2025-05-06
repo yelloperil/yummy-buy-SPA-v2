@@ -1,3 +1,22 @@
+
+
+.nav-clamp-width {
+    width: clamp(25vw, 30vw, 35vw);
+}
+
+.header-clamp-height {
+    height: clamp(15vh,20vh,25vh);
+}
+
+.logo-clamp-height {
+    height: clamp(12vh, 17vh, 22vh)
+}
+
+
+/* /////////////////////////////////////////////////////////////////////////////////////////////////// */
+
+
+
 .order-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
