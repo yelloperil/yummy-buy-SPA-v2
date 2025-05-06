@@ -72,16 +72,14 @@
         <header class="
         relative 
         header-clamp-height
-        flex flex-col 
-        md:flex-row 
-        justify-start md:justify-between 
-        items-center md:items-end
+        flex justify-start md:justify-between 
+        items-end
         py-4 
         mb-10">
 
             <!-- LOGO Container -->
             <div class="
-                flex-1 
+                flex-none md:flex-1 
                 flex justify-start items-end">
 
                 <!-- DESKTOP LOGO -->
@@ -91,7 +89,7 @@
                         alt="Yummy Buy Mascot"
                         class="
                             hidden md:block
-                            logo-clamp-height
+                            logo-clamp-height w-auto
                             transition-transform
                             duration-300
                             ease-in-out
@@ -106,8 +104,9 @@
                         src="/assets/images/mascot-logo-1.png"
                         alt="Yummy Buy Mascot"
                         class="
-                            block md:hidden
-                            logo-clamp-height
+                            absolute md:hidden
+                            top-4 left-0
+                            h-[20vh] w-auto
                             transition-transform
                             duration-300
                             ease-in-out
@@ -133,7 +132,7 @@
                         hidden md:block 
                         font-zenMaru 
                         text-7xl
-                        xl:text-8xl 
+                        2xl:text-8xl 
                         font-bold text-indigo-100 hover:text-secondary 
                         transition-transform duration-300 ease-in-out  
                         ml-auto ">
@@ -206,7 +205,6 @@
             <nav class="
                 flex-1
                 nav-clamp-width
-                mb-0 mobile:mb-6 
                 flex gap-2 justify-around 
                 bg-[#292f3d] 
                 px-6 pb-2 pt-2 
@@ -257,8 +255,7 @@
             <div class="
                 flex-1
                 self-center mobile:self-end 
-                flex justify-end items-end
-                mb-0 mobile:mb-6 ">
+                flex justify-end items-end">
             <!-- <div class="flex-1 sm:flex sm:justify-end sm:items-end sm:mb-6"> -->
                 <!-- <div class="relative"> -->
                                 

@@ -5,11 +5,11 @@
 }
 
 .header-clamp-height {
-    height: clamp(15vh,20vh,25vh);
+    height: clamp(250px,20vh,25vh);
 }
 
 .logo-clamp-height {
-    height: clamp(12vh, 17vh, 22vh)
+    height: clamp(230px, 17vh, 22vh)
 }
 
 
