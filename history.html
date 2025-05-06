@@ -101,7 +101,15 @@
                     <option value="order completed"><span class="text-xs lg:text-sm 2xl:text-base">Order Completed</span></option>
                     <option value="order cancelled"><span class="text-xs lg:text-sm 2xl:text-base">Order Cancelled</span></option>
                 </select>
-                <input type="date" id="dateFilter" placeholder="Filter by Date" class="text-xs mobile:text-sm desktop:text-base sm:text-lg p-2 border rounded-md">
+                <!-- <input type="date" id="dateFilter" placeholder="Filter by Date" class="text-xs mobile:text-sm desktop:text-base sm:text-lg p-2 border rounded-md"> -->
+                <input 
+                    type="text" 
+                    id="dateFilter" 
+                    class="text-xs mobile:text-sm desktop:text-base sm:text-lg p-2 border rounded-md w-full"
+                    placeholder="mm/dd/yyyy"
+                    onfocus="this.type='date'"
+                    onblur="if(!this.value){this.type='text'}"
+                >
             </div>
 
             <!-- Orders Container -->

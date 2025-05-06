@@ -42,14 +42,26 @@
 
 <body class="bg-[#6A47C4] dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
 
-    <!-- Initial loader to prevent purple flash -->
+    <!-- Initial loader to prevent purple flash - Solution A -->
     <div id="initialLoader" class="fixed inset-0 bg-[#6A47C4] z-50"></div>
     
-    <!-- Loading Screen -->
+    <!-- Loading Screen - Solution A -->
     <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center bg-[#6A47C4] z-40 opacity-0 transition-opacity duration-500 pointer-events-auto" aria-label="Loading, please wait">
         <video id="loadingVideoMobile" src="/assets/videos/mobile-loading-mp4-v1.mp4" autoplay loop muted playsinline class="block sm:hidden object-cover w-full h-full max-h-screen"></video>
         <video id="loadingVideoDesktop" src="/assets/videos/desktop-loading-mp4-v1.mp4" autoplay loop muted playsinline class="hidden sm:block object-cover w-full h-full max-h-screen"></video>
     </div>
+
+    
+    <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+        <!-- Loading Screen - Solution B -->
+        <!-- <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center bg-[#6A47C4] z-50 opacity-0 transition-opacity duration-500 pointer-events-auto" aria-label="Loading, please wait">
+            <video id="loadingVideoMobile" src="/assets/videos/mobile-loading-mp4-v1.mp4" poster="/assets/images/mobile-poster.jpg" autoplay loop muted playsinline class="block sm:hidden object-cover w-full h-full max-h-screen"></video>
+            <video id="loadingVideoDesktop" src="/assets/videos/desktop-loading-mp4-v1.mp4" poster="/assets/images/desktop-poster.jpg" autoplay loop muted playsinline class="hidden sm:block object-cover w-full h-full max-h-screen"></video>
+        </div> -->
+
+    <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
     
     <!-- Gallery Modal for enlarged images -->
     <div id="galleryModal" class="gallery-modal">
@@ -620,7 +632,40 @@
         });
     </script> -->
 
-    <!-- LOAD SCREEN LOGIC - v3.2 -->
+    <!-- v3.1 -->
+    <!-- <script>
+        const loadingScreen = document.getElementById('loadingScreen');
+        const content = document.querySelector('.content');
+        const loadingVideoMobile = document.getElementById('loadingVideoMobile');
+        const loadingVideoDesktop = document.getElementById('loadingVideoDesktop');
+        const startTime = 0.55; 
+
+        function showLoadingScreen() {
+            loadingScreen.classList.add('opacity-100');
+            if (loadingVideoMobile) {
+                loadingVideoMobile.currentTime = startTime;
+            }
+            if (loadingVideoDesktop) {
+                loadingVideoDesktop.currentTime = startTime;
+            }
+        }
+
+        function hideLoadingScreen() {
+            loadingScreen.classList.remove('opacity-100');
+            loadingScreen.classList.add('opacity-0');
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                content.classList.add('opacity-100');
+            }, 500);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            showLoadingScreen();
+            setTimeout(hideLoadingScreen, 3000);
+        });
+    </script> -->
+
+    <!-- LOAD SCREEN LOGIC - v3.2 [A] - Add Inital Loader Element + Prioritize -->
     <script>
         const loadingScreen = document.getElementById('loadingScreen');
         const initialLoader = document.getElementById('initialLoader');
@@ -686,25 +731,21 @@
             }
         });
     </script>
+
      
-    <!-- v3.1 -->
+    <!-- LOAD SCREEN LOGIC - v3.2 [B] - Poster Placeholder of Video Thumbnail -->
     <!-- <script>
         const loadingScreen = document.getElementById('loadingScreen');
         const content = document.querySelector('.content');
         const loadingVideoMobile = document.getElementById('loadingVideoMobile');
         const loadingVideoDesktop = document.getElementById('loadingVideoDesktop');
-        const startTime = 0.55; 
-
+        const startTime = 0.55;
+    
         function showLoadingScreen() {
             loadingScreen.classList.add('opacity-100');
-            if (loadingVideoMobile) {
-                loadingVideoMobile.currentTime = startTime;
-            }
-            if (loadingVideoDesktop) {
-                loadingVideoDesktop.currentTime = startTime;
-            }
+            // Note: Setting currentTime is moved to 'loadedmetadata' event below
         }
-
+    
         function hideLoadingScreen() {
             loadingScreen.classList.remove('opacity-100');
             loadingScreen.classList.add('opacity-0');
@@ -713,12 +754,26 @@
                 content.classList.add('opacity-100');
             }, 500);
         }
-
+    
         document.addEventListener('DOMContentLoaded', () => {
             showLoadingScreen();
-            setTimeout(hideLoadingScreen, 3000);
+    
+            // Determine which video is active based on screen size (sm = 640px)
+            const isMobile = window.matchMedia("(max-width: 640px)").matches;
+            const activeVideo = isMobile ? loadingVideoMobile : loadingVideoDesktop;
+    
+            // Set start time when video metadata is loaded
+            activeVideo.addEventListener('loadedmetadata', () => {
+                activeVideo.currentTime = startTime;
+            }, { once: true });
+    
+            // Start the 3-second timer when the video begins playing
+            activeVideo.addEventListener('playing', () => {
+                setTimeout(hideLoadingScreen, 3000);
+            }, { once: true });
         });
     </script> -->
+
 
     <!-- ////////////////////////////////////////////////////////////////////////////////// -->
 
