@@ -53,6 +53,30 @@ tailwind.config = {
             },  
         },
     },
+    plugins: [
+        function ({ addUtilities }) {
+            addUtilities({
+                '.custom-scrollbar': {
+                    'scrollbar-width': 'auto',
+                    'scrollbar-color': 'transparent transparent',
+                    '&::-webkit-scrollbar': {
+                        width: '8px',
+                        background: 'transparent',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        background: 'transparent',
+                    'border-radius': '4px',
+                    },
+                    '&:hover::-webkit-scrollbar-thumb, &:active::-webkit-scrollbar-thumb': {
+                        background: 'rgba(107, 70, 193, 0.5)',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                        background: 'transparent',
+                    },
+                },
+            });
+        },
+    ],
     variants: {
         extend: {
             display: ['responsive'],
