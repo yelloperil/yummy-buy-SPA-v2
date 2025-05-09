@@ -1,20 +1,30 @@
 
+
+/* NAVIGATION */
 .nav-clamp-width {
     width: clamp(25vw, 30vw, 35vw);
 }
 
+
+/* HEADER */
 .header-clamp-desktop {
-    height: clamp(400px,20vh,25vh);
+    height: clamp(800px, 25%, 100%);
+    width: clamp(300px, 100vw, 100vw);
 }
 
 .header-clamp-mobile {
-    height: clamp(250px,20vh,25vh);
+    height: clamp(250px, 20vh, 25vh);
+    width:clamp(300px, 100vw, 100vw);
 }
 
+
+/* FOOTER */
 .footer-clamp-height {
     height: clamp(80px, 5vh, 10vh);
 }
 
+
+/* LOGO */
 .logo-clamp-desktop {
     height: clamp(250px, 15vh, 325px)
 }
@@ -23,17 +33,21 @@
     height: clamp(150px, 17vh, 22vh)
 }
 
+
+/* BRAND TEXT */
 .brand-text-clamp {
     height: clamp(80px, 10vh, 15vh);
     width: clamp(240px, auto, 75vw);
 }
 
+
+/* TEXT FORMATS */
 .no-decorate {
     text-decoration: none;
 }
 
-/* /////////////////////////////////////////////////////////////////////////////////////////////////// */
 
+/* /////////////////////////////////////////////////////////////////////////////////////////////////// */
 
 /* For WebKit browsers (Chrome, Safari) */
 ::-webkit-scrollbar {
