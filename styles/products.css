@@ -3,12 +3,29 @@
     width: clamp(25vw, 30vw, 35vw);
 }
 
-.header-clamp-height {
+.header-clamp-desktop {
+    height: clamp(400px,20vh,25vh);
+}
+
+.header-clamp-mobile {
     height: clamp(250px,20vh,25vh);
 }
 
-.logo-clamp-height {
-    height: clamp(230px, 17vh, 22vh)
+.footer-clamp-height {
+    height: clamp(80px, 5vh, 10vh);
+}
+
+.logo-clamp-desktop {
+    height: clamp(250px, 15vh, 325px)
+}
+
+.logo-clamp-mobile {
+    height: clamp(150px, 17vh, 22vh)
+}
+
+.brand-text-clamp {
+    height: clamp(80px, 10vh, 15vh);
+    width: clamp(240px, auto, 75vw);
 }
 
 .no-decorate {
