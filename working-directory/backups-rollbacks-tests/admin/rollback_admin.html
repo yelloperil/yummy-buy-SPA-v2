@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title -->
     <title>Yummy Buy</title>
-    <link rel="icon" type="image/png" href="/assets/icons/favicon-1.png">
+    <!-- Favicons -->
+    <link rel="icon" href="/assets/icons/mascot-sitting-favicon.io/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/mascot-sitting-favicon.io/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/mascot-sitting-favicon.io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/mascot-sitting-favicon.io/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/icons/mascot-sitting-favicon.io/android-chrome-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/icons/mascot-sitting-favicon.io/apple-touch-icon.png">
+    <link rel="manifest" href="/assets/icons/mascot-sitting-favicon.io/site.webmanifest">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/styles/admin.css">
+    <!-- Firebase Imports -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -12,157 +23,18 @@
     
     <!-- Add Sortable.js for drag-and-drop functionality -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    
-    <!-- Tailwind CDN import -->
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Google Fonts -->
-    <link
-    href="https://fonts.googleapis.com/css2?family=Roboto&family=Lora&family=DM+Mono&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Zen+Old+Mincho&family=IBM+Plex+Sans+JP&family=Iansui&family=Klee+One&family=Dela+Gothic+One&family=Yusei+Magic&family=Noto+Sans+SC&family=Zen+Kaku+Gothic+Antique&family=Noto+Sans+JP&family=DotGothic16&family=Noto+Sans+TC&display=swap"
-    rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Lora&family=DM+Mono&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Zen+Old+Mincho&family=IBM+Plex+Sans+JP&family=Iansui&family=Klee+One&family=Dela+Gothic+One&family=Yusei+Magic&family=Noto+Sans+SC&family=Zen+Kaku+Gothic+Antique&family=Noto+Sans+JP&family=DotGothic16&family=Noto+Sans+TC&display=swap" rel="stylesheet" >
 
-    <!-- styles for tailwind -->
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-                theme: {
-                    extend: {
-                        colors: {
-                            primary: '#5D5CDE',
-                            secondary: '#A5A4FF',
-                        },
-                        fontFamily: {
-                            roboto: ['Roboto', 'sans-serif'],
-                            lora: ['Lora', 'serif'],
-                            dmMono: ['DM Mono', 'monospace'],
-                            zenMaru: ['"Zen Maru Gothic"', 'sans-serif'],
-                            zenMincho: ['Zen Old Mincho', 'serif'],
-                            'ibm-plex-sans-jp': ['IBM Plex Sans JP', 'sans-serif'],
-                            iansui: ['Iansui', 'sans-serif'],
-                            'klee-one': ['Klee One', 'cursive'],
-                            'dela-gothic-one': ['Dela Gothic One', 'sans-serif'],
-                            'yusei-magic': ['Yusei Magic', 'sans-serif'],
-                            'noto-sans-sc': ['Noto Sans SC', 'sans-serif'],
-                            'zen-kaku-gothic-antique': ['Zen Kaku Gothic Antique', 'sans-serif'],
-                            'noto-sans-jp': ['Noto Sans JP', 'sans-serif'],
-                            dotgothic16: ['DotGothic16', 'sans-serif'],
-                            'noto-sans-tc': ['Noto Sans TC', 'sans-serif'],
-                        },
-                        keyframes: {
-                            'pulse-glow': {
-                            '0%, 100%': { filter: 'drop-shadow(0 0 10px rgba(173, 216, 230, 0.7))' },
-                            '50%': { filter: 'drop-shadow(0 0 15px rgba(173, 216, 230, 0.9))' },
-                            }
-                        },
-                        animation: {
-                            // name: keyframes   duration   timing   iterations
-                            'pulse-glow': 'pulse-glow 3s   ease-in-out infinite',
-                        }                                                
-                    },
-                },
-        };
-
-        // Check for dark mode preference
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-        }
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            document.documentElement.classList.toggle('dark', event.matches);
-        });
-    </script>
-
-    <style>
-        /* styles for modals and other features*/
-        .order-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        .tab-active {
-            border-bottom: 3px solid #5D5CDE;
-            font-weight: 600;
-        }
-        /* Add toast styles here */
-        .toast {
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
-
-    <style>
-        /* Add styles for image gallery */
-        .image-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .image-item {
-            position: relative;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 5px;
-            height: 120px;
-            cursor: grab;
-        }
-        .image-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        .delete-image {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        .main-image-badge {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            background: rgba(0, 123, 255, 0.7);
-            border-radius: 3px;
-            padding: 2px 4px;
-            font-size: 10px;
-            color: white;
-        }
-        .add-image-btn {
-            height: 120px;
-            border: 2px dashed #ddd;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        .add-image-btn:hover {
-            border-color: #aaa;
-        }
-    </style>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Configuration -->
+    <script src="/tailwind.config.js"></script>
 
 </head>
 
 
-<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
- 
-    <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-    
-        <!-- // this divides head and body -->
-    
-    <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
- 
 <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
 
@@ -328,12 +200,19 @@
                     
                     <!-- Image Gallery -->
                     <div id="imageGallery" class="image-gallery">
-                        <!-- Add Image Button -->
-                        <div id="addImageBtn" class="add-image-btn">
+                        <!-- Add Image Button: LABEL allows better MOBILE browser touch event capture -->
+                        <label for="productImageInput">
+                            <div id="addImageBtn" class="add-image-btn" aria-label="Add image">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                            </div>
+                        </label>
+                        <!-- <div id="addImageBtn" class="add-image-btn">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                             </svg>
-                        </div>
+                        </div> -->
                     </div>
 
                     <!-- alternate image upload method -->
@@ -1473,11 +1352,21 @@ async function loadProducts(filter = 'all') {
             
             // Add image button click handler
             const addImageBtn = document.getElementById('addImageBtn');
+
             if (addImageBtn) {
-                addImageBtn.addEventListener('click', () => {
+                // Add click event for desktop
+                addImageBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.getElementById('productImageInput').click();
+                });
+                
+                // Add touch events for mobile
+                addImageBtn.addEventListener('touchend', (e) => {
+                    e.preventDefault(); // Prevent default touch behavior
                     document.getElementById('productImageInput').click();
                 });
             }
+
         }
 
 
@@ -1525,6 +1414,15 @@ async function loadProducts(filter = 'all') {
             });
         }
 
+        // Add touch event support for the initial add image button
+        const initialAddImageBtn = document.getElementById('addImageBtn');
+        if (initialAddImageBtn) {
+            initialAddImageBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                document.getElementById('productImageInput').click();
+            });
+        }
+
         // Set up cancel button
         const cancelBtn = document.getElementById('cancelProductBtn');
         if (cancelBtn) {
@@ -1541,7 +1439,6 @@ async function loadProducts(filter = 'all') {
             });
         }
     });
-
 
 
 
@@ -1818,3 +1715,7 @@ async function loadProducts(filter = 'all') {
 </body>
 </html>
 <!-- End of HTML Document -->
+
+<!-- 
+This version added touch event listeners to better handle mobile browser based product management, specifically image upload. May 11, 2025. 
+-->
