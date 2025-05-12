@@ -40,7 +40,7 @@
 
 </head>
 
-<body class="bg-[#6A47C4] dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
+<body class="bg-[#6A47C4] py-2 md:py-4 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
 
     <!-- Initial loader to prevent purple flash - Solution A -->
     <div id="initialLoader" class="fixed inset-0 bg-[#6A47C4] z-50"></div>
@@ -114,6 +114,7 @@
                         class="
                             hidden md:block
                             logo-clamp-height w-auto
+                            pt-4
                             transition-transform
                             duration-300
                             ease-in-out
@@ -130,7 +131,9 @@
                         class="
                             absolute md:hidden
                             top-4 left-0
-                            h-[15vh] w-auto
+                            h-[17vh] w-auto
+                            min-h-[50px] 
+                            max-h-[300px]
                             transition-transform
                             duration-300
                             ease-in-out
