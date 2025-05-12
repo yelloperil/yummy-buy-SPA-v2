@@ -1352,21 +1352,11 @@ async function loadProducts(filter = 'all') {
             
             // Add image button click handler
             const addImageBtn = document.getElementById('addImageBtn');
-
             if (addImageBtn) {
-                // Add click event for desktop
-                addImageBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    document.getElementById('productImageInput').click();
-                });
-                
-                // Add touch events for mobile
-                addImageBtn.addEventListener('touchend', (e) => {
-                    e.preventDefault(); // Prevent default touch behavior
+                addImageBtn.addEventListener('click', () => {
                     document.getElementById('productImageInput').click();
                 });
             }
-
         }
 
 
@@ -1414,15 +1404,6 @@ async function loadProducts(filter = 'all') {
             });
         }
 
-        // Add touch event support for the initial add image button
-        const initialAddImageBtn = document.getElementById('addImageBtn');
-        if (initialAddImageBtn) {
-            initialAddImageBtn.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                document.getElementById('productImageInput').click();
-            });
-        }
-
         // Set up cancel button
         const cancelBtn = document.getElementById('cancelProductBtn');
         if (cancelBtn) {
@@ -1439,6 +1420,7 @@ async function loadProducts(filter = 'all') {
             });
         }
     });
+
 
 
 
