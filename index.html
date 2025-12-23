@@ -356,6 +356,28 @@ function draw() {
         false
     );
     
+    // Draw "Click Sloth to Enter" text
+    let instructionTextY = brandTextY + (textCharHeight * brandTextPixelSize) + pS * 3;
+    let instructionColors = [];
+    let instructionScales = [];
+    let instructionMessage = "CLICK SLOTH TO ENTER";
+    for(let i = 0; i < instructionMessage.length; i++) {
+        instructionColors.push(whiteColor);
+        instructionScales.push(0.8);
+    }
+    drawPixelText(
+        instructionMessage,
+        width / 2,
+        instructionTextY,
+        floor(brandTextPixelSize * 0.4),
+        textCharWidth,
+        textCharHeight,
+        brandCharSpacing,
+        instructionColors,
+        instructionScales,
+        false
+    );
+    
     // Calculate speech bubble dimensions
     let messageLines = message.split('\n');
     let bubbleContentHeightPixels = messageLines.length * textCharHeight + (messageLines.length - 1) * textLineSpacing;
