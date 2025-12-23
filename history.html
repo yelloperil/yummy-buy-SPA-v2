@@ -47,7 +47,7 @@
 
             <!-- BACK TO HOME -->
             <span class="flex-1">
-                <a href="index.html" class="flex gap-2 lg:gap-3">
+                <a href="products.html" class="flex gap-2 lg:gap-3">
                     <img src="/assets/icons/left_arrow_001.png" alt="link back to home" class="w-5 mobile:w-6 desktop:w-7 xl:w-8 h-5 mobile:h-6 desktop:h-7 xl:h-8">
                     <!-- <span>home</span> -->
                     <span class="text-primary text-sm desktop:text-base sm:text-lg sm:font-semibold hover:text-secondary pb-1 pl-2">home</span>
@@ -308,7 +308,7 @@
     // auth.onAuthStateChanged(user => {
     //     if (!user) {
     //         // Redirect to login if not authenticated
-    //         window.location.href = 'index.html';
+    //         window.location.href = 'products.html';
     //     } else {
     //         // Load orders by default
     //         loadOrders('chronological');
@@ -376,15 +376,15 @@
         }
     });
 
-    // Close modal and redirect to index.html
+    // Close modal and redirect to products.html
     document.getElementById('okButton').addEventListener('click', function() {
-        // Redirect to index.html after closing the modal
-        window.location.href = 'index.html';
+        // Redirect to products.html after closing the modal
+        window.location.href = 'products.html';
     });
 
     document.getElementById('closeModal').addEventListener('click', function() {
         document.getElementById('customAlert').classList.add('hidden');
-        window.location.href = 'index.html';
+        window.location.href = 'products.html';
     });
 
 
@@ -450,7 +450,7 @@
     // Logout functionality
     document.getElementById('logoutBtn').addEventListener('click', () => {
         auth.signOut().then(() => {
-            window.location.href = 'index.html';
+            window.location.href = 'products.html';
         });
     });
 
